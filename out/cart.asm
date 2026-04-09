@@ -10,12 +10,15 @@
 ;--------------------------------------------------------
 	.globl _cart_type_name
 	.globl _cart_lic_name
+	.globl _String_Format
 	.globl _msx_printf
 	.globl _Mem_HeapAlloc
 	.globl _DOS_SeekHandle
 	.globl _DOS_ReadHandle
 	.globl _DOS_CloseHandle
 	.globl _DOS_OpenHandle
+	.globl _DOS_StringOutput
+	.globl _g_StrBuffer
 	.globl _DOS_TPAUpperAddr
 	.globl _cart_load
 ;--------------------------------------------------------
@@ -26,6 +29,8 @@
 ;--------------------------------------------------------
 	.area _DATA
 _DOS_TPAUpperAddr	=	0x0006
+_g_StrBuffer::
+	.ds 128
 _ctx:
 	.ds 1032
 ;--------------------------------------------------------
@@ -56,7 +61,7 @@ _LIC_CODE:
 ; code
 ;--------------------------------------------------------
 	.area _CODE
-;./cart.c:117: const char *cart_lic_name() {
+;./cart.c:121: const char *cart_lic_name() {
 ;	---------------------------------
 ; Function cart_lic_name
 ; ---------------------------------
@@ -65,7 +70,7 @@ _cart_lic_name::
 	ld	ix,#0
 	add	ix,sp
 	push	af
-;./cart.c:118: if (ctx.header->new_lic_code <= 0xA4) {
+;./cart.c:122: if (ctx.header->new_lic_code <= 0xA4) {
 	ld	hl, #(_ctx + 1030)
 	ld	a, (hl)
 	ld	-2 (ix), a
@@ -84,7 +89,7 @@ _cart_lic_name::
 	ld	a, #0x00
 	sbc	a, b
 	jr	C, 00102$
-;./cart.c:119: return LIC_CODE[ctx.header->lic_code];
+;./cart.c:123: return LIC_CODE[ctx.header->lic_code];
 	ld	bc, #_LIC_CODE+0
 	pop	de
 	push	de
@@ -102,10 +107,10 @@ _cart_lic_name::
 	ld	d, (hl)
 	jp	00103$
 00102$:
-;./cart.c:122: return "UNKNOWN";
+;./cart.c:126: return "UNKNOWN";
 	ld	de, #___str_1
 00103$:
-;./cart.c:123: }
+;./cart.c:127: }
 	ld	sp, ix
 	pop	ix
 	ret
@@ -117,12 +122,12 @@ ___str_0:
 ___str_1:
 	.ascii "UNKNOWN"
 	.db 0x00
-;./cart.c:125: const char *cart_type_name() {
+;./cart.c:129: const char *cart_type_name() {
 ;	---------------------------------
 ; Function cart_type_name
 ; ---------------------------------
 _cart_type_name::
-;./cart.c:126: if (ctx.header->type <= 0x22) {
+;./cart.c:130: if (ctx.header->type <= 0x22) {
 	ld	hl, (#(_ctx + 1030) + 0)
 	ld	de, #0x0047
 	add	hl, de
@@ -130,7 +135,7 @@ _cart_type_name::
 	ld	a, #0x22
 	sub	a, c
 	jr	C, 00102$
-;./cart.c:127: return ROM_TYPES[ctx.header->type];
+;./cart.c:131: return ROM_TYPES[ctx.header->type];
 	ld	de, #_ROM_TYPES+0
 	ld	l, c
 ;	spillPairReg hl
@@ -145,14 +150,14 @@ _cart_type_name::
 	ld	d, (hl)
 	ret
 00102$:
-;./cart.c:130: return "UNKNOWN";
+;./cart.c:134: return "UNKNOWN";
 	ld	de, #___str_2
-;./cart.c:131: }
+;./cart.c:135: }
 	ret
 ___str_2:
 	.ascii "UNKNOWN"
 	.db 0x00
-;./cart.c:133: bool cart_load(c8 *filename) {
+;./cart.c:137: bool cart_load(c8 *filename) {
 ;	---------------------------------
 ; Function cart_load
 ; ---------------------------------
@@ -162,47 +167,69 @@ _cart_load::
 	add	ix,sp
 	push	af
 	push	af
-;./cart.c:134: msx_printf("Trying to open %s file...\r\n", filename);
-	ld	bc, #___str_3+0
+	ex	de, hl
+;./cart.c:138: String_Format(g_StrBuffer, "Trying to open %s file...\r\n$", filename);
+	push	de
+	push	de
+	ld	hl, #___str_3
 	push	hl
+	ld	hl, #_g_StrBuffer
 	push	hl
-	push	bc
-	call	_msx_printf
-	pop	af
-	pop	af
-	pop	hl
-;./cart.c:135: u8 fp = DOS_FOpen(filename, O_RDONLY);
-	push	hl
+	call	_String_Format
+	ld	hl, #6
+	add	hl, sp
+	ld	sp, hl
+	ld	hl, #_g_StrBuffer
+	call	_DOS_StringOutput
+	pop	de
+;./cart.c:141: u8 fp = DOS_FOpen(filename, O_RDONLY);
+	push	de
 	ld	a, #0x01
 	push	af
 	inc	sp
+;	spillPairReg hl
+;	spillPairReg hl
+	ex	de,hl
+;	spillPairReg hl
+;	spillPairReg hl
 	call	_DOS_OpenHandle
-	pop	hl
-;./cart.c:137: if (fp == HANDLE_INVALID) {
+	pop	de
+;./cart.c:143: if (fp == HANDLE_INVALID) {
 	ld	c, a
 	inc	a
 	jr	NZ, 00102$
-;./cart.c:138: msx_printf("Failed to open: %s\r\n", filename);
-	ld	bc, #___str_4+0
+;./cart.c:144: String_Format(g_StrBuffer, "Failed to open: %s\r\n$", filename);
+	push	de
+	ld	hl, #___str_4
 	push	hl
-	push	bc
-	call	_msx_printf
-	pop	af
-	pop	af
-;./cart.c:139: return false;
+	ld	hl, #_g_StrBuffer
+	push	hl
+	call	_String_Format
+	ld	hl, #6
+	add	hl, sp
+	ld	sp, hl
+;./cart.c:145: DOS_StringOutput(g_StrBuffer);
+	ld	hl, #_g_StrBuffer
+	call	_DOS_StringOutput
+;./cart.c:146: return false;
 	xor	a, a
 	jp	00103$
 00102$:
-;./cart.c:142: msx_printf("Opened: %s\r\n", filename);
-	ld	de, #___str_5+0
+;./cart.c:149: String_Format(g_StrBuffer, "Opened: %s\r\n$", filename);
 	push	bc
-	push	hl
 	push	de
-	call	_msx_printf
-	pop	af
-	pop	af
+	ld	hl, #___str_5
+	push	hl
+	ld	hl, #_g_StrBuffer
+	push	hl
+	call	_String_Format
+	ld	hl, #6
+	add	hl, sp
+	ld	sp, hl
+	ld	hl, #_g_StrBuffer
+	call	_DOS_StringOutput
 	pop	bc
-;./cart.c:144: ctx.rom_size = DOS_SeekHandle(fp, 0, SEEK_END); // go to the end to the filename
+;./cart.c:152: ctx.rom_size = DOS_SeekHandle(fp, 0, SEEK_END); // go to the end to the filename
 	push	bc
 	ld	a, #0x02
 	push	af
@@ -222,7 +249,7 @@ _cart_load::
 	ld	bc, #0x0004
 	ldir
 	pop	bc
-;./cart.c:146: msx_printf("Rom Size: %d\r\n", (u8)(ctx.rom_size/1024L));
+;./cart.c:154: String_Format(g_StrBuffer, "File Size: %d KB\r\n$", (u16)(ctx.rom_size/1024L));
 	ld	e, -3 (ix)
 	ld	d, -2 (ix)
 	ld	l, -1 (ix)
@@ -236,17 +263,20 @@ _cart_load::
 	rr	d
 	rr	e
 	djnz	00112$
-	ld	b, e
 	push	bc
-	push	bc
-	inc	sp
+	push	de
 	ld	hl, #___str_6
 	push	hl
-	call	_msx_printf
-	pop	af
-	inc	sp
+	ld	hl, #_g_StrBuffer
+	push	hl
+	call	_String_Format
+	ld	hl, #6
+	add	hl, sp
+	ld	sp, hl
+	ld	hl, #_g_StrBuffer
+	call	_DOS_StringOutput
 	pop	bc
-;./cart.c:148: DOS_SeekHandle(fp, 0, SEEK_SET); // rewind 
+;./cart.c:157: DOS_SeekHandle(fp, 0, SEEK_SET); // rewind 
 	push	bc
 	xor	a, a
 	push	af
@@ -257,39 +287,39 @@ _cart_load::
 	ld	a, c
 	call	_DOS_SeekHandle
 	pop	bc
-;./cart.c:150: ctx.rom_data = Mem_HeapAlloc(ctx.rom_size);
+;./cart.c:159: ctx.rom_data = Mem_HeapAlloc(ctx.rom_size);
 	ld	hl, (#(_ctx + 1024) + 0)
 	push	bc
 	call	_Mem_HeapAlloc
 	pop	bc
 	ld	((_ctx + 1028)), de
-;./cart.c:152: DOS_FRead(fp, (void*)ctx.rom_data, ctx.rom_size);
+;./cart.c:161: DOS_FRead(fp, (void*)ctx.rom_data, ctx.rom_size);
 	ld	hl, (#(_ctx + 1024) + 0)
 	push	bc
 	push	hl
 	ld	a, c
 	call	_DOS_ReadHandle
 	pop	bc
-;./cart.c:153: DOS_FClose(fp); 
+;./cart.c:162: DOS_FClose(fp); 
 	ld	a, c
 	call	_DOS_CloseHandle
-;./cart.c:155: ctx.header = (rom_header *)(ctx.rom_data + 0x100);
+;./cart.c:164: ctx.header = (rom_header *)(ctx.rom_data + 0x100);
 	ld	hl, (#(_ctx + 1028) + 0)
 	ld	c, l
 	ld	a, h
 	inc	a
 	ld	b, a
 	ld	((_ctx + 1030)), bc
-;./cart.c:156: ctx.header->title[15] = 0;
+;./cart.c:165: ctx.header->title[15] = 0;
 	ld	hl, #0x0043
 	add	hl, bc
 	ld	(hl), #0x00
-;./cart.c:158: msx_printf("Cartridge Loaded:\n");
+;./cart.c:167: msx_printf("Cartridge Loaded:\n");
 	ld	hl, #___str_7
 	push	hl
 	call	_msx_printf
 	pop	af
-;./cart.c:159: msx_printf("\t Title    : %s\r\n", ctx.header->title);
+;./cart.c:168: msx_printf("\t Title    : %s\r\n", ctx.header->title);
 	ld	hl, (#(_ctx + 1030) + 0)
 	ld	bc, #0x0034
 	add	hl, bc
@@ -299,22 +329,27 @@ _cart_load::
 	call	_msx_printf
 	pop	af
 	pop	af
-;./cart.c:160: msx_printf("\t Type     : %d (%s)\r\n", ctx.header->type, cart_type_name());
+;./cart.c:169: String_Format(g_StrBuffer, "\t Type     : %2.2X (%s)\r\n$", ctx.header->type, cart_type_name());
 	call	_cart_type_name
 	ld	hl, (#(_ctx + 1030) + 0)
 	ld	bc, #0x0047
 	add	hl, bc
 	ld	c, (hl)
 	ld	b, #0x00
+	ld	hl, #_g_StrBuffer
 	push	de
 	push	bc
-	ld	hl, #___str_9
+	ld	de, #___str_9
+	push	de
 	push	hl
-	call	_msx_printf
-	ld	hl, #6
+	call	_String_Format
+	ld	hl, #8
 	add	hl, sp
 	ld	sp, hl
-;./cart.c:161: msx_printf("\t ROM Size : %d KB\r\n", 32 << ctx.header->rom_size);
+;./cart.c:170: DOS_StringOutput(g_StrBuffer);
+	ld	hl, #_g_StrBuffer
+	call	_DOS_StringOutput
+;./cart.c:171: msx_printf("\t ROM Size : %d KB\r\n", 32 << ctx.header->rom_size);
 	ld	hl, (#(_ctx + 1030) + 0)
 	ld	de, #0x0048
 	add	hl, de
@@ -333,7 +368,7 @@ _cart_load::
 	call	_msx_printf
 	pop	af
 	pop	af
-;./cart.c:162: msx_printf("\t RAM Size : %d\r\n", ctx.header->ram_size);
+;./cart.c:172: msx_printf("\t RAM Size : %d\r\n", ctx.header->ram_size);
 	ld	hl, (#(_ctx + 1030) + 0)
 	ld	de, #0x0049
 	add	hl, de
@@ -345,7 +380,7 @@ _cart_load::
 	call	_msx_printf
 	pop	af
 	pop	af
-;./cart.c:163: msx_printf("\t LIC Code : %d (%s)\r\n", ctx.header->lic_code, cart_lic_name());
+;./cart.c:173: msx_printf("\t LIC Code : %d (%s)\r\n", ctx.header->lic_code, cart_lic_name());
 	call	_cart_lic_name
 	ld	hl, (#(_ctx + 1030) + 0)
 	ld	bc, #0x004b
@@ -360,7 +395,7 @@ _cart_load::
 	ld	hl, #6
 	add	hl, sp
 	ld	sp, hl
-;./cart.c:164: msx_printf("\t ROM Vers : %d\r\n", ctx.header->version);
+;./cart.c:174: msx_printf("\t ROM Vers : %d\r\n", ctx.header->version);
 	ld	hl, (#(_ctx + 1030) + 0)
 	ld	de, #0x004c
 	add	hl, de
@@ -372,10 +407,10 @@ _cart_load::
 	call	_msx_printf
 	pop	af
 	pop	af
-;./cart.c:166: return true;
+;./cart.c:176: return true;
 	ld	a, #0x01
 00103$:
-;./cart.c:167: }
+;./cart.c:177: }
 	ld	sp, ix
 	pop	ix
 	ret
@@ -383,21 +418,25 @@ ___str_3:
 	.ascii "Trying to open %s file..."
 	.db 0x0d
 	.db 0x0a
+	.ascii "$"
 	.db 0x00
 ___str_4:
 	.ascii "Failed to open: %s"
 	.db 0x0d
 	.db 0x0a
+	.ascii "$"
 	.db 0x00
 ___str_5:
 	.ascii "Opened: %s"
 	.db 0x0d
 	.db 0x0a
+	.ascii "$"
 	.db 0x00
 ___str_6:
-	.ascii "Rom Size: %d"
+	.ascii "File Size: %d KB"
 	.db 0x0d
 	.db 0x0a
+	.ascii "$"
 	.db 0x00
 ___str_7:
 	.ascii "Cartridge Loaded:"
@@ -411,9 +450,10 @@ ___str_8:
 	.db 0x00
 ___str_9:
 	.db 0x09
-	.ascii " Type     : %d (%s)"
+	.ascii " Type     : %2.2X (%s)"
 	.db 0x0d
 	.db 0x0a
+	.ascii "$"
 	.db 0x00
 ___str_10:
 	.db 0x09

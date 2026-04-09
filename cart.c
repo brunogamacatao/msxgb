@@ -2,6 +2,10 @@
 #include "memory.h"
 #include "cart.h"
 #include "msx_printf.h"
+#include "string.h"
+
+// buffer for string manipulation
+c8 g_StrBuffer[128];
 
 typedef struct {
   c8 filename[1024];
@@ -131,19 +135,24 @@ const char *cart_type_name() {
 }
 
 bool cart_load(c8 *filename) {
-  msx_printf("Trying to open %s file...\r\n", filename);
+  String_Format(g_StrBuffer, "Trying to open %s file...\r\n$", filename);
+  DOS_StringOutput(g_StrBuffer);
+
   u8 fp = DOS_FOpen(filename, O_RDONLY);
 
   if (fp == HANDLE_INVALID) {
-    msx_printf("Failed to open: %s\r\n", filename);
+    String_Format(g_StrBuffer, "Failed to open: %s\r\n$", filename);
+    DOS_StringOutput(g_StrBuffer);
     return false;
   }
 
-  msx_printf("Opened: %s\r\n", filename);
+  String_Format(g_StrBuffer, "Opened: %s\r\n$", filename);
+  DOS_StringOutput(g_StrBuffer);
 
   ctx.rom_size = DOS_SeekHandle(fp, 0, SEEK_END); // go to the end to the filename
 
-  msx_printf("File Size: %d KB\r\n", (u8)(ctx.rom_size/1024L));
+  String_Format(g_StrBuffer, "File Size: %d KB\r\n$", (u16)(ctx.rom_size/1024L));
+  DOS_StringOutput(g_StrBuffer);
 
   DOS_SeekHandle(fp, 0, SEEK_SET); // rewind 
 

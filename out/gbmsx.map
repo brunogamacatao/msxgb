@@ -18,7 +18,6 @@ Area                                    Addr        Size        Decimal Bytes (A
      00000000  l__HEADER                       
      00000000  l__HEADER0                      
      00000000  l__HEAP                         
-     00000000  l__HOME                         
      00000000  l__RODATA                       
      00000000  s__CABS                         
      00000000  s__DABS                         
@@ -37,18 +36,19 @@ Area                                    Addr        Size        Decimal Bytes (A
      00000100  s__CODE                         
      00000190  l__INITIALIZED                  
      00000190  l__INITIALIZER                  
-     0000045F  l__DATA                         
-     00001212  l__CODE                         
-     00001312  s__HOME                         
-     00001312  s__INITIALIZER                  
-     00001312  s__RODATA                       
-     000014A2  s__DATA                         
-     000014A2  s__GSFINAL                      
-     000014A2  s__GSINIT                       
-     00001901  s__INITIALIZED                  
-     00001A91  s__BSEG                         
-     00001A91  s__BSS                          
-     00001A91  s__HEAP                         
+     00000221  l__HOME                         
+     000004DF  l__DATA                         
+     00001951  l__CODE                         
+     00001A51  s__HOME                         
+     00001C72  s__INITIALIZER                  
+     00001C72  s__RODATA                       
+     00001E02  s__DATA                         
+     00001E02  s__GSFINAL                      
+     00001E02  s__GSINIT                       
+     000022E1  s__INITIALIZED                  
+     00002471  s__BSEG                         
+     00002471  s__BSS                          
+     00002471  s__HEAP                         
      0000F30F  _g_KANJTABLE                       dos
      0000F323  _g_DISKVE                          dos
      0000F325  _g_BREAKV                          dos
@@ -284,7 +284,7 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-_CODE                               00000100    00001212 =        4626. bytes (REL,CON)
+_CODE                               00000100    00001951 =        6481. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
@@ -302,121 +302,140 @@ _CODE                               00000100    00001212 =        4626. bytes (R
      0000093F  _cart_lic_name                     cart
      0000098D  _cart_type_name                    cart
      000009B2  _cart_load                         cart
-     00000FAB  _DOS_Call                          dos
-     00000FB8  _DOS_Exit0                         dos
-     00000FBE  _DOS_CharInput                     dos
-     00000FC8  _DOS_CharOutput                    dos
-     00000FD3  _DOS_StringOutput                  dos
-     00000FDE  _DOS_SetTransferAddr               dos
-     00000FE9  _DOS_OpenFCB                       dos
-     00000FF7  _DOS_CreateFCB                     dos
-     00001005  _DOS_CloseFCB                      dos
-     00001013  _DOS_SequentialReadFCB             dos
-     00001021  _DOS_SequentialWriteFCB            dos
-     0000102F  _DOS_RandomBlockWriteFCB           dos
-     0000103D  _DOS_RandomBlockReadFCB            dos
-     0000104C  _DOS_FindFirstFileFCB              dos
-     0000105A  _DOS_FindNextFileFCB               dos
-     00001067  _DOS_OpenHandle                    dos
-     00001080  _DOS_CreateHandle                  dos
-     00001099  _DOS_CloseHandle                   dos
-     000010A3  _DOS_EnsureHandle                  dos
-     000010AD  _DOS_DuplicateHandle               dos
-     000010C1  _DOS_ReadHandle                    dos
-     000010D7  _DOS_WriteHandle                   dos
-     000010ED  _DOS_SeekHandle                    dos
-     00001108  _DOS_DeleteHandle                  dos
-     00001112  _DOS_RenameHandle                  dos
-     0000111D  _DOS_MoveHandle                    dos
-     00001128  _DOS_SetAttributeHandle            dos
-     0000113C  _DOS_GetAttributeHandle            dos
-     0000114F  _DOS_GetDiskParam                  dos
-     0000115D  _DOS_Exit                          dos
-     00001164  _DOS_Explain                       dos
-     0000116F  _DOS_FindFirstEntry                dos
-     00001193  _DOS_FindNextEntry                 dos
-     000011B1  _DOS_Delete                        dos
-     000011BB  _DOS_Rename                        dos
-     000011C5  _DOS_Move                          dos
+     00000FF5  _DOS_Call                          dos
+     00001002  _DOS_Exit0                         dos
+     00001008  _DOS_CharInput                     dos
+     00001012  _DOS_CharOutput                    dos
+     0000101D  _DOS_StringOutput                  dos
+     00001028  _DOS_SetTransferAddr               dos
+     00001033  _DOS_OpenFCB                       dos
+     00001041  _DOS_CreateFCB                     dos
+     0000104F  _DOS_CloseFCB                      dos
+     0000105D  _DOS_SequentialReadFCB             dos
+     0000106B  _DOS_SequentialWriteFCB            dos
+     00001079  _DOS_RandomBlockWriteFCB           dos
+     00001087  _DOS_RandomBlockReadFCB            dos
+     00001096  _DOS_FindFirstFileFCB              dos
+     000010A4  _DOS_FindNextFileFCB               dos
+     000010B1  _DOS_OpenHandle                    dos
+     000010CA  _DOS_CreateHandle                  dos
+     000010E3  _DOS_CloseHandle                   dos
+     000010ED  _DOS_EnsureHandle                  dos
+     000010F7  _DOS_DuplicateHandle               dos
+     0000110B  _DOS_ReadHandle                    dos
+     00001121  _DOS_WriteHandle                   dos
+     00001137  _DOS_SeekHandle                    dos
+     00001152  _DOS_DeleteHandle                  dos
+     0000115C  _DOS_RenameHandle                  dos
+     00001167  _DOS_MoveHandle                    dos
+     00001172  _DOS_SetAttributeHandle            dos
+     00001186  _DOS_GetAttributeHandle            dos
+     00001199  _DOS_GetDiskParam                  dos
+     000011A7  _DOS_Exit                          dos
+     000011AE  _DOS_Explain                       dos
+     000011B9  _DOS_FindFirstEntry                dos
+     000011DD  _DOS_FindNextEntry                 dos
+     000011FB  _DOS_Delete                        dos
+     00001205  _DOS_Rename                        dos
+     0000120F  _DOS_Move                          dos
 ASxxxx Linker V03.00 + NoICE + sdld,  page 7.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-_CODE                               00000100    00001212 =        4626. bytes (REL,CON)
+_CODE                               00000100    00001951 =        6481. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     000011CF  _DOS_SetAttribute                  dos
-     000011ED  _DOS_GetAttribute                  dos
-     00001200  _DOS_GetDirectory                  dos
-     0000120A  _DOS_ChangeDirectory               dos
-     00001214  _DOS_GetTime                       dos
-     00001233  _DOS_GetVersion                    dos
-     00001249  _Mem_GetStackAddress               memory
-     00001252  _Mem_HeapAlloc                     memory
-     00001263  _Mem_HeapFree                      memory
-     0000126F  _Mem_Copy                          memory
-     00001276  _Mem_Set                           memory
-     00001282  _Mem_Set_16b                       memory
-     00001296  __modschar                         
-     0000129E  __modsint                          
-     000012A4  __divschar                         
-     000012A6  __div8                             
-     000012AA  __div_signexte                     
-     000012AE  __div16                            
-     000012AE  __divsint                          
-     000012D4  __get_remainder                    
-     000012DE  __divuchar                         
-     000012E0  __divu8                            
-     000012E3  __divu16                           
-     000012E3  __divuint                          
+     00001219  _DOS_SetAttribute                  dos
+     00001237  _DOS_GetAttribute                  dos
+     0000124A  _DOS_GetDirectory                  dos
+     00001254  _DOS_ChangeDirectory               dos
+     0000125E  _DOS_GetTime                       dos
+     0000127D  _DOS_GetVersion                    dos
+     00001293  _Mem_GetStackAddress               memory
+     0000129C  _Mem_HeapAlloc                     memory
+     000012AD  _Mem_HeapFree                      memory
+     000012B9  _Mem_Copy                          memory
+     000012C0  _Mem_Set                           memory
+     000012CC  _Mem_Set_16b                       memory
+     000012E0  _String_FromUInt8ZT                string
+     000012F6  _String_FromUInt8                  string
+     00001310  _String_FromUInt16ZT               string
+     00001316  _String_FromUInt16                 string
+     0000133A  _String_Format                     string
+     000019D5  __modschar                         
+     000019DD  __modsint                          
+     000019E3  __divschar                         
+     000019E5  __div8                             
+     000019E9  __div_signexte                     
+     000019ED  __div16                            
+     000019ED  __divsint                          
+     00001A13  __get_remainder                    
+     00001A1D  __divuchar                         
+     00001A1F  __divu8                            
+     00001A22  __divu16                           
+     00001A22  __divuint                          
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 8.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-_INITIALIZER                        00001312    00000190 =         400. bytes (REL,CON)
+_HOME                               00001A51    00000221 =         545. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
+     00001A51  __modslong                         _modslong
+     00001AD9  __modulong                         _modulong
+     00001B68  __divslong                         _divslong
+     00001BF8  __divulong                         _divulong
+
 ASxxxx Linker V03.00 + NoICE + sdld,  page 9.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-_GSFINAL                            000014A2    00000000 =           0. bytes (REL,CON)
+_INITIALIZER                        00001C72    00000190 =         400. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     000014A2  _g_LastAddr                        crt0
-
 ASxxxx Linker V03.00 + NoICE + sdld,  page 10.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-_DATA                               000014A2    0000045F =        1119. bytes (REL,CON)
+_GSFINAL                            00001E02    00000000 =           0. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     000014A2  _g_HeapStartAddress                crt0
-     000018B6  _g_DOS_LastError                   dos
-     000018B7  _g_DOS_LastFIB                     dos
-     000018F7  _g_DOS_Time                        dos
-     000018FF  _g_StackAddress                    memory
+     00001E02  _g_LastAddr                        crt0
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 11.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-_INITIALIZED                        00001901    00000190 =         400. bytes (REL,CON)
+_DATA                               00001E02    000004DF =        1247. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
+     00001E02  _g_HeapStartAddress                crt0
+     00001E0E  _g_StrBuffer                       cart
+     00002296  _g_DOS_LastError                   dos
+     00002297  _g_DOS_LastFIB                     dos
+     000022D7  _g_DOS_Time                        dos
+     000022DF  _g_StackAddress                    memory
 ASxxxx Linker V03.00 + NoICE + sdld,  page 12.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_INITIALIZED                        000022E1    00000190 =         400. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+ASxxxx Linker V03.00 + NoICE + sdld,  page 13.
 
 Files Linked                              [ module(s) ]
 
@@ -438,6 +457,16 @@ Libraries Linked                          [ object file ]
                                           [ dos.rel ]
 /home/bruno/dev/MSXgl/projects/gbmsx/out/msxgl.lib
                                           [ memory.rel ]
+/home/bruno/dev/MSXgl/projects/gbmsx/out/msxgl.lib
+                                          [ string.rel ]
+/home/bruno/dev/MSXgl/tools/sdcc/lib/z80/z80.lib
+                                          [ _modslong.rel ]
+/home/bruno/dev/MSXgl/tools/sdcc/lib/z80/z80.lib
+                                          [ _modulong.rel ]
+/home/bruno/dev/MSXgl/tools/sdcc/lib/z80/z80.lib
+                                          [ _divslong.rel ]
+/home/bruno/dev/MSXgl/tools/sdcc/lib/z80/z80.lib
+                                          [ _divulong.rel ]
 /home/bruno/dev/MSXgl/tools/sdcc/lib/z80/z80.lib
                                           [ modsigned.rel ]
 /home/bruno/dev/MSXgl/tools/sdcc/lib/z80/z80.lib
@@ -445,7 +474,7 @@ Libraries Linked                          [ object file ]
 /home/bruno/dev/MSXgl/tools/sdcc/lib/z80/z80.lib
                                           [ divunsigned.rel ]
 
-ASxxxx Linker V03.00 + NoICE + sdld,  page 13.
+ASxxxx Linker V03.00 + NoICE + sdld,  page 14.
 
 User Base Address Definitions
 

@@ -10,1016 +10,1058 @@
                                      10 ;--------------------------------------------------------
                                      11 	.globl _cart_type_name
                                      12 	.globl _cart_lic_name
-                                     13 	.globl _msx_printf
-                                     14 	.globl _Mem_HeapAlloc
-                                     15 	.globl _DOS_SeekHandle
-                                     16 	.globl _DOS_ReadHandle
-                                     17 	.globl _DOS_CloseHandle
-                                     18 	.globl _DOS_OpenHandle
-                                     19 	.globl _DOS_TPAUpperAddr
-                                     20 	.globl _cart_load
-                                     21 ;--------------------------------------------------------
-                                     22 ; special function registers
-                                     23 ;--------------------------------------------------------
+                                     13 	.globl _String_Format
+                                     14 	.globl _msx_printf
+                                     15 	.globl _Mem_HeapAlloc
+                                     16 	.globl _DOS_SeekHandle
+                                     17 	.globl _DOS_ReadHandle
+                                     18 	.globl _DOS_CloseHandle
+                                     19 	.globl _DOS_OpenHandle
+                                     20 	.globl _DOS_StringOutput
+                                     21 	.globl _g_StrBuffer
+                                     22 	.globl _DOS_TPAUpperAddr
+                                     23 	.globl _cart_load
                                      24 ;--------------------------------------------------------
-                                     25 ; ram data
+                                     25 ; special function registers
                                      26 ;--------------------------------------------------------
-                                     27 	.area _DATA
-                           000006    28 _DOS_TPAUpperAddr	=	0x0006
-      000000                         29 _ctx:
-      000000                         30 	.ds 1032
-                                     31 ;--------------------------------------------------------
-                                     32 ; ram data
-                                     33 ;--------------------------------------------------------
-                                     34 	.area _INITIALIZED
-      000000                         35 _ROM_TYPES:
-      000000                         36 	.ds 70
-      000046                         37 _LIC_CODE:
-      000046                         38 	.ds 330
-                                     39 ;--------------------------------------------------------
-                                     40 ; absolute external ram data
-                                     41 ;--------------------------------------------------------
-                                     42 	.area _DABS (ABS)
-                                     43 ;--------------------------------------------------------
-                                     44 ; global & static initialisations
-                                     45 ;--------------------------------------------------------
-                                     46 	.area _HOME
-                                     47 	.area _GSINIT
-                                     48 	.area _GSFINAL
-                                     49 	.area _GSINIT
+                                     27 ;--------------------------------------------------------
+                                     28 ; ram data
+                                     29 ;--------------------------------------------------------
+                                     30 	.area _DATA
+                           000006    31 _DOS_TPAUpperAddr	=	0x0006
+      000000                         32 _g_StrBuffer::
+      000000                         33 	.ds 128
+      000080                         34 _ctx:
+      000080                         35 	.ds 1032
+                                     36 ;--------------------------------------------------------
+                                     37 ; ram data
+                                     38 ;--------------------------------------------------------
+                                     39 	.area _INITIALIZED
+      000000                         40 _ROM_TYPES:
+      000000                         41 	.ds 70
+      000046                         42 _LIC_CODE:
+      000046                         43 	.ds 330
+                                     44 ;--------------------------------------------------------
+                                     45 ; absolute external ram data
+                                     46 ;--------------------------------------------------------
+                                     47 	.area _DABS (ABS)
+                                     48 ;--------------------------------------------------------
+                                     49 ; global & static initialisations
                                      50 ;--------------------------------------------------------
-                                     51 ; Home
-                                     52 ;--------------------------------------------------------
-                                     53 	.area _HOME
-                                     54 	.area _HOME
+                                     51 	.area _HOME
+                                     52 	.area _GSINIT
+                                     53 	.area _GSFINAL
+                                     54 	.area _GSINIT
                                      55 ;--------------------------------------------------------
-                                     56 ; code
+                                     56 ; Home
                                      57 ;--------------------------------------------------------
-                                     58 	.area _CODE
-                                     59 ;./cart.c:117: const char *cart_lic_name() {
-                                     60 ;	---------------------------------
-                                     61 ; Function cart_lic_name
-                                     62 ; ---------------------------------
-      000000                         63 _cart_lic_name::
-      000000 DD E5            [15]   64 	push	ix
-      000002 DD 21 00 00      [14]   65 	ld	ix,#0
-      000006 DD 39            [15]   66 	add	ix,sp
-      000008 F5               [11]   67 	push	af
-                                     68 ;./cart.c:118: if (ctx.header->new_lic_code <= 0xA4) {
-      000009 21r06r04         [10]   69 	ld	hl, #(_ctx + 1030)
-      00000C 7E               [ 7]   70 	ld	a, (hl)
-      00000D DD 77 FE         [19]   71 	ld	-2 (ix), a
-      000010 23               [ 6]   72 	inc	hl
-      000011 7E               [ 7]   73 	ld	a, (hl)
-      000012 DD 77 FF         [19]   74 	ld	-1 (ix), a
-      000015 C1               [10]   75 	pop	bc
-      000016 C5               [11]   76 	push	bc
-      000017 21 44 00         [10]   77 	ld	hl, #68
-      00001A 09               [11]   78 	add	hl, bc
-      00001B 4E               [ 7]   79 	ld	c, (hl)
-      00001C 23               [ 6]   80 	inc	hl
-      00001D 46               [ 7]   81 	ld	b, (hl)
-      00001E 3E A4            [ 7]   82 	ld	a, #0xa4
-      000020 B9               [ 4]   83 	cp	a, c
-      000021 3E 00            [ 7]   84 	ld	a, #0x00
-      000023 98               [ 4]   85 	sbc	a, b
-      000024 38 14            [12]   86 	jr	C, 00102$
-                                     87 ;./cart.c:119: return LIC_CODE[ctx.header->lic_code];
-      000026 01r46r00         [10]   88 	ld	bc, #_LIC_CODE+0
-      000029 D1               [10]   89 	pop	de
-      00002A D5               [11]   90 	push	de
-      00002B 21 4B 00         [10]   91 	ld	hl, #75
-      00002E 19               [11]   92 	add	hl, de
-      00002F 6E               [ 7]   93 	ld	l, (hl)
-                                     94 ;	spillPairReg hl
-      000030 26 00            [ 7]   95 	ld	h, #0x00
-                                     96 ;	spillPairReg hl
-                                     97 ;	spillPairReg hl
-      000032 29               [11]   98 	add	hl, hl
-      000033 09               [11]   99 	add	hl, bc
-      000034 5E               [ 7]  100 	ld	e, (hl)
-      000035 23               [ 6]  101 	inc	hl
-      000036 56               [ 7]  102 	ld	d, (hl)
-      000037 C3r3Dr00         [10]  103 	jp	00103$
-      00003A                        104 00102$:
-                                    105 ;./cart.c:122: return "UNKNOWN";
-      00003A 11r46r00         [10]  106 	ld	de, #___str_1
-      00003D                        107 00103$:
-                                    108 ;./cart.c:123: }
-      00003D DD F9            [10]  109 	ld	sp, ix
-      00003F DD E1            [14]  110 	pop	ix
-      000041 C9               [10]  111 	ret
-      000042                        112 ___str_0:
-      000042 0A                     113 	.db 0x0a
-      000043 0D                     114 	.db 0x0d
-      000044 24                     115 	.ascii "$"
-      000045 00                     116 	.db 0x00
-      000046                        117 ___str_1:
-      000046 55 4E 4B 4E 4F 57 4E   118 	.ascii "UNKNOWN"
-      00004D 00                     119 	.db 0x00
-                                    120 ;./cart.c:125: const char *cart_type_name() {
-                                    121 ;	---------------------------------
-                                    122 ; Function cart_type_name
-                                    123 ; ---------------------------------
-      00004E                        124 _cart_type_name::
-                                    125 ;./cart.c:126: if (ctx.header->type <= 0x22) {
-      00004E 2Ar06r04         [16]  126 	ld	hl, (#(_ctx + 1030) + 0)
-      000051 11 47 00         [10]  127 	ld	de, #0x0047
-      000054 19               [11]  128 	add	hl, de
-      000055 4E               [ 7]  129 	ld	c, (hl)
-      000056 3E 22            [ 7]  130 	ld	a, #0x22
-      000058 91               [ 4]  131 	sub	a, c
-      000059 38 0C            [12]  132 	jr	C, 00102$
-                                    133 ;./cart.c:127: return ROM_TYPES[ctx.header->type];
-      00005B 11r00r00         [10]  134 	ld	de, #_ROM_TYPES+0
-      00005E 69               [ 4]  135 	ld	l, c
-                                    136 ;	spillPairReg hl
-                                    137 ;	spillPairReg hl
-      00005F 26 00            [ 7]  138 	ld	h, #0x00
-                                    139 ;	spillPairReg hl
-                                    140 ;	spillPairReg hl
-      000061 29               [11]  141 	add	hl, hl
-      000062 19               [11]  142 	add	hl, de
-      000063 5E               [ 7]  143 	ld	e, (hl)
-      000064 23               [ 6]  144 	inc	hl
-      000065 56               [ 7]  145 	ld	d, (hl)
-      000066 C9               [10]  146 	ret
-      000067                        147 00102$:
-                                    148 ;./cart.c:130: return "UNKNOWN";
-      000067 11r6Br00         [10]  149 	ld	de, #___str_2
-                                    150 ;./cart.c:131: }
-      00006A C9               [10]  151 	ret
-      00006B                        152 ___str_2:
-      00006B 55 4E 4B 4E 4F 57 4E   153 	.ascii "UNKNOWN"
-      000072 00                     154 	.db 0x00
-                                    155 ;./cart.c:133: bool cart_load(c8 *filename) {
-                                    156 ;	---------------------------------
-                                    157 ; Function cart_load
-                                    158 ; ---------------------------------
-      000073                        159 _cart_load::
-      000073 DD E5            [15]  160 	push	ix
-      000075 DD 21 00 00      [14]  161 	ld	ix,#0
-      000079 DD 39            [15]  162 	add	ix,sp
-      00007B F5               [11]  163 	push	af
-      00007C F5               [11]  164 	push	af
-                                    165 ;./cart.c:134: msx_printf("Trying to open %s file...\r\n", filename);
-      00007D 01rCCr01         [10]  166 	ld	bc, #___str_3+0
-      000080 E5               [11]  167 	push	hl
-      000081 E5               [11]  168 	push	hl
-      000082 C5               [11]  169 	push	bc
-      000083 CDr00r00         [17]  170 	call	_msx_printf
-      000086 F1               [10]  171 	pop	af
-      000087 F1               [10]  172 	pop	af
-      000088 E1               [10]  173 	pop	hl
-                                    174 ;./cart.c:135: u8 fp = DOS_FOpen(filename, O_RDONLY);
-      000089 E5               [11]  175 	push	hl
-      00008A 3E 01            [ 7]  176 	ld	a, #0x01
-      00008C F5               [11]  177 	push	af
-      00008D 33               [ 6]  178 	inc	sp
-      00008E CDr00r00         [17]  179 	call	_DOS_OpenHandle
-      000091 E1               [10]  180 	pop	hl
-                                    181 ;./cart.c:137: if (fp == HANDLE_INVALID) {
-      000092 4F               [ 4]  182 	ld	c, a
-      000093 3C               [ 4]  183 	inc	a
-      000094 20 0E            [12]  184 	jr	NZ, 00102$
-                                    185 ;./cart.c:138: msx_printf("Failed to open: %s\r\n", filename);
-      000096 01rE8r01         [10]  186 	ld	bc, #___str_4+0
-      000099 E5               [11]  187 	push	hl
-      00009A C5               [11]  188 	push	bc
-      00009B CDr00r00         [17]  189 	call	_msx_printf
-      00009E F1               [10]  190 	pop	af
-      00009F F1               [10]  191 	pop	af
-                                    192 ;./cart.c:139: return false;
-      0000A0 AF               [ 4]  193 	xor	a, a
-      0000A1 C3rC7r01         [10]  194 	jp	00103$
-      0000A4                        195 00102$:
-                                    196 ;./cart.c:142: msx_printf("Opened: %s\r\n", filename);
-      0000A4 11rFDr01         [10]  197 	ld	de, #___str_5+0
-      0000A7 C5               [11]  198 	push	bc
-      0000A8 E5               [11]  199 	push	hl
-      0000A9 D5               [11]  200 	push	de
-      0000AA CDr00r00         [17]  201 	call	_msx_printf
-      0000AD F1               [10]  202 	pop	af
-      0000AE F1               [10]  203 	pop	af
-      0000AF C1               [10]  204 	pop	bc
-                                    205 ;./cart.c:144: ctx.rom_size = DOS_SeekHandle(fp, 0, SEEK_END); // go to the end to the filename
-      0000B0 C5               [11]  206 	push	bc
-      0000B1 3E 02            [ 7]  207 	ld	a, #0x02
-      0000B3 F5               [11]  208 	push	af
-      0000B4 33               [ 6]  209 	inc	sp
-      0000B5 21 00 00         [10]  210 	ld	hl, #0x0000
-      0000B8 E5               [11]  211 	push	hl
-      0000B9 E5               [11]  212 	push	hl
-      0000BA 79               [ 4]  213 	ld	a, c
-      0000BB CDr00r00         [17]  214 	call	_DOS_SeekHandle
-      0000BE DD 73 FC         [19]  215 	ld	-4 (ix), e
-      0000C1 DD 72 FD         [19]  216 	ld	-3 (ix), d
-      0000C4 DD 75 FE         [19]  217 	ld	-2 (ix), l
-      0000C7 DD 74 FF         [19]  218 	ld	-1 (ix), h
-      0000CA 11r00r04         [10]  219 	ld	de, #(_ctx + 1024)
-      0000CD 21 02 00         [10]  220 	ld	hl, #2
-      0000D0 39               [11]  221 	add	hl, sp
-      0000D1 01 04 00         [10]  222 	ld	bc, #0x0004
-      0000D4 ED B0            [21]  223 	ldir
-      0000D6 C1               [10]  224 	pop	bc
-                                    225 ;./cart.c:146: msx_printf("Rom Size: %d\r\n", (u8)(ctx.rom_size/1024L));
-      0000D7 DD 5E FD         [19]  226 	ld	e, -3 (ix)
-      0000DA DD 56 FE         [19]  227 	ld	d, -2 (ix)
-      0000DD DD 6E FF         [19]  228 	ld	l, -1 (ix)
-                                    229 ;	spillPairReg hl
-                                    230 ;	spillPairReg hl
-                                    231 ;	spillPairReg hl
-                                    232 ;	spillPairReg hl
-      0000E0 06 02            [ 7]  233 	ld	b, #0x02
-      0000E2                        234 00112$:
-      0000E2 CB 3D            [ 8]  235 	srl	l
-      0000E4 CB 1A            [ 8]  236 	rr	d
-      0000E6 CB 1B            [ 8]  237 	rr	e
-      0000E8 10 F8            [13]  238 	djnz	00112$
-      0000EA 43               [ 4]  239 	ld	b, e
-      0000EB C5               [11]  240 	push	bc
-      0000EC C5               [11]  241 	push	bc
-      0000ED 33               [ 6]  242 	inc	sp
-      0000EE 21r0Ar02         [10]  243 	ld	hl, #___str_6
-      0000F1 E5               [11]  244 	push	hl
-      0000F2 CDr00r00         [17]  245 	call	_msx_printf
-      0000F5 F1               [10]  246 	pop	af
-      0000F6 33               [ 6]  247 	inc	sp
-      0000F7 C1               [10]  248 	pop	bc
-                                    249 ;./cart.c:148: DOS_SeekHandle(fp, 0, SEEK_SET); // rewind 
-      0000F8 C5               [11]  250 	push	bc
-      0000F9 AF               [ 4]  251 	xor	a, a
-      0000FA F5               [11]  252 	push	af
-      0000FB 33               [ 6]  253 	inc	sp
-      0000FC 21 00 00         [10]  254 	ld	hl, #0x0000
-      0000FF E5               [11]  255 	push	hl
-      000100 E5               [11]  256 	push	hl
-      000101 79               [ 4]  257 	ld	a, c
-      000102 CDr00r00         [17]  258 	call	_DOS_SeekHandle
-      000105 C1               [10]  259 	pop	bc
-                                    260 ;./cart.c:150: ctx.rom_data = Mem_HeapAlloc(ctx.rom_size);
-      000106 2Ar00r04         [16]  261 	ld	hl, (#(_ctx + 1024) + 0)
-      000109 C5               [11]  262 	push	bc
-      00010A CDr00r00         [17]  263 	call	_Mem_HeapAlloc
-      00010D C1               [10]  264 	pop	bc
-      00010E ED 53r04r04      [20]  265 	ld	((_ctx + 1028)), de
-                                    266 ;./cart.c:152: DOS_FRead(fp, (void*)ctx.rom_data, ctx.rom_size);
-      000112 2Ar00r04         [16]  267 	ld	hl, (#(_ctx + 1024) + 0)
-      000115 C5               [11]  268 	push	bc
-      000116 E5               [11]  269 	push	hl
-      000117 79               [ 4]  270 	ld	a, c
-      000118 CDr00r00         [17]  271 	call	_DOS_ReadHandle
-      00011B C1               [10]  272 	pop	bc
-                                    273 ;./cart.c:153: DOS_FClose(fp); 
-      00011C 79               [ 4]  274 	ld	a, c
-      00011D CDr00r00         [17]  275 	call	_DOS_CloseHandle
-                                    276 ;./cart.c:155: ctx.header = (rom_header *)(ctx.rom_data + 0x100);
-      000120 2Ar04r04         [16]  277 	ld	hl, (#(_ctx + 1028) + 0)
-      000123 4D               [ 4]  278 	ld	c, l
-      000124 7C               [ 4]  279 	ld	a, h
-      000125 3C               [ 4]  280 	inc	a
-      000126 47               [ 4]  281 	ld	b, a
-      000127 ED 43r06r04      [20]  282 	ld	((_ctx + 1030)), bc
-                                    283 ;./cart.c:156: ctx.header->title[15] = 0;
-      00012B 21 43 00         [10]  284 	ld	hl, #0x0043
-      00012E 09               [11]  285 	add	hl, bc
-      00012F 36 00            [10]  286 	ld	(hl), #0x00
-                                    287 ;./cart.c:158: msx_printf("Cartridge Loaded:\n");
-      000131 21r19r02         [10]  288 	ld	hl, #___str_7
-      000134 E5               [11]  289 	push	hl
-      000135 CDr00r00         [17]  290 	call	_msx_printf
-      000138 F1               [10]  291 	pop	af
-                                    292 ;./cart.c:159: msx_printf("\t Title    : %s\r\n", ctx.header->title);
-      000139 2Ar06r04         [16]  293 	ld	hl, (#(_ctx + 1030) + 0)
-      00013C 01 34 00         [10]  294 	ld	bc, #0x0034
-      00013F 09               [11]  295 	add	hl, bc
-      000140 01r2Cr02         [10]  296 	ld	bc, #___str_8+0
-      000143 E5               [11]  297 	push	hl
-      000144 C5               [11]  298 	push	bc
-      000145 CDr00r00         [17]  299 	call	_msx_printf
-      000148 F1               [10]  300 	pop	af
-      000149 F1               [10]  301 	pop	af
-                                    302 ;./cart.c:160: msx_printf("\t Type     : %d (%s)\r\n", ctx.header->type, cart_type_name());
-      00014A CDr4Er00         [17]  303 	call	_cart_type_name
-      00014D 2Ar06r04         [16]  304 	ld	hl, (#(_ctx + 1030) + 0)
-      000150 01 47 00         [10]  305 	ld	bc, #0x0047
-      000153 09               [11]  306 	add	hl, bc
-      000154 4E               [ 7]  307 	ld	c, (hl)
-      000155 06 00            [ 7]  308 	ld	b, #0x00
-      000157 D5               [11]  309 	push	de
-      000158 C5               [11]  310 	push	bc
-      000159 21r3Er02         [10]  311 	ld	hl, #___str_9
-      00015C E5               [11]  312 	push	hl
-      00015D CDr00r00         [17]  313 	call	_msx_printf
-      000160 21 06 00         [10]  314 	ld	hl, #6
-      000163 39               [11]  315 	add	hl, sp
-      000164 F9               [ 6]  316 	ld	sp, hl
-                                    317 ;./cart.c:161: msx_printf("\t ROM Size : %d KB\r\n", 32 << ctx.header->rom_size);
-      000165 2Ar06r04         [16]  318 	ld	hl, (#(_ctx + 1030) + 0)
-      000168 11 48 00         [10]  319 	ld	de, #0x0048
-      00016B 19               [11]  320 	add	hl, de
-      00016C 4E               [ 7]  321 	ld	c, (hl)
-      00016D 21 20 00         [10]  322 	ld	hl, #0x0020
-      000170 0C               [ 4]  323 	inc	c
-      000171 C3r75r01         [10]  324 	jp	00115$
-      000174                        325 00114$:
-      000174 29               [11]  326 	add	hl, hl
-      000175                        327 00115$:
-      000175 0D               [ 4]  328 	dec	c
-      000176 20 FC            [12]  329 	jr	NZ,00114$
-      000178 01r55r02         [10]  330 	ld	bc, #___str_10+0
-      00017B E5               [11]  331 	push	hl
-      00017C C5               [11]  332 	push	bc
-      00017D CDr00r00         [17]  333 	call	_msx_printf
-      000180 F1               [10]  334 	pop	af
-      000181 F1               [10]  335 	pop	af
-                                    336 ;./cart.c:162: msx_printf("\t RAM Size : %d\r\n", ctx.header->ram_size);
-      000182 2Ar06r04         [16]  337 	ld	hl, (#(_ctx + 1030) + 0)
-      000185 11 49 00         [10]  338 	ld	de, #0x0049
-      000188 19               [11]  339 	add	hl, de
-      000189 4E               [ 7]  340 	ld	c, (hl)
-      00018A 06 00            [ 7]  341 	ld	b, #0x00
-      00018C C5               [11]  342 	push	bc
-      00018D 21r6Ar02         [10]  343 	ld	hl, #___str_11
-      000190 E5               [11]  344 	push	hl
-      000191 CDr00r00         [17]  345 	call	_msx_printf
-      000194 F1               [10]  346 	pop	af
-      000195 F1               [10]  347 	pop	af
-                                    348 ;./cart.c:163: msx_printf("\t LIC Code : %d (%s)\r\n", ctx.header->lic_code, cart_lic_name());
-      000196 CDr00r00         [17]  349 	call	_cart_lic_name
-      000199 2Ar06r04         [16]  350 	ld	hl, (#(_ctx + 1030) + 0)
-      00019C 01 4B 00         [10]  351 	ld	bc, #0x004b
-      00019F 09               [11]  352 	add	hl, bc
-      0001A0 4E               [ 7]  353 	ld	c, (hl)
-      0001A1 06 00            [ 7]  354 	ld	b, #0x00
-      0001A3 D5               [11]  355 	push	de
-      0001A4 C5               [11]  356 	push	bc
-      0001A5 21r7Cr02         [10]  357 	ld	hl, #___str_12
-      0001A8 E5               [11]  358 	push	hl
-      0001A9 CDr00r00         [17]  359 	call	_msx_printf
-      0001AC 21 06 00         [10]  360 	ld	hl, #6
-      0001AF 39               [11]  361 	add	hl, sp
-      0001B0 F9               [ 6]  362 	ld	sp, hl
-                                    363 ;./cart.c:164: msx_printf("\t ROM Vers : %d\r\n", ctx.header->version);
-      0001B1 2Ar06r04         [16]  364 	ld	hl, (#(_ctx + 1030) + 0)
-      0001B4 11 4C 00         [10]  365 	ld	de, #0x004c
-      0001B7 19               [11]  366 	add	hl, de
-      0001B8 4E               [ 7]  367 	ld	c, (hl)
-      0001B9 06 00            [ 7]  368 	ld	b, #0x00
-      0001BB C5               [11]  369 	push	bc
-      0001BC 21r93r02         [10]  370 	ld	hl, #___str_13
-      0001BF E5               [11]  371 	push	hl
-      0001C0 CDr00r00         [17]  372 	call	_msx_printf
-      0001C3 F1               [10]  373 	pop	af
-      0001C4 F1               [10]  374 	pop	af
-                                    375 ;./cart.c:166: return true;
-      0001C5 3E 01            [ 7]  376 	ld	a, #0x01
-      0001C7                        377 00103$:
-                                    378 ;./cart.c:167: }
-      0001C7 DD F9            [10]  379 	ld	sp, ix
-      0001C9 DD E1            [14]  380 	pop	ix
-      0001CB C9               [10]  381 	ret
-      0001CC                        382 ___str_3:
-      0001CC 54 72 79 69 6E 67 20   383 	.ascii "Trying to open %s file..."
+                                     58 	.area _HOME
+                                     59 	.area _HOME
+                                     60 ;--------------------------------------------------------
+                                     61 ; code
+                                     62 ;--------------------------------------------------------
+                                     63 	.area _CODE
+                                     64 ;./cart.c:121: const char *cart_lic_name() {
+                                     65 ;	---------------------------------
+                                     66 ; Function cart_lic_name
+                                     67 ; ---------------------------------
+      000000                         68 _cart_lic_name::
+      000000 DD E5            [15]   69 	push	ix
+      000002 DD 21 00 00      [14]   70 	ld	ix,#0
+      000006 DD 39            [15]   71 	add	ix,sp
+      000008 F5               [11]   72 	push	af
+                                     73 ;./cart.c:122: if (ctx.header->new_lic_code <= 0xA4) {
+      000009 21r86r04         [10]   74 	ld	hl, #(_ctx + 1030)
+      00000C 7E               [ 7]   75 	ld	a, (hl)
+      00000D DD 77 FE         [19]   76 	ld	-2 (ix), a
+      000010 23               [ 6]   77 	inc	hl
+      000011 7E               [ 7]   78 	ld	a, (hl)
+      000012 DD 77 FF         [19]   79 	ld	-1 (ix), a
+      000015 C1               [10]   80 	pop	bc
+      000016 C5               [11]   81 	push	bc
+      000017 21 44 00         [10]   82 	ld	hl, #68
+      00001A 09               [11]   83 	add	hl, bc
+      00001B 4E               [ 7]   84 	ld	c, (hl)
+      00001C 23               [ 6]   85 	inc	hl
+      00001D 46               [ 7]   86 	ld	b, (hl)
+      00001E 3E A4            [ 7]   87 	ld	a, #0xa4
+      000020 B9               [ 4]   88 	cp	a, c
+      000021 3E 00            [ 7]   89 	ld	a, #0x00
+      000023 98               [ 4]   90 	sbc	a, b
+      000024 38 14            [12]   91 	jr	C, 00102$
+                                     92 ;./cart.c:123: return LIC_CODE[ctx.header->lic_code];
+      000026 01r46r00         [10]   93 	ld	bc, #_LIC_CODE+0
+      000029 D1               [10]   94 	pop	de
+      00002A D5               [11]   95 	push	de
+      00002B 21 4B 00         [10]   96 	ld	hl, #75
+      00002E 19               [11]   97 	add	hl, de
+      00002F 6E               [ 7]   98 	ld	l, (hl)
+                                     99 ;	spillPairReg hl
+      000030 26 00            [ 7]  100 	ld	h, #0x00
+                                    101 ;	spillPairReg hl
+                                    102 ;	spillPairReg hl
+      000032 29               [11]  103 	add	hl, hl
+      000033 09               [11]  104 	add	hl, bc
+      000034 5E               [ 7]  105 	ld	e, (hl)
+      000035 23               [ 6]  106 	inc	hl
+      000036 56               [ 7]  107 	ld	d, (hl)
+      000037 C3r3Dr00         [10]  108 	jp	00103$
+      00003A                        109 00102$:
+                                    110 ;./cart.c:126: return "UNKNOWN";
+      00003A 11r46r00         [10]  111 	ld	de, #___str_1
+      00003D                        112 00103$:
+                                    113 ;./cart.c:127: }
+      00003D DD F9            [10]  114 	ld	sp, ix
+      00003F DD E1            [14]  115 	pop	ix
+      000041 C9               [10]  116 	ret
+      000042                        117 ___str_0:
+      000042 0A                     118 	.db 0x0a
+      000043 0D                     119 	.db 0x0d
+      000044 24                     120 	.ascii "$"
+      000045 00                     121 	.db 0x00
+      000046                        122 ___str_1:
+      000046 55 4E 4B 4E 4F 57 4E   123 	.ascii "UNKNOWN"
+      00004D 00                     124 	.db 0x00
+                                    125 ;./cart.c:129: const char *cart_type_name() {
+                                    126 ;	---------------------------------
+                                    127 ; Function cart_type_name
+                                    128 ; ---------------------------------
+      00004E                        129 _cart_type_name::
+                                    130 ;./cart.c:130: if (ctx.header->type <= 0x22) {
+      00004E 2Ar86r04         [16]  131 	ld	hl, (#(_ctx + 1030) + 0)
+      000051 11 47 00         [10]  132 	ld	de, #0x0047
+      000054 19               [11]  133 	add	hl, de
+      000055 4E               [ 7]  134 	ld	c, (hl)
+      000056 3E 22            [ 7]  135 	ld	a, #0x22
+      000058 91               [ 4]  136 	sub	a, c
+      000059 38 0C            [12]  137 	jr	C, 00102$
+                                    138 ;./cart.c:131: return ROM_TYPES[ctx.header->type];
+      00005B 11r00r00         [10]  139 	ld	de, #_ROM_TYPES+0
+      00005E 69               [ 4]  140 	ld	l, c
+                                    141 ;	spillPairReg hl
+                                    142 ;	spillPairReg hl
+      00005F 26 00            [ 7]  143 	ld	h, #0x00
+                                    144 ;	spillPairReg hl
+                                    145 ;	spillPairReg hl
+      000061 29               [11]  146 	add	hl, hl
+      000062 19               [11]  147 	add	hl, de
+      000063 5E               [ 7]  148 	ld	e, (hl)
+      000064 23               [ 6]  149 	inc	hl
+      000065 56               [ 7]  150 	ld	d, (hl)
+      000066 C9               [10]  151 	ret
+      000067                        152 00102$:
+                                    153 ;./cart.c:134: return "UNKNOWN";
+      000067 11r6Br00         [10]  154 	ld	de, #___str_2
+                                    155 ;./cart.c:135: }
+      00006A C9               [10]  156 	ret
+      00006B                        157 ___str_2:
+      00006B 55 4E 4B 4E 4F 57 4E   158 	.ascii "UNKNOWN"
+      000072 00                     159 	.db 0x00
+                                    160 ;./cart.c:137: bool cart_load(c8 *filename) {
+                                    161 ;	---------------------------------
+                                    162 ; Function cart_load
+                                    163 ; ---------------------------------
+      000073                        164 _cart_load::
+      000073 DD E5            [15]  165 	push	ix
+      000075 DD 21 00 00      [14]  166 	ld	ix,#0
+      000079 DD 39            [15]  167 	add	ix,sp
+      00007B F5               [11]  168 	push	af
+      00007C F5               [11]  169 	push	af
+      00007D EB               [ 4]  170 	ex	de, hl
+                                    171 ;./cart.c:138: String_Format(g_StrBuffer, "Trying to open %s file...\r\n$", filename);
+      00007E D5               [11]  172 	push	de
+      00007F D5               [11]  173 	push	de
+      000080 21r0Ar02         [10]  174 	ld	hl, #___str_3
+      000083 E5               [11]  175 	push	hl
+      000084 21r00r00         [10]  176 	ld	hl, #_g_StrBuffer
+      000087 E5               [11]  177 	push	hl
+      000088 CDr00r00         [17]  178 	call	_String_Format
+      00008B 21 06 00         [10]  179 	ld	hl, #6
+      00008E 39               [11]  180 	add	hl, sp
+      00008F F9               [ 6]  181 	ld	sp, hl
+      000090 21r00r00         [10]  182 	ld	hl, #_g_StrBuffer
+      000093 CDr00r00         [17]  183 	call	_DOS_StringOutput
+      000096 D1               [10]  184 	pop	de
+                                    185 ;./cart.c:141: u8 fp = DOS_FOpen(filename, O_RDONLY);
+      000097 D5               [11]  186 	push	de
+      000098 3E 01            [ 7]  187 	ld	a, #0x01
+      00009A F5               [11]  188 	push	af
+      00009B 33               [ 6]  189 	inc	sp
+                                    190 ;	spillPairReg hl
+                                    191 ;	spillPairReg hl
+      00009C EB               [ 4]  192 	ex	de,hl
+                                    193 ;	spillPairReg hl
+                                    194 ;	spillPairReg hl
+      00009D CDr00r00         [17]  195 	call	_DOS_OpenHandle
+      0000A0 D1               [10]  196 	pop	de
+                                    197 ;./cart.c:143: if (fp == HANDLE_INVALID) {
+      0000A1 4F               [ 4]  198 	ld	c, a
+      0000A2 3C               [ 4]  199 	inc	a
+      0000A3 20 1B            [12]  200 	jr	NZ, 00102$
+                                    201 ;./cart.c:144: String_Format(g_StrBuffer, "Failed to open: %s\r\n$", filename);
+      0000A5 D5               [11]  202 	push	de
+      0000A6 21r27r02         [10]  203 	ld	hl, #___str_4
+      0000A9 E5               [11]  204 	push	hl
+      0000AA 21r00r00         [10]  205 	ld	hl, #_g_StrBuffer
+      0000AD E5               [11]  206 	push	hl
+      0000AE CDr00r00         [17]  207 	call	_String_Format
+      0000B1 21 06 00         [10]  208 	ld	hl, #6
+      0000B4 39               [11]  209 	add	hl, sp
+      0000B5 F9               [ 6]  210 	ld	sp, hl
+                                    211 ;./cart.c:145: DOS_StringOutput(g_StrBuffer);
+      0000B6 21r00r00         [10]  212 	ld	hl, #_g_StrBuffer
+      0000B9 CDr00r00         [17]  213 	call	_DOS_StringOutput
+                                    214 ;./cart.c:146: return false;
+      0000BC AF               [ 4]  215 	xor	a, a
+      0000BD C3r05r02         [10]  216 	jp	00103$
+      0000C0                        217 00102$:
+                                    218 ;./cart.c:149: String_Format(g_StrBuffer, "Opened: %s\r\n$", filename);
+      0000C0 C5               [11]  219 	push	bc
+      0000C1 D5               [11]  220 	push	de
+      0000C2 21r3Dr02         [10]  221 	ld	hl, #___str_5
+      0000C5 E5               [11]  222 	push	hl
+      0000C6 21r00r00         [10]  223 	ld	hl, #_g_StrBuffer
+      0000C9 E5               [11]  224 	push	hl
+      0000CA CDr00r00         [17]  225 	call	_String_Format
+      0000CD 21 06 00         [10]  226 	ld	hl, #6
+      0000D0 39               [11]  227 	add	hl, sp
+      0000D1 F9               [ 6]  228 	ld	sp, hl
+      0000D2 21r00r00         [10]  229 	ld	hl, #_g_StrBuffer
+      0000D5 CDr00r00         [17]  230 	call	_DOS_StringOutput
+      0000D8 C1               [10]  231 	pop	bc
+                                    232 ;./cart.c:152: ctx.rom_size = DOS_SeekHandle(fp, 0, SEEK_END); // go to the end to the filename
+      0000D9 C5               [11]  233 	push	bc
+      0000DA 3E 02            [ 7]  234 	ld	a, #0x02
+      0000DC F5               [11]  235 	push	af
+      0000DD 33               [ 6]  236 	inc	sp
+      0000DE 21 00 00         [10]  237 	ld	hl, #0x0000
+      0000E1 E5               [11]  238 	push	hl
+      0000E2 E5               [11]  239 	push	hl
+      0000E3 79               [ 4]  240 	ld	a, c
+      0000E4 CDr00r00         [17]  241 	call	_DOS_SeekHandle
+      0000E7 DD 73 FC         [19]  242 	ld	-4 (ix), e
+      0000EA DD 72 FD         [19]  243 	ld	-3 (ix), d
+      0000ED DD 75 FE         [19]  244 	ld	-2 (ix), l
+      0000F0 DD 74 FF         [19]  245 	ld	-1 (ix), h
+      0000F3 11r80r04         [10]  246 	ld	de, #(_ctx + 1024)
+      0000F6 21 02 00         [10]  247 	ld	hl, #2
+      0000F9 39               [11]  248 	add	hl, sp
+      0000FA 01 04 00         [10]  249 	ld	bc, #0x0004
+      0000FD ED B0            [21]  250 	ldir
+      0000FF C1               [10]  251 	pop	bc
+                                    252 ;./cart.c:154: String_Format(g_StrBuffer, "File Size: %d KB\r\n$", (u16)(ctx.rom_size/1024L));
+      000100 DD 5E FD         [19]  253 	ld	e, -3 (ix)
+      000103 DD 56 FE         [19]  254 	ld	d, -2 (ix)
+      000106 DD 6E FF         [19]  255 	ld	l, -1 (ix)
+                                    256 ;	spillPairReg hl
+                                    257 ;	spillPairReg hl
+                                    258 ;	spillPairReg hl
+                                    259 ;	spillPairReg hl
+      000109 06 02            [ 7]  260 	ld	b, #0x02
+      00010B                        261 00112$:
+      00010B CB 3D            [ 8]  262 	srl	l
+      00010D CB 1A            [ 8]  263 	rr	d
+      00010F CB 1B            [ 8]  264 	rr	e
+      000111 10 F8            [13]  265 	djnz	00112$
+      000113 C5               [11]  266 	push	bc
+      000114 D5               [11]  267 	push	de
+      000115 21r4Br02         [10]  268 	ld	hl, #___str_6
+      000118 E5               [11]  269 	push	hl
+      000119 21r00r00         [10]  270 	ld	hl, #_g_StrBuffer
+      00011C E5               [11]  271 	push	hl
+      00011D CDr00r00         [17]  272 	call	_String_Format
+      000120 21 06 00         [10]  273 	ld	hl, #6
+      000123 39               [11]  274 	add	hl, sp
+      000124 F9               [ 6]  275 	ld	sp, hl
+      000125 21r00r00         [10]  276 	ld	hl, #_g_StrBuffer
+      000128 CDr00r00         [17]  277 	call	_DOS_StringOutput
+      00012B C1               [10]  278 	pop	bc
+                                    279 ;./cart.c:157: DOS_SeekHandle(fp, 0, SEEK_SET); // rewind 
+      00012C C5               [11]  280 	push	bc
+      00012D AF               [ 4]  281 	xor	a, a
+      00012E F5               [11]  282 	push	af
+      00012F 33               [ 6]  283 	inc	sp
+      000130 21 00 00         [10]  284 	ld	hl, #0x0000
+      000133 E5               [11]  285 	push	hl
+      000134 E5               [11]  286 	push	hl
+      000135 79               [ 4]  287 	ld	a, c
+      000136 CDr00r00         [17]  288 	call	_DOS_SeekHandle
+      000139 C1               [10]  289 	pop	bc
+                                    290 ;./cart.c:159: ctx.rom_data = Mem_HeapAlloc(ctx.rom_size);
+      00013A 2Ar80r04         [16]  291 	ld	hl, (#(_ctx + 1024) + 0)
+      00013D C5               [11]  292 	push	bc
+      00013E CDr00r00         [17]  293 	call	_Mem_HeapAlloc
+      000141 C1               [10]  294 	pop	bc
+      000142 ED 53r84r04      [20]  295 	ld	((_ctx + 1028)), de
+                                    296 ;./cart.c:161: DOS_FRead(fp, (void*)ctx.rom_data, ctx.rom_size);
+      000146 2Ar80r04         [16]  297 	ld	hl, (#(_ctx + 1024) + 0)
+      000149 C5               [11]  298 	push	bc
+      00014A E5               [11]  299 	push	hl
+      00014B 79               [ 4]  300 	ld	a, c
+      00014C CDr00r00         [17]  301 	call	_DOS_ReadHandle
+      00014F C1               [10]  302 	pop	bc
+                                    303 ;./cart.c:162: DOS_FClose(fp); 
+      000150 79               [ 4]  304 	ld	a, c
+      000151 CDr00r00         [17]  305 	call	_DOS_CloseHandle
+                                    306 ;./cart.c:164: ctx.header = (rom_header *)(ctx.rom_data + 0x100);
+      000154 2Ar84r04         [16]  307 	ld	hl, (#(_ctx + 1028) + 0)
+      000157 4D               [ 4]  308 	ld	c, l
+      000158 7C               [ 4]  309 	ld	a, h
+      000159 3C               [ 4]  310 	inc	a
+      00015A 47               [ 4]  311 	ld	b, a
+      00015B ED 43r86r04      [20]  312 	ld	((_ctx + 1030)), bc
+                                    313 ;./cart.c:165: ctx.header->title[15] = 0;
+      00015F 21 43 00         [10]  314 	ld	hl, #0x0043
+      000162 09               [11]  315 	add	hl, bc
+      000163 36 00            [10]  316 	ld	(hl), #0x00
+                                    317 ;./cart.c:167: msx_printf("Cartridge Loaded:\n");
+      000165 21r5Fr02         [10]  318 	ld	hl, #___str_7
+      000168 E5               [11]  319 	push	hl
+      000169 CDr00r00         [17]  320 	call	_msx_printf
+      00016C F1               [10]  321 	pop	af
+                                    322 ;./cart.c:168: msx_printf("\t Title    : %s\r\n", ctx.header->title);
+      00016D 2Ar86r04         [16]  323 	ld	hl, (#(_ctx + 1030) + 0)
+      000170 01 34 00         [10]  324 	ld	bc, #0x0034
+      000173 09               [11]  325 	add	hl, bc
+      000174 01r72r02         [10]  326 	ld	bc, #___str_8+0
+      000177 E5               [11]  327 	push	hl
+      000178 C5               [11]  328 	push	bc
+      000179 CDr00r00         [17]  329 	call	_msx_printf
+      00017C F1               [10]  330 	pop	af
+      00017D F1               [10]  331 	pop	af
+                                    332 ;./cart.c:169: String_Format(g_StrBuffer, "\t Type     : %2.2X (%s)\r\n$", ctx.header->type, cart_type_name());
+      00017E CDr4Er00         [17]  333 	call	_cart_type_name
+      000181 2Ar86r04         [16]  334 	ld	hl, (#(_ctx + 1030) + 0)
+      000184 01 47 00         [10]  335 	ld	bc, #0x0047
+      000187 09               [11]  336 	add	hl, bc
+      000188 4E               [ 7]  337 	ld	c, (hl)
+      000189 06 00            [ 7]  338 	ld	b, #0x00
+      00018B 21r00r00         [10]  339 	ld	hl, #_g_StrBuffer
+      00018E D5               [11]  340 	push	de
+      00018F C5               [11]  341 	push	bc
+      000190 11r84r02         [10]  342 	ld	de, #___str_9
+      000193 D5               [11]  343 	push	de
+      000194 E5               [11]  344 	push	hl
+      000195 CDr00r00         [17]  345 	call	_String_Format
+      000198 21 08 00         [10]  346 	ld	hl, #8
+      00019B 39               [11]  347 	add	hl, sp
+      00019C F9               [ 6]  348 	ld	sp, hl
+                                    349 ;./cart.c:170: DOS_StringOutput(g_StrBuffer);
+      00019D 21r00r00         [10]  350 	ld	hl, #_g_StrBuffer
+      0001A0 CDr00r00         [17]  351 	call	_DOS_StringOutput
+                                    352 ;./cart.c:171: msx_printf("\t ROM Size : %d KB\r\n", 32 << ctx.header->rom_size);
+      0001A3 2Ar86r04         [16]  353 	ld	hl, (#(_ctx + 1030) + 0)
+      0001A6 11 48 00         [10]  354 	ld	de, #0x0048
+      0001A9 19               [11]  355 	add	hl, de
+      0001AA 4E               [ 7]  356 	ld	c, (hl)
+      0001AB 21 20 00         [10]  357 	ld	hl, #0x0020
+      0001AE 0C               [ 4]  358 	inc	c
+      0001AF C3rB3r01         [10]  359 	jp	00115$
+      0001B2                        360 00114$:
+      0001B2 29               [11]  361 	add	hl, hl
+      0001B3                        362 00115$:
+      0001B3 0D               [ 4]  363 	dec	c
+      0001B4 20 FC            [12]  364 	jr	NZ,00114$
+      0001B6 01r9Fr02         [10]  365 	ld	bc, #___str_10+0
+      0001B9 E5               [11]  366 	push	hl
+      0001BA C5               [11]  367 	push	bc
+      0001BB CDr00r00         [17]  368 	call	_msx_printf
+      0001BE F1               [10]  369 	pop	af
+      0001BF F1               [10]  370 	pop	af
+                                    371 ;./cart.c:172: msx_printf("\t RAM Size : %d\r\n", ctx.header->ram_size);
+      0001C0 2Ar86r04         [16]  372 	ld	hl, (#(_ctx + 1030) + 0)
+      0001C3 11 49 00         [10]  373 	ld	de, #0x0049
+      0001C6 19               [11]  374 	add	hl, de
+      0001C7 4E               [ 7]  375 	ld	c, (hl)
+      0001C8 06 00            [ 7]  376 	ld	b, #0x00
+      0001CA C5               [11]  377 	push	bc
+      0001CB 21rB4r02         [10]  378 	ld	hl, #___str_11
+      0001CE E5               [11]  379 	push	hl
+      0001CF CDr00r00         [17]  380 	call	_msx_printf
+      0001D2 F1               [10]  381 	pop	af
+      0001D3 F1               [10]  382 	pop	af
+                                    383 ;./cart.c:173: msx_printf("\t LIC Code : %d (%s)\r\n", ctx.header->lic_code, cart_lic_name());
+      0001D4 CDr00r00         [17]  384 	call	_cart_lic_name
+      0001D7 2Ar86r04         [16]  385 	ld	hl, (#(_ctx + 1030) + 0)
+      0001DA 01 4B 00         [10]  386 	ld	bc, #0x004b
+      0001DD 09               [11]  387 	add	hl, bc
+      0001DE 4E               [ 7]  388 	ld	c, (hl)
+      0001DF 06 00            [ 7]  389 	ld	b, #0x00
+      0001E1 D5               [11]  390 	push	de
+      0001E2 C5               [11]  391 	push	bc
+      0001E3 21rC6r02         [10]  392 	ld	hl, #___str_12
+      0001E6 E5               [11]  393 	push	hl
+      0001E7 CDr00r00         [17]  394 	call	_msx_printf
+      0001EA 21 06 00         [10]  395 	ld	hl, #6
+      0001ED 39               [11]  396 	add	hl, sp
+      0001EE F9               [ 6]  397 	ld	sp, hl
+                                    398 ;./cart.c:174: msx_printf("\t ROM Vers : %d\r\n", ctx.header->version);
+      0001EF 2Ar86r04         [16]  399 	ld	hl, (#(_ctx + 1030) + 0)
+      0001F2 11 4C 00         [10]  400 	ld	de, #0x004c
+      0001F5 19               [11]  401 	add	hl, de
+      0001F6 4E               [ 7]  402 	ld	c, (hl)
+      0001F7 06 00            [ 7]  403 	ld	b, #0x00
+      0001F9 C5               [11]  404 	push	bc
+      0001FA 21rDDr02         [10]  405 	ld	hl, #___str_13
+      0001FD E5               [11]  406 	push	hl
+      0001FE CDr00r00         [17]  407 	call	_msx_printf
+      000201 F1               [10]  408 	pop	af
+      000202 F1               [10]  409 	pop	af
+                                    410 ;./cart.c:176: return true;
+      000203 3E 01            [ 7]  411 	ld	a, #0x01
+      000205                        412 00103$:
+                                    413 ;./cart.c:177: }
+      000205 DD F9            [10]  414 	ld	sp, ix
+      000207 DD E1            [14]  415 	pop	ix
+      000209 C9               [10]  416 	ret
+      00020A                        417 ___str_3:
+      00020A 54 72 79 69 6E 67 20   418 	.ascii "Trying to open %s file..."
              74 6F 20 6F 70 65 6E
              20 25 73 20 66 69 6C
              65 2E 2E 2E
-      0001E5 0D                     384 	.db 0x0d
-      0001E6 0A                     385 	.db 0x0a
-      0001E7 00                     386 	.db 0x00
-      0001E8                        387 ___str_4:
-      0001E8 46 61 69 6C 65 64 20   388 	.ascii "Failed to open: %s"
+      000223 0D                     419 	.db 0x0d
+      000224 0A                     420 	.db 0x0a
+      000225 24                     421 	.ascii "$"
+      000226 00                     422 	.db 0x00
+      000227                        423 ___str_4:
+      000227 46 61 69 6C 65 64 20   424 	.ascii "Failed to open: %s"
              74 6F 20 6F 70 65 6E
              3A 20 25 73
-      0001FA 0D                     389 	.db 0x0d
-      0001FB 0A                     390 	.db 0x0a
-      0001FC 00                     391 	.db 0x00
-      0001FD                        392 ___str_5:
-      0001FD 4F 70 65 6E 65 64 3A   393 	.ascii "Opened: %s"
+      000239 0D                     425 	.db 0x0d
+      00023A 0A                     426 	.db 0x0a
+      00023B 24                     427 	.ascii "$"
+      00023C 00                     428 	.db 0x00
+      00023D                        429 ___str_5:
+      00023D 4F 70 65 6E 65 64 3A   430 	.ascii "Opened: %s"
              20 25 73
-      000207 0D                     394 	.db 0x0d
-      000208 0A                     395 	.db 0x0a
-      000209 00                     396 	.db 0x00
-      00020A                        397 ___str_6:
-      00020A 52 6F 6D 20 53 69 7A   398 	.ascii "Rom Size: %d"
-             65 3A 20 25 64
-      000216 0D                     399 	.db 0x0d
-      000217 0A                     400 	.db 0x0a
-      000218 00                     401 	.db 0x00
-      000219                        402 ___str_7:
-      000219 43 61 72 74 72 69 64   403 	.ascii "Cartridge Loaded:"
+      000247 0D                     431 	.db 0x0d
+      000248 0A                     432 	.db 0x0a
+      000249 24                     433 	.ascii "$"
+      00024A 00                     434 	.db 0x00
+      00024B                        435 ___str_6:
+      00024B 46 69 6C 65 20 53 69   436 	.ascii "File Size: %d KB"
+             7A 65 3A 20 25 64 20
+             4B 42
+      00025B 0D                     437 	.db 0x0d
+      00025C 0A                     438 	.db 0x0a
+      00025D 24                     439 	.ascii "$"
+      00025E 00                     440 	.db 0x00
+      00025F                        441 ___str_7:
+      00025F 43 61 72 74 72 69 64   442 	.ascii "Cartridge Loaded:"
              67 65 20 4C 6F 61 64
              65 64 3A
-      00022A 0A                     404 	.db 0x0a
-      00022B 00                     405 	.db 0x00
-      00022C                        406 ___str_8:
-      00022C 09                     407 	.db 0x09
-      00022D 20 54 69 74 6C 65 20   408 	.ascii " Title    : %s"
+      000270 0A                     443 	.db 0x0a
+      000271 00                     444 	.db 0x00
+      000272                        445 ___str_8:
+      000272 09                     446 	.db 0x09
+      000273 20 54 69 74 6C 65 20   447 	.ascii " Title    : %s"
              20 20 20 3A 20 25 73
-      00023B 0D                     409 	.db 0x0d
-      00023C 0A                     410 	.db 0x0a
-      00023D 00                     411 	.db 0x00
-      00023E                        412 ___str_9:
-      00023E 09                     413 	.db 0x09
-      00023F 20 54 79 70 65 20 20   414 	.ascii " Type     : %d (%s)"
-             20 20 20 3A 20 25 64
-             20 28 25 73 29
-      000252 0D                     415 	.db 0x0d
-      000253 0A                     416 	.db 0x0a
-      000254 00                     417 	.db 0x00
-      000255                        418 ___str_10:
-      000255 09                     419 	.db 0x09
-      000256 20 52 4F 4D 20 53 69   420 	.ascii " ROM Size : %d KB"
+      000281 0D                     448 	.db 0x0d
+      000282 0A                     449 	.db 0x0a
+      000283 00                     450 	.db 0x00
+      000284                        451 ___str_9:
+      000284 09                     452 	.db 0x09
+      000285 20 54 79 70 65 20 20   453 	.ascii " Type     : %2.2X (%s)"
+             20 20 20 3A 20 25 32
+             2E 32 58 20 28 25 73
+             29
+      00029B 0D                     454 	.db 0x0d
+      00029C 0A                     455 	.db 0x0a
+      00029D 24                     456 	.ascii "$"
+      00029E 00                     457 	.db 0x00
+      00029F                        458 ___str_10:
+      00029F 09                     459 	.db 0x09
+      0002A0 20 52 4F 4D 20 53 69   460 	.ascii " ROM Size : %d KB"
              7A 65 20 3A 20 25 64
              20 4B 42
-      000267 0D                     421 	.db 0x0d
-      000268 0A                     422 	.db 0x0a
-      000269 00                     423 	.db 0x00
-      00026A                        424 ___str_11:
-      00026A 09                     425 	.db 0x09
-      00026B 20 52 41 4D 20 53 69   426 	.ascii " RAM Size : %d"
+      0002B1 0D                     461 	.db 0x0d
+      0002B2 0A                     462 	.db 0x0a
+      0002B3 00                     463 	.db 0x00
+      0002B4                        464 ___str_11:
+      0002B4 09                     465 	.db 0x09
+      0002B5 20 52 41 4D 20 53 69   466 	.ascii " RAM Size : %d"
              7A 65 20 3A 20 25 64
-      000279 0D                     427 	.db 0x0d
-      00027A 0A                     428 	.db 0x0a
-      00027B 00                     429 	.db 0x00
-      00027C                        430 ___str_12:
-      00027C 09                     431 	.db 0x09
-      00027D 20 4C 49 43 20 43 6F   432 	.ascii " LIC Code : %d (%s)"
+      0002C3 0D                     467 	.db 0x0d
+      0002C4 0A                     468 	.db 0x0a
+      0002C5 00                     469 	.db 0x00
+      0002C6                        470 ___str_12:
+      0002C6 09                     471 	.db 0x09
+      0002C7 20 4C 49 43 20 43 6F   472 	.ascii " LIC Code : %d (%s)"
              64 65 20 3A 20 25 64
              20 28 25 73 29
-      000290 0D                     433 	.db 0x0d
-      000291 0A                     434 	.db 0x0a
-      000292 00                     435 	.db 0x00
-      000293                        436 ___str_13:
-      000293 09                     437 	.db 0x09
-      000294 20 52 4F 4D 20 56 65   438 	.ascii " ROM Vers : %d"
+      0002DA 0D                     473 	.db 0x0d
+      0002DB 0A                     474 	.db 0x0a
+      0002DC 00                     475 	.db 0x00
+      0002DD                        476 ___str_13:
+      0002DD 09                     477 	.db 0x09
+      0002DE 20 52 4F 4D 20 56 65   478 	.ascii " ROM Vers : %d"
              72 73 20 3A 20 25 64
-      0002A2 0D                     439 	.db 0x0d
-      0002A3 0A                     440 	.db 0x0a
-      0002A4 00                     441 	.db 0x00
-                                    442 	.area _CODE
-      0002A5                        443 ___str_14:
-      0002A5 52 4F 4D 20 4F 4E 4C   444 	.ascii "ROM ONLY"
+      0002EC 0D                     479 	.db 0x0d
+      0002ED 0A                     480 	.db 0x0a
+      0002EE 00                     481 	.db 0x00
+                                    482 	.area _CODE
+      0002EF                        483 ___str_14:
+      0002EF 52 4F 4D 20 4F 4E 4C   484 	.ascii "ROM ONLY"
              59
-      0002AD 00                     445 	.db 0x00
-      0002AE                        446 ___str_15:
-      0002AE 4D 42 43 31            447 	.ascii "MBC1"
-      0002B2 00                     448 	.db 0x00
-      0002B3                        449 ___str_16:
-      0002B3 4D 42 43 31 2B 52 41   450 	.ascii "MBC1+RAM"
+      0002F7 00                     485 	.db 0x00
+      0002F8                        486 ___str_15:
+      0002F8 4D 42 43 31            487 	.ascii "MBC1"
+      0002FC 00                     488 	.db 0x00
+      0002FD                        489 ___str_16:
+      0002FD 4D 42 43 31 2B 52 41   490 	.ascii "MBC1+RAM"
              4D
-      0002BB 00                     451 	.db 0x00
-      0002BC                        452 ___str_17:
-      0002BC 4D 42 43 31 2B 52 41   453 	.ascii "MBC1+RAM+BATTERY"
+      000305 00                     491 	.db 0x00
+      000306                        492 ___str_17:
+      000306 4D 42 43 31 2B 52 41   493 	.ascii "MBC1+RAM+BATTERY"
              4D 2B 42 41 54 54 45
              52 59
-      0002CC 00                     454 	.db 0x00
-      0002CD                        455 ___str_18:
-      0002CD 30 78 30 34 20 3F 3F   456 	.ascii "0x04 ???"
+      000316 00                     494 	.db 0x00
+      000317                        495 ___str_18:
+      000317 30 78 30 34 20 3F 3F   496 	.ascii "0x04 ???"
              3F
-      0002D5 00                     457 	.db 0x00
-      0002D6                        458 ___str_19:
-      0002D6 4D 42 43 32            459 	.ascii "MBC2"
-      0002DA 00                     460 	.db 0x00
-      0002DB                        461 ___str_20:
-      0002DB 4D 42 43 32 2B 42 41   462 	.ascii "MBC2+BATTERY"
+      00031F 00                     497 	.db 0x00
+      000320                        498 ___str_19:
+      000320 4D 42 43 32            499 	.ascii "MBC2"
+      000324 00                     500 	.db 0x00
+      000325                        501 ___str_20:
+      000325 4D 42 43 32 2B 42 41   502 	.ascii "MBC2+BATTERY"
              54 54 45 52 59
-      0002E7 00                     463 	.db 0x00
-      0002E8                        464 ___str_21:
-      0002E8 30 78 30 37 20 3F 3F   465 	.ascii "0x07 ???"
+      000331 00                     503 	.db 0x00
+      000332                        504 ___str_21:
+      000332 30 78 30 37 20 3F 3F   505 	.ascii "0x07 ???"
              3F
-      0002F0 00                     466 	.db 0x00
-      0002F1                        467 ___str_22:
-      0002F1 52 4F 4D 2B 52 41 4D   468 	.ascii "ROM+RAM 1"
+      00033A 00                     506 	.db 0x00
+      00033B                        507 ___str_22:
+      00033B 52 4F 4D 2B 52 41 4D   508 	.ascii "ROM+RAM 1"
              20 31
-      0002FA 00                     469 	.db 0x00
-      0002FB                        470 ___str_23:
-      0002FB 52 4F 4D 2B 52 41 4D   471 	.ascii "ROM+RAM+BATTERY 1"
+      000344 00                     509 	.db 0x00
+      000345                        510 ___str_23:
+      000345 52 4F 4D 2B 52 41 4D   511 	.ascii "ROM+RAM+BATTERY 1"
              2B 42 41 54 54 45 52
              59 20 31
-      00030C 00                     472 	.db 0x00
-      00030D                        473 ___str_24:
-      00030D 30 78 30 41 20 3F 3F   474 	.ascii "0x0A ???"
+      000356 00                     512 	.db 0x00
+      000357                        513 ___str_24:
+      000357 30 78 30 41 20 3F 3F   514 	.ascii "0x0A ???"
              3F
-      000315 00                     475 	.db 0x00
-      000316                        476 ___str_25:
-      000316 4D 4D 4D 30 31         477 	.ascii "MMM01"
-      00031B 00                     478 	.db 0x00
-      00031C                        479 ___str_26:
-      00031C 4D 4D 4D 30 31 2B 52   480 	.ascii "MMM01+RAM"
+      00035F 00                     515 	.db 0x00
+      000360                        516 ___str_25:
+      000360 4D 4D 4D 30 31         517 	.ascii "MMM01"
+      000365 00                     518 	.db 0x00
+      000366                        519 ___str_26:
+      000366 4D 4D 4D 30 31 2B 52   520 	.ascii "MMM01+RAM"
              41 4D
-      000325 00                     481 	.db 0x00
-      000326                        482 ___str_27:
-      000326 4D 4D 4D 30 31 2B 52   483 	.ascii "MMM01+RAM+BATTERY"
+      00036F 00                     521 	.db 0x00
+      000370                        522 ___str_27:
+      000370 4D 4D 4D 30 31 2B 52   523 	.ascii "MMM01+RAM+BATTERY"
              41 4D 2B 42 41 54 54
              45 52 59
-      000337 00                     484 	.db 0x00
-      000338                        485 ___str_28:
-      000338 30 78 30 45 20 3F 3F   486 	.ascii "0x0E ???"
+      000381 00                     524 	.db 0x00
+      000382                        525 ___str_28:
+      000382 30 78 30 45 20 3F 3F   526 	.ascii "0x0E ???"
              3F
-      000340 00                     487 	.db 0x00
-      000341                        488 ___str_29:
-      000341 4D 42 43 33 2B 54 49   489 	.ascii "MBC3+TIMER+BATTERY"
+      00038A 00                     527 	.db 0x00
+      00038B                        528 ___str_29:
+      00038B 4D 42 43 33 2B 54 49   529 	.ascii "MBC3+TIMER+BATTERY"
              4D 45 52 2B 42 41 54
              54 45 52 59
-      000353 00                     490 	.db 0x00
-      000354                        491 ___str_30:
-      000354 4D 42 43 33 2B 54 49   492 	.ascii "MBC3+TIMER+RAM+BATTERY 2"
+      00039D 00                     530 	.db 0x00
+      00039E                        531 ___str_30:
+      00039E 4D 42 43 33 2B 54 49   532 	.ascii "MBC3+TIMER+RAM+BATTERY 2"
              4D 45 52 2B 52 41 4D
              2B 42 41 54 54 45 52
              59 20 32
-      00036C 00                     493 	.db 0x00
-      00036D                        494 ___str_31:
-      00036D 4D 42 43 33            495 	.ascii "MBC3"
-      000371 00                     496 	.db 0x00
-      000372                        497 ___str_32:
-      000372 4D 42 43 33 2B 52 41   498 	.ascii "MBC3+RAM 2"
+      0003B6 00                     533 	.db 0x00
+      0003B7                        534 ___str_31:
+      0003B7 4D 42 43 33            535 	.ascii "MBC3"
+      0003BB 00                     536 	.db 0x00
+      0003BC                        537 ___str_32:
+      0003BC 4D 42 43 33 2B 52 41   538 	.ascii "MBC3+RAM 2"
              4D 20 32
-      00037C 00                     499 	.db 0x00
-      00037D                        500 ___str_33:
-      00037D 4D 42 43 33 2B 52 41   501 	.ascii "MBC3+RAM+BATTERY 2"
+      0003C6 00                     539 	.db 0x00
+      0003C7                        540 ___str_33:
+      0003C7 4D 42 43 33 2B 52 41   541 	.ascii "MBC3+RAM+BATTERY 2"
              4D 2B 42 41 54 54 45
              52 59 20 32
-      00038F 00                     502 	.db 0x00
-      000390                        503 ___str_34:
-      000390 30 78 31 34 20 3F 3F   504 	.ascii "0x14 ???"
+      0003D9 00                     542 	.db 0x00
+      0003DA                        543 ___str_34:
+      0003DA 30 78 31 34 20 3F 3F   544 	.ascii "0x14 ???"
              3F
-      000398 00                     505 	.db 0x00
-      000399                        506 ___str_35:
-      000399 30 78 31 35 20 3F 3F   507 	.ascii "0x15 ???"
+      0003E2 00                     545 	.db 0x00
+      0003E3                        546 ___str_35:
+      0003E3 30 78 31 35 20 3F 3F   547 	.ascii "0x15 ???"
              3F
-      0003A1 00                     508 	.db 0x00
-      0003A2                        509 ___str_36:
-      0003A2 30 78 31 36 20 3F 3F   510 	.ascii "0x16 ???"
+      0003EB 00                     548 	.db 0x00
+      0003EC                        549 ___str_36:
+      0003EC 30 78 31 36 20 3F 3F   550 	.ascii "0x16 ???"
              3F
-      0003AA 00                     511 	.db 0x00
-      0003AB                        512 ___str_37:
-      0003AB 30 78 31 37 20 3F 3F   513 	.ascii "0x17 ???"
+      0003F4 00                     551 	.db 0x00
+      0003F5                        552 ___str_37:
+      0003F5 30 78 31 37 20 3F 3F   553 	.ascii "0x17 ???"
              3F
-      0003B3 00                     514 	.db 0x00
-      0003B4                        515 ___str_38:
-      0003B4 30 78 31 38 20 3F 3F   516 	.ascii "0x18 ???"
+      0003FD 00                     554 	.db 0x00
+      0003FE                        555 ___str_38:
+      0003FE 30 78 31 38 20 3F 3F   556 	.ascii "0x18 ???"
              3F
-      0003BC 00                     517 	.db 0x00
-      0003BD                        518 ___str_39:
-      0003BD 4D 42 43 35            519 	.ascii "MBC5"
-      0003C1 00                     520 	.db 0x00
-      0003C2                        521 ___str_40:
-      0003C2 4D 42 43 35 2B 52 41   522 	.ascii "MBC5+RAM"
+      000406 00                     557 	.db 0x00
+      000407                        558 ___str_39:
+      000407 4D 42 43 35            559 	.ascii "MBC5"
+      00040B 00                     560 	.db 0x00
+      00040C                        561 ___str_40:
+      00040C 4D 42 43 35 2B 52 41   562 	.ascii "MBC5+RAM"
              4D
-      0003CA 00                     523 	.db 0x00
-      0003CB                        524 ___str_41:
-      0003CB 4D 42 43 35 2B 52 41   525 	.ascii "MBC5+RAM+BATTERY"
+      000414 00                     563 	.db 0x00
+      000415                        564 ___str_41:
+      000415 4D 42 43 35 2B 52 41   565 	.ascii "MBC5+RAM+BATTERY"
              4D 2B 42 41 54 54 45
              52 59
-      0003DB 00                     526 	.db 0x00
-      0003DC                        527 ___str_42:
-      0003DC 4D 42 43 35 2B 52 55   528 	.ascii "MBC5+RUMBLE"
+      000425 00                     566 	.db 0x00
+      000426                        567 ___str_42:
+      000426 4D 42 43 35 2B 52 55   568 	.ascii "MBC5+RUMBLE"
              4D 42 4C 45
-      0003E7 00                     529 	.db 0x00
-      0003E8                        530 ___str_43:
-      0003E8 4D 42 43 35 2B 52 55   531 	.ascii "MBC5+RUMBLE+RAM"
+      000431 00                     569 	.db 0x00
+      000432                        570 ___str_43:
+      000432 4D 42 43 35 2B 52 55   571 	.ascii "MBC5+RUMBLE+RAM"
              4D 42 4C 45 2B 52 41
              4D
-      0003F7 00                     532 	.db 0x00
-      0003F8                        533 ___str_44:
-      0003F8 4D 42 43 35 2B 52 55   534 	.ascii "MBC5+RUMBLE+RAM+BATTERY"
+      000441 00                     572 	.db 0x00
+      000442                        573 ___str_44:
+      000442 4D 42 43 35 2B 52 55   574 	.ascii "MBC5+RUMBLE+RAM+BATTERY"
              4D 42 4C 45 2B 52 41
              4D 2B 42 41 54 54 45
              52 59
-      00040F 00                     535 	.db 0x00
-      000410                        536 ___str_45:
-      000410 30 78 31 46 20 3F 3F   537 	.ascii "0x1F ???"
+      000459 00                     575 	.db 0x00
+      00045A                        576 ___str_45:
+      00045A 30 78 31 46 20 3F 3F   577 	.ascii "0x1F ???"
              3F
-      000418 00                     538 	.db 0x00
-      000419                        539 ___str_46:
-      000419 4D 42 43 36            540 	.ascii "MBC6"
-      00041D 00                     541 	.db 0x00
-      00041E                        542 ___str_47:
-      00041E 30 78 32 31 20 3F 3F   543 	.ascii "0x21 ???"
+      000462 00                     578 	.db 0x00
+      000463                        579 ___str_46:
+      000463 4D 42 43 36            580 	.ascii "MBC6"
+      000467 00                     581 	.db 0x00
+      000468                        582 ___str_47:
+      000468 30 78 32 31 20 3F 3F   583 	.ascii "0x21 ???"
              3F
-      000426 00                     544 	.db 0x00
-      000427                        545 ___str_48:
-      000427 4D 42 43 37 2B 53 45   546 	.ascii "MBC7+SENSOR+RUMBLE+RAM+BATTERY"
+      000470 00                     584 	.db 0x00
+      000471                        585 ___str_48:
+      000471 4D 42 43 37 2B 53 45   586 	.ascii "MBC7+SENSOR+RUMBLE+RAM+BATTERY"
              4E 53 4F 52 2B 52 55
              4D 42 4C 45 2B 52 41
              4D 2B 42 41 54 54 45
              52 59
-      000445 00                     547 	.db 0x00
-      000446                        548 ___str_49:
-      000446 4E 6F 6E 65            549 	.ascii "None"
-      00044A 00                     550 	.db 0x00
-      00044B                        551 ___str_50:
-      00044B 4E 69 6E 74 65 6E 64   552 	.ascii "Nintendo R&D1"
+      00048F 00                     587 	.db 0x00
+      000490                        588 ___str_49:
+      000490 4E 6F 6E 65            589 	.ascii "None"
+      000494 00                     590 	.db 0x00
+      000495                        591 ___str_50:
+      000495 4E 69 6E 74 65 6E 64   592 	.ascii "Nintendo R&D1"
              6F 20 52 26 44 31
-      000458 00                     553 	.db 0x00
-      000459                        554 ___str_51:
-      000459 43 61 70 63 6F 6D      555 	.ascii "Capcom"
-      00045F 00                     556 	.db 0x00
-      000460                        557 ___str_52:
-      000460 45 6C 65 63 74 72 6F   558 	.ascii "Electronic Arts"
+      0004A2 00                     593 	.db 0x00
+      0004A3                        594 ___str_51:
+      0004A3 43 61 70 63 6F 6D      595 	.ascii "Capcom"
+      0004A9 00                     596 	.db 0x00
+      0004AA                        597 ___str_52:
+      0004AA 45 6C 65 63 74 72 6F   598 	.ascii "Electronic Arts"
              6E 69 63 20 41 72 74
              73
-      00046F 00                     559 	.db 0x00
-      000470                        560 ___str_53:
-      000470 48 75 64 73 6F 6E 20   561 	.ascii "Hudson Soft"
+      0004B9 00                     599 	.db 0x00
+      0004BA                        600 ___str_53:
+      0004BA 48 75 64 73 6F 6E 20   601 	.ascii "Hudson Soft"
              53 6F 66 74
-      00047B 00                     562 	.db 0x00
-      00047C                        563 ___str_54:
-      00047C 62 2D 61 69            564 	.ascii "b-ai"
-      000480 00                     565 	.db 0x00
-      000481                        566 ___str_55:
-      000481 6B 73 73               567 	.ascii "kss"
-      000484 00                     568 	.db 0x00
-      000485                        569 ___str_56:
-      000485 70 6F 77               570 	.ascii "pow"
-      000488 00                     571 	.db 0x00
-      000489                        572 ___str_57:
-      000489 50 43 4D 20 43 6F 6D   573 	.ascii "PCM Complete"
+      0004C5 00                     602 	.db 0x00
+      0004C6                        603 ___str_54:
+      0004C6 62 2D 61 69            604 	.ascii "b-ai"
+      0004CA 00                     605 	.db 0x00
+      0004CB                        606 ___str_55:
+      0004CB 6B 73 73               607 	.ascii "kss"
+      0004CE 00                     608 	.db 0x00
+      0004CF                        609 ___str_56:
+      0004CF 70 6F 77               610 	.ascii "pow"
+      0004D2 00                     611 	.db 0x00
+      0004D3                        612 ___str_57:
+      0004D3 50 43 4D 20 43 6F 6D   613 	.ascii "PCM Complete"
              70 6C 65 74 65
-      000495 00                     574 	.db 0x00
-      000496                        575 ___str_58:
-      000496 73 61 6E 2D 78         576 	.ascii "san-x"
-      00049B 00                     577 	.db 0x00
-      00049C                        578 ___str_59:
-      00049C 4B 65 6D 63 6F 20 4A   579 	.ascii "Kemco Japan"
+      0004DF 00                     614 	.db 0x00
+      0004E0                        615 ___str_58:
+      0004E0 73 61 6E 2D 78         616 	.ascii "san-x"
+      0004E5 00                     617 	.db 0x00
+      0004E6                        618 ___str_59:
+      0004E6 4B 65 6D 63 6F 20 4A   619 	.ascii "Kemco Japan"
              61 70 61 6E
-      0004A7 00                     580 	.db 0x00
-      0004A8                        581 ___str_60:
-      0004A8 73 65 74 61            582 	.ascii "seta"
-      0004AC 00                     583 	.db 0x00
-      0004AD                        584 ___str_61:
-      0004AD 56 69 61 63 6F 6D      585 	.ascii "Viacom"
-      0004B3 00                     586 	.db 0x00
-      0004B4                        587 ___str_62:
-      0004B4 4E 69 6E 74 65 6E 64   588 	.ascii "Nintendo"
+      0004F1 00                     620 	.db 0x00
+      0004F2                        621 ___str_60:
+      0004F2 73 65 74 61            622 	.ascii "seta"
+      0004F6 00                     623 	.db 0x00
+      0004F7                        624 ___str_61:
+      0004F7 56 69 61 63 6F 6D      625 	.ascii "Viacom"
+      0004FD 00                     626 	.db 0x00
+      0004FE                        627 ___str_62:
+      0004FE 4E 69 6E 74 65 6E 64   628 	.ascii "Nintendo"
              6F
-      0004BC 00                     589 	.db 0x00
-      0004BD                        590 ___str_63:
-      0004BD 42 61 6E 64 61 69      591 	.ascii "Bandai"
-      0004C3 00                     592 	.db 0x00
-      0004C4                        593 ___str_64:
-      0004C4 4F 63 65 61 6E 2F 41   594 	.ascii "Ocean/Acclaim"
+      000506 00                     629 	.db 0x00
+      000507                        630 ___str_63:
+      000507 42 61 6E 64 61 69      631 	.ascii "Bandai"
+      00050D 00                     632 	.db 0x00
+      00050E                        633 ___str_64:
+      00050E 4F 63 65 61 6E 2F 41   634 	.ascii "Ocean/Acclaim"
              63 63 6C 61 69 6D
-      0004D1 00                     595 	.db 0x00
-      0004D2                        596 ___str_65:
-      0004D2 4B 6F 6E 61 6D 69      597 	.ascii "Konami"
-      0004D8 00                     598 	.db 0x00
-      0004D9                        599 ___str_66:
-      0004D9 48 65 63 74 6F 72      600 	.ascii "Hector"
-      0004DF 00                     601 	.db 0x00
-      0004E0                        602 ___str_67:
-      0004E0 54 61 69 74 6F         603 	.ascii "Taito"
-      0004E5 00                     604 	.db 0x00
-      0004E6                        605 ___str_68:
-      0004E6 48 75 64 73 6F 6E      606 	.ascii "Hudson"
-      0004EC 00                     607 	.db 0x00
-      0004ED                        608 ___str_69:
-      0004ED 42 61 6E 70 72 65 73   609 	.ascii "Banpresto"
+      00051B 00                     635 	.db 0x00
+      00051C                        636 ___str_65:
+      00051C 4B 6F 6E 61 6D 69      637 	.ascii "Konami"
+      000522 00                     638 	.db 0x00
+      000523                        639 ___str_66:
+      000523 48 65 63 74 6F 72      640 	.ascii "Hector"
+      000529 00                     641 	.db 0x00
+      00052A                        642 ___str_67:
+      00052A 54 61 69 74 6F         643 	.ascii "Taito"
+      00052F 00                     644 	.db 0x00
+      000530                        645 ___str_68:
+      000530 48 75 64 73 6F 6E      646 	.ascii "Hudson"
+      000536 00                     647 	.db 0x00
+      000537                        648 ___str_69:
+      000537 42 61 6E 70 72 65 73   649 	.ascii "Banpresto"
              74 6F
-      0004F6 00                     610 	.db 0x00
-      0004F7                        611 ___str_70:
-      0004F7 55 62 69 20 53 6F 66   612 	.ascii "Ubi Soft"
+      000540 00                     650 	.db 0x00
+      000541                        651 ___str_70:
+      000541 55 62 69 20 53 6F 66   652 	.ascii "Ubi Soft"
              74
-      0004FF 00                     613 	.db 0x00
-      000500                        614 ___str_71:
-      000500 41 74 6C 75 73         615 	.ascii "Atlus"
-      000505 00                     616 	.db 0x00
-      000506                        617 ___str_72:
-      000506 4D 61 6C 69 62 75      618 	.ascii "Malibu"
-      00050C 00                     619 	.db 0x00
-      00050D                        620 ___str_73:
-      00050D 61 6E 67 65 6C         621 	.ascii "angel"
-      000512 00                     622 	.db 0x00
-      000513                        623 ___str_74:
-      000513 42 75 6C 6C 65 74 2D   624 	.ascii "Bullet-Proof"
+      000549 00                     653 	.db 0x00
+      00054A                        654 ___str_71:
+      00054A 41 74 6C 75 73         655 	.ascii "Atlus"
+      00054F 00                     656 	.db 0x00
+      000550                        657 ___str_72:
+      000550 4D 61 6C 69 62 75      658 	.ascii "Malibu"
+      000556 00                     659 	.db 0x00
+      000557                        660 ___str_73:
+      000557 61 6E 67 65 6C         661 	.ascii "angel"
+      00055C 00                     662 	.db 0x00
+      00055D                        663 ___str_74:
+      00055D 42 75 6C 6C 65 74 2D   664 	.ascii "Bullet-Proof"
              50 72 6F 6F 66
-      00051F 00                     625 	.db 0x00
-      000520                        626 ___str_75:
-      000520 69 72 65 6D            627 	.ascii "irem"
-      000524 00                     628 	.db 0x00
-      000525                        629 ___str_76:
-      000525 41 62 73 6F 6C 75 74   630 	.ascii "Absolute"
+      000569 00                     665 	.db 0x00
+      00056A                        666 ___str_75:
+      00056A 69 72 65 6D            667 	.ascii "irem"
+      00056E 00                     668 	.db 0x00
+      00056F                        669 ___str_76:
+      00056F 41 62 73 6F 6C 75 74   670 	.ascii "Absolute"
              65
-      00052D 00                     631 	.db 0x00
-      00052E                        632 ___str_77:
-      00052E 41 63 63 6C 61 69 6D   633 	.ascii "Acclaim"
-      000535 00                     634 	.db 0x00
-      000536                        635 ___str_78:
-      000536 41 63 74 69 76 69 73   636 	.ascii "Activision"
+      000577 00                     671 	.db 0x00
+      000578                        672 ___str_77:
+      000578 41 63 63 6C 61 69 6D   673 	.ascii "Acclaim"
+      00057F 00                     674 	.db 0x00
+      000580                        675 ___str_78:
+      000580 41 63 74 69 76 69 73   676 	.ascii "Activision"
              69 6F 6E
-      000540 00                     637 	.db 0x00
-      000541                        638 ___str_79:
-      000541 41 6D 65 72 69 63 61   639 	.ascii "American sammy"
+      00058A 00                     677 	.db 0x00
+      00058B                        678 ___str_79:
+      00058B 41 6D 65 72 69 63 61   679 	.ascii "American sammy"
              6E 20 73 61 6D 6D 79
-      00054F 00                     640 	.db 0x00
-      000550                        641 ___str_80:
-      000550 48 69 20 74 65 63 68   642 	.ascii "Hi tech entertainment"
+      000599 00                     680 	.db 0x00
+      00059A                        681 ___str_80:
+      00059A 48 69 20 74 65 63 68   682 	.ascii "Hi tech entertainment"
              20 65 6E 74 65 72 74
              61 69 6E 6D 65 6E 74
-      000565 00                     643 	.db 0x00
-      000566                        644 ___str_81:
-      000566 4C 4A 4E               645 	.ascii "LJN"
-      000569 00                     646 	.db 0x00
-      00056A                        647 ___str_82:
-      00056A 4D 61 74 63 68 62 6F   648 	.ascii "Matchbox"
+      0005AF 00                     683 	.db 0x00
+      0005B0                        684 ___str_81:
+      0005B0 4C 4A 4E               685 	.ascii "LJN"
+      0005B3 00                     686 	.db 0x00
+      0005B4                        687 ___str_82:
+      0005B4 4D 61 74 63 68 62 6F   688 	.ascii "Matchbox"
              78
-      000572 00                     649 	.db 0x00
-      000573                        650 ___str_83:
-      000573 4D 61 74 74 65 6C      651 	.ascii "Mattel"
-      000579 00                     652 	.db 0x00
-      00057A                        653 ___str_84:
-      00057A 4D 69 6C 74 6F 6E 20   654 	.ascii "Milton Bradley"
+      0005BC 00                     689 	.db 0x00
+      0005BD                        690 ___str_83:
+      0005BD 4D 61 74 74 65 6C      691 	.ascii "Mattel"
+      0005C3 00                     692 	.db 0x00
+      0005C4                        693 ___str_84:
+      0005C4 4D 69 6C 74 6F 6E 20   694 	.ascii "Milton Bradley"
              42 72 61 64 6C 65 79
-      000588 00                     655 	.db 0x00
-      000589                        656 ___str_85:
-      000589 54 69 74 75 73         657 	.ascii "Titus"
-      00058E 00                     658 	.db 0x00
-      00058F                        659 ___str_86:
-      00058F 56 69 72 67 69 6E      660 	.ascii "Virgin"
-      000595 00                     661 	.db 0x00
-      000596                        662 ___str_87:
-      000596 4C 75 63 61 73 41 72   663 	.ascii "LucasArts"
+      0005D2 00                     695 	.db 0x00
+      0005D3                        696 ___str_85:
+      0005D3 54 69 74 75 73         697 	.ascii "Titus"
+      0005D8 00                     698 	.db 0x00
+      0005D9                        699 ___str_86:
+      0005D9 56 69 72 67 69 6E      700 	.ascii "Virgin"
+      0005DF 00                     701 	.db 0x00
+      0005E0                        702 ___str_87:
+      0005E0 4C 75 63 61 73 41 72   703 	.ascii "LucasArts"
              74 73
-      00059F 00                     664 	.db 0x00
-      0005A0                        665 ___str_88:
-      0005A0 4F 63 65 61 6E         666 	.ascii "Ocean"
-      0005A5 00                     667 	.db 0x00
-      0005A6                        668 ___str_89:
-      0005A6 49 6E 66 6F 67 72 61   669 	.ascii "Infogrames"
+      0005E9 00                     704 	.db 0x00
+      0005EA                        705 ___str_88:
+      0005EA 4F 63 65 61 6E         706 	.ascii "Ocean"
+      0005EF 00                     707 	.db 0x00
+      0005F0                        708 ___str_89:
+      0005F0 49 6E 66 6F 67 72 61   709 	.ascii "Infogrames"
              6D 65 73
-      0005B0 00                     670 	.db 0x00
-      0005B1                        671 ___str_90:
-      0005B1 49 6E 74 65 72 70 6C   672 	.ascii "Interplay"
+      0005FA 00                     710 	.db 0x00
+      0005FB                        711 ___str_90:
+      0005FB 49 6E 74 65 72 70 6C   712 	.ascii "Interplay"
              61 79
-      0005BA 00                     673 	.db 0x00
-      0005BB                        674 ___str_91:
-      0005BB 42 72 6F 64 65 72 62   675 	.ascii "Broderbund"
+      000604 00                     713 	.db 0x00
+      000605                        714 ___str_91:
+      000605 42 72 6F 64 65 72 62   715 	.ascii "Broderbund"
              75 6E 64
-      0005C5 00                     676 	.db 0x00
-      0005C6                        677 ___str_92:
-      0005C6 73 63 75 6C 70 74 75   678 	.ascii "sculptured"
+      00060F 00                     716 	.db 0x00
+      000610                        717 ___str_92:
+      000610 73 63 75 6C 70 74 75   718 	.ascii "sculptured"
              72 65 64
-      0005D0 00                     679 	.db 0x00
-      0005D1                        680 ___str_93:
-      0005D1 73 63 69               681 	.ascii "sci"
-      0005D4 00                     682 	.db 0x00
-      0005D5                        683 ___str_94:
-      0005D5 54 48 51               684 	.ascii "THQ"
-      0005D8 00                     685 	.db 0x00
-      0005D9                        686 ___str_95:
-      0005D9 41 63 63 6F 6C 61 64   687 	.ascii "Accolade"
+      00061A 00                     719 	.db 0x00
+      00061B                        720 ___str_93:
+      00061B 73 63 69               721 	.ascii "sci"
+      00061E 00                     722 	.db 0x00
+      00061F                        723 ___str_94:
+      00061F 54 48 51               724 	.ascii "THQ"
+      000622 00                     725 	.db 0x00
+      000623                        726 ___str_95:
+      000623 41 63 63 6F 6C 61 64   727 	.ascii "Accolade"
              65
-      0005E1 00                     688 	.db 0x00
-      0005E2                        689 ___str_96:
-      0005E2 6D 69 73 61 77 61      690 	.ascii "misawa"
-      0005E8 00                     691 	.db 0x00
-      0005E9                        692 ___str_97:
-      0005E9 6C 6F 7A 63            693 	.ascii "lozc"
-      0005ED 00                     694 	.db 0x00
-      0005EE                        695 ___str_98:
-      0005EE 54 6F 6B 75 6D 61 20   696 	.ascii "Tokuma Shoten Intermedia"
+      00062B 00                     728 	.db 0x00
+      00062C                        729 ___str_96:
+      00062C 6D 69 73 61 77 61      730 	.ascii "misawa"
+      000632 00                     731 	.db 0x00
+      000633                        732 ___str_97:
+      000633 6C 6F 7A 63            733 	.ascii "lozc"
+      000637 00                     734 	.db 0x00
+      000638                        735 ___str_98:
+      000638 54 6F 6B 75 6D 61 20   736 	.ascii "Tokuma Shoten Intermedia"
              53 68 6F 74 65 6E 20
              49 6E 74 65 72 6D 65
              64 69 61
-      000606 00                     697 	.db 0x00
-      000607                        698 ___str_99:
-      000607 54 73 75 6B 75 64 61   699 	.ascii "Tsukuda Original"
+      000650 00                     737 	.db 0x00
+      000651                        738 ___str_99:
+      000651 54 73 75 6B 75 64 61   739 	.ascii "Tsukuda Original"
              20 4F 72 69 67 69 6E
              61 6C
-      000617 00                     700 	.db 0x00
-      000618                        701 ___str_100:
-      000618 43 68 75 6E 73 6F 66   702 	.ascii "Chunsoft"
+      000661 00                     740 	.db 0x00
+      000662                        741 ___str_100:
+      000662 43 68 75 6E 73 6F 66   742 	.ascii "Chunsoft"
              74
-      000620 00                     703 	.db 0x00
-      000621                        704 ___str_101:
-      000621 56 69 64 65 6F 20 73   705 	.ascii "Video system"
+      00066A 00                     743 	.db 0x00
+      00066B                        744 ___str_101:
+      00066B 56 69 64 65 6F 20 73   745 	.ascii "Video system"
              79 73 74 65 6D
-      00062D 00                     706 	.db 0x00
-      00062E                        707 ___str_102:
-      00062E 56 61 72 69 65         708 	.ascii "Varie"
-      000633 00                     709 	.db 0x00
-      000634                        710 ___str_103:
-      000634 59 6F 6E 65 7A 61 77   711 	.ascii "Yonezawa/s"
+      000677 00                     746 	.db 0x00
+      000678                        747 ___str_102:
+      000678 56 61 72 69 65         748 	.ascii "Varie"
+      00067D 00                     749 	.db 0x00
+      00067E                        750 ___str_103:
+      00067E 59 6F 6E 65 7A 61 77   751 	.ascii "Yonezawa/s"
              61 2F 73
-      00063E E2                     712 	.db 0xe2
-      00063F 80                     713 	.db 0x80
-      000640 99                     714 	.db 0x99
-      000641 70 61 6C               715 	.ascii "pal"
-      000644 00                     716 	.db 0x00
-      000645                        717 ___str_104:
-      000645 4B 61 6E 65 6B 6F      718 	.ascii "Kaneko"
-      00064B 00                     719 	.db 0x00
-      00064C                        720 ___str_105:
-      00064C 50 61 63 6B 20 69 6E   721 	.ascii "Pack in soft"
+      000688 E2                     752 	.db 0xe2
+      000689 80                     753 	.db 0x80
+      00068A 99                     754 	.db 0x99
+      00068B 70 61 6C               755 	.ascii "pal"
+      00068E 00                     756 	.db 0x00
+      00068F                        757 ___str_104:
+      00068F 4B 61 6E 65 6B 6F      758 	.ascii "Kaneko"
+      000695 00                     759 	.db 0x00
+      000696                        760 ___str_105:
+      000696 50 61 63 6B 20 69 6E   761 	.ascii "Pack in soft"
              20 73 6F 66 74
-      000658 00                     722 	.db 0x00
-      000659                        723 ___str_106:
-      000659 4B 6F 6E 61 6D 69 20   724 	.ascii "Konami (Yu-Gi-Oh!)"
+      0006A2 00                     762 	.db 0x00
+      0006A3                        763 ___str_106:
+      0006A3 4B 6F 6E 61 6D 69 20   764 	.ascii "Konami (Yu-Gi-Oh!)"
              28 59 75 2D 47 69 2D
              4F 68 21 29
-      00066B 00                     725 	.db 0x00
-                                    726 	.area _INITIALIZER
-      000000                        727 __xinit__ROM_TYPES:
-      000000rA5r02                  728 	.dw ___str_14
-      000002rAEr02                  729 	.dw ___str_15
-      000004rB3r02                  730 	.dw ___str_16
-      000006rBCr02                  731 	.dw ___str_17
-      000008rCDr02                  732 	.dw ___str_18
-      00000ArD6r02                  733 	.dw ___str_19
-      00000CrDBr02                  734 	.dw ___str_20
-      00000ErE8r02                  735 	.dw ___str_21
-      000010rF1r02                  736 	.dw ___str_22
-      000012rFBr02                  737 	.dw ___str_23
-      000014r0Dr03                  738 	.dw ___str_24
-      000016r16r03                  739 	.dw ___str_25
-      000018r1Cr03                  740 	.dw ___str_26
-      00001Ar26r03                  741 	.dw ___str_27
-      00001Cr38r03                  742 	.dw ___str_28
-      00001Er41r03                  743 	.dw ___str_29
-      000020r54r03                  744 	.dw ___str_30
-      000022r6Dr03                  745 	.dw ___str_31
-      000024r72r03                  746 	.dw ___str_32
-      000026r7Dr03                  747 	.dw ___str_33
-      000028r90r03                  748 	.dw ___str_34
-      00002Ar99r03                  749 	.dw ___str_35
-      00002CrA2r03                  750 	.dw ___str_36
-      00002ErABr03                  751 	.dw ___str_37
-      000030rB4r03                  752 	.dw ___str_38
-      000032rBDr03                  753 	.dw ___str_39
-      000034rC2r03                  754 	.dw ___str_40
-      000036rCBr03                  755 	.dw ___str_41
-      000038rDCr03                  756 	.dw ___str_42
-      00003ArE8r03                  757 	.dw ___str_43
-      00003CrF8r03                  758 	.dw ___str_44
-      00003Er10r04                  759 	.dw ___str_45
-      000040r19r04                  760 	.dw ___str_46
-      000042r1Er04                  761 	.dw ___str_47
-      000044r27r04                  762 	.dw ___str_48
-      000046                        763 __xinit__LIC_CODE:
-      000046r46r04                  764 	.dw ___str_49
-      000048r4Br04                  765 	.dw ___str_50
-      00004A 00 00                  766 	.dw #0x0000
-      00004C 00 00                  767 	.dw #0x0000
-      00004E 00 00                  768 	.dw #0x0000
-      000050 00 00                  769 	.dw #0x0000
-      000052 00 00                  770 	.dw #0x0000
-      000054 00 00                  771 	.dw #0x0000
-      000056r59r04                  772 	.dw ___str_51
-      000058 00 00                  773 	.dw #0x0000
-      00005A 00 00                  774 	.dw #0x0000
-      00005C 00 00                  775 	.dw #0x0000
-      00005E 00 00                  776 	.dw #0x0000
-      000060 00 00                  777 	.dw #0x0000
-      000062 00 00                  778 	.dw #0x0000
-      000064 00 00                  779 	.dw #0x0000
-      000066 00 00                  780 	.dw #0x0000
-      000068 00 00                  781 	.dw #0x0000
-      00006A 00 00                  782 	.dw #0x0000
-      00006Cr60r04                  783 	.dw ___str_52
-      00006E 00 00                  784 	.dw #0x0000
-      000070 00 00                  785 	.dw #0x0000
-      000072 00 00                  786 	.dw #0x0000
-      000074 00 00                  787 	.dw #0x0000
-      000076r70r04                  788 	.dw ___str_53
-      000078r7Cr04                  789 	.dw ___str_54
-      00007A 00 00                  790 	.dw #0x0000
-      00007C 00 00                  791 	.dw #0x0000
-      00007E 00 00                  792 	.dw #0x0000
-      000080 00 00                  793 	.dw #0x0000
-      000082 00 00                  794 	.dw #0x0000
-      000084 00 00                  795 	.dw #0x0000
-      000086r81r04                  796 	.dw ___str_55
-      000088 00 00                  797 	.dw #0x0000
-      00008Ar85r04                  798 	.dw ___str_56
-      00008C 00 00                  799 	.dw #0x0000
-      00008Er89r04                  800 	.dw ___str_57
-      000090r96r04                  801 	.dw ___str_58
-      000092 00 00                  802 	.dw #0x0000
-      000094 00 00                  803 	.dw #0x0000
-      000096r9Cr04                  804 	.dw ___str_59
-      000098rA8r04                  805 	.dw ___str_60
-      00009A 00 00                  806 	.dw #0x0000
-      00009C 00 00                  807 	.dw #0x0000
-      00009E 00 00                  808 	.dw #0x0000
-      0000A0 00 00                  809 	.dw #0x0000
-      0000A2 00 00                  810 	.dw #0x0000
-      0000A4 00 00                  811 	.dw #0x0000
-      0000A6rADr04                  812 	.dw ___str_61
-      0000A8rB4r04                  813 	.dw ___str_62
-      0000AArBDr04                  814 	.dw ___str_63
-      0000ACrC4r04                  815 	.dw ___str_64
-      0000AErD2r04                  816 	.dw ___str_65
-      0000B0rD9r04                  817 	.dw ___str_66
-      0000B2 00 00                  818 	.dw #0x0000
-      0000B4rE0r04                  819 	.dw ___str_67
-      0000B6rE6r04                  820 	.dw ___str_68
-      0000B8rEDr04                  821 	.dw ___str_69
-      0000BA 00 00                  822 	.dw #0x0000
-      0000BC 00 00                  823 	.dw #0x0000
-      0000BE 00 00                  824 	.dw #0x0000
-      0000C0 00 00                  825 	.dw #0x0000
-      0000C2 00 00                  826 	.dw #0x0000
-      0000C4 00 00                  827 	.dw #0x0000
-      0000C6 00 00                  828 	.dw #0x0000
-      0000C8rF7r04                  829 	.dw ___str_70
-      0000CAr00r05                  830 	.dw ___str_71
-      0000CC 00 00                  831 	.dw #0x0000
-      0000CEr06r05                  832 	.dw ___str_72
-      0000D0 00 00                  833 	.dw #0x0000
-      0000D2r0Dr05                  834 	.dw ___str_73
-      0000D4r13r05                  835 	.dw ___str_74
-      0000D6 00 00                  836 	.dw #0x0000
-      0000D8r20r05                  837 	.dw ___str_75
-      0000DA 00 00                  838 	.dw #0x0000
-      0000DC 00 00                  839 	.dw #0x0000
-      0000DE 00 00                  840 	.dw #0x0000
-      0000E0 00 00                  841 	.dw #0x0000
-      0000E2 00 00                  842 	.dw #0x0000
-      0000E4 00 00                  843 	.dw #0x0000
-      0000E6r25r05                  844 	.dw ___str_76
-      0000E8r2Er05                  845 	.dw ___str_77
-      0000EAr36r05                  846 	.dw ___str_78
-      0000ECr41r05                  847 	.dw ___str_79
-      0000EErD2r04                  848 	.dw ___str_65
-      0000F0r50r05                  849 	.dw ___str_80
-      0000F2r66r05                  850 	.dw ___str_81
-      0000F4r6Ar05                  851 	.dw ___str_82
-      0000F6r73r05                  852 	.dw ___str_83
-      0000F8r7Ar05                  853 	.dw ___str_84
-      0000FA 00 00                  854 	.dw #0x0000
-      0000FC 00 00                  855 	.dw #0x0000
-      0000FE 00 00                  856 	.dw #0x0000
-      000100 00 00                  857 	.dw #0x0000
-      000102 00 00                  858 	.dw #0x0000
-      000104 00 00                  859 	.dw #0x0000
-      000106r89r05                  860 	.dw ___str_85
-      000108r8Fr05                  861 	.dw ___str_86
-      00010A 00 00                  862 	.dw #0x0000
-      00010C 00 00                  863 	.dw #0x0000
-      00010Er96r05                  864 	.dw ___str_87
-      000110 00 00                  865 	.dw #0x0000
-      000112 00 00                  866 	.dw #0x0000
-      000114rA0r05                  867 	.dw ___str_88
-      000116 00 00                  868 	.dw #0x0000
-      000118r60r04                  869 	.dw ___str_52
-      00011A 00 00                  870 	.dw #0x0000
-      00011C 00 00                  871 	.dw #0x0000
-      00011E 00 00                  872 	.dw #0x0000
-      000120 00 00                  873 	.dw #0x0000
-      000122 00 00                  874 	.dw #0x0000
-      000124 00 00                  875 	.dw #0x0000
-      000126rA6r05                  876 	.dw ___str_89
-      000128rB1r05                  877 	.dw ___str_90
-      00012ArBBr05                  878 	.dw ___str_91
-      00012CrC6r05                  879 	.dw ___str_92
-      00012E 00 00                  880 	.dw #0x0000
-      000130rD1r05                  881 	.dw ___str_93
-      000132 00 00                  882 	.dw #0x0000
-      000134 00 00                  883 	.dw #0x0000
-      000136rD5r05                  884 	.dw ___str_94
-      000138rD9r05                  885 	.dw ___str_95
-      00013A 00 00                  886 	.dw #0x0000
-      00013C 00 00                  887 	.dw #0x0000
-      00013E 00 00                  888 	.dw #0x0000
-      000140 00 00                  889 	.dw #0x0000
-      000142 00 00                  890 	.dw #0x0000
-      000144 00 00                  891 	.dw #0x0000
-      000146rE2r05                  892 	.dw ___str_96
-      000148 00 00                  893 	.dw #0x0000
-      00014A 00 00                  894 	.dw #0x0000
-      00014CrE9r05                  895 	.dw ___str_97
-      00014E 00 00                  896 	.dw #0x0000
-      000150 00 00                  897 	.dw #0x0000
-      000152rEEr05                  898 	.dw ___str_98
-      000154r07r06                  899 	.dw ___str_99
-      000156 00 00                  900 	.dw #0x0000
-      000158 00 00                  901 	.dw #0x0000
-      00015A 00 00                  902 	.dw #0x0000
-      00015C 00 00                  903 	.dw #0x0000
-      00015E 00 00                  904 	.dw #0x0000
-      000160 00 00                  905 	.dw #0x0000
-      000162 00 00                  906 	.dw #0x0000
-      000164 00 00                  907 	.dw #0x0000
-      000166 00 00                  908 	.dw #0x0000
-      000168r18r06                  909 	.dw ___str_100
-      00016Ar21r06                  910 	.dw ___str_101
-      00016CrC4r04                  911 	.dw ___str_64
-      00016E 00 00                  912 	.dw #0x0000
-      000170r2Er06                  913 	.dw ___str_102
-      000172r34r06                  914 	.dw ___str_103
-      000174r45r06                  915 	.dw ___str_104
-      000176 00 00                  916 	.dw #0x0000
-      000178r4Cr06                  917 	.dw ___str_105
-      00017A 00 00                  918 	.dw #0x0000
-      00017C 00 00                  919 	.dw #0x0000
-      00017E 00 00                  920 	.dw #0x0000
-      000180 00 00                  921 	.dw #0x0000
-      000182 00 00                  922 	.dw #0x0000
-      000184 00 00                  923 	.dw #0x0000
-      000186 00 00                  924 	.dw #0x0000
-      000188 00 00                  925 	.dw #0x0000
-      00018A 00 00                  926 	.dw #0x0000
-      00018C 00 00                  927 	.dw #0x0000
-      00018Er59r06                  928 	.dw ___str_106
-                                    929 	.area _CABS (ABS)
+      0006B5 00                     765 	.db 0x00
+                                    766 	.area _INITIALIZER
+      000000                        767 __xinit__ROM_TYPES:
+      000000rEFr02                  768 	.dw ___str_14
+      000002rF8r02                  769 	.dw ___str_15
+      000004rFDr02                  770 	.dw ___str_16
+      000006r06r03                  771 	.dw ___str_17
+      000008r17r03                  772 	.dw ___str_18
+      00000Ar20r03                  773 	.dw ___str_19
+      00000Cr25r03                  774 	.dw ___str_20
+      00000Er32r03                  775 	.dw ___str_21
+      000010r3Br03                  776 	.dw ___str_22
+      000012r45r03                  777 	.dw ___str_23
+      000014r57r03                  778 	.dw ___str_24
+      000016r60r03                  779 	.dw ___str_25
+      000018r66r03                  780 	.dw ___str_26
+      00001Ar70r03                  781 	.dw ___str_27
+      00001Cr82r03                  782 	.dw ___str_28
+      00001Er8Br03                  783 	.dw ___str_29
+      000020r9Er03                  784 	.dw ___str_30
+      000022rB7r03                  785 	.dw ___str_31
+      000024rBCr03                  786 	.dw ___str_32
+      000026rC7r03                  787 	.dw ___str_33
+      000028rDAr03                  788 	.dw ___str_34
+      00002ArE3r03                  789 	.dw ___str_35
+      00002CrECr03                  790 	.dw ___str_36
+      00002ErF5r03                  791 	.dw ___str_37
+      000030rFEr03                  792 	.dw ___str_38
+      000032r07r04                  793 	.dw ___str_39
+      000034r0Cr04                  794 	.dw ___str_40
+      000036r15r04                  795 	.dw ___str_41
+      000038r26r04                  796 	.dw ___str_42
+      00003Ar32r04                  797 	.dw ___str_43
+      00003Cr42r04                  798 	.dw ___str_44
+      00003Er5Ar04                  799 	.dw ___str_45
+      000040r63r04                  800 	.dw ___str_46
+      000042r68r04                  801 	.dw ___str_47
+      000044r71r04                  802 	.dw ___str_48
+      000046                        803 __xinit__LIC_CODE:
+      000046r90r04                  804 	.dw ___str_49
+      000048r95r04                  805 	.dw ___str_50
+      00004A 00 00                  806 	.dw #0x0000
+      00004C 00 00                  807 	.dw #0x0000
+      00004E 00 00                  808 	.dw #0x0000
+      000050 00 00                  809 	.dw #0x0000
+      000052 00 00                  810 	.dw #0x0000
+      000054 00 00                  811 	.dw #0x0000
+      000056rA3r04                  812 	.dw ___str_51
+      000058 00 00                  813 	.dw #0x0000
+      00005A 00 00                  814 	.dw #0x0000
+      00005C 00 00                  815 	.dw #0x0000
+      00005E 00 00                  816 	.dw #0x0000
+      000060 00 00                  817 	.dw #0x0000
+      000062 00 00                  818 	.dw #0x0000
+      000064 00 00                  819 	.dw #0x0000
+      000066 00 00                  820 	.dw #0x0000
+      000068 00 00                  821 	.dw #0x0000
+      00006A 00 00                  822 	.dw #0x0000
+      00006CrAAr04                  823 	.dw ___str_52
+      00006E 00 00                  824 	.dw #0x0000
+      000070 00 00                  825 	.dw #0x0000
+      000072 00 00                  826 	.dw #0x0000
+      000074 00 00                  827 	.dw #0x0000
+      000076rBAr04                  828 	.dw ___str_53
+      000078rC6r04                  829 	.dw ___str_54
+      00007A 00 00                  830 	.dw #0x0000
+      00007C 00 00                  831 	.dw #0x0000
+      00007E 00 00                  832 	.dw #0x0000
+      000080 00 00                  833 	.dw #0x0000
+      000082 00 00                  834 	.dw #0x0000
+      000084 00 00                  835 	.dw #0x0000
+      000086rCBr04                  836 	.dw ___str_55
+      000088 00 00                  837 	.dw #0x0000
+      00008ArCFr04                  838 	.dw ___str_56
+      00008C 00 00                  839 	.dw #0x0000
+      00008ErD3r04                  840 	.dw ___str_57
+      000090rE0r04                  841 	.dw ___str_58
+      000092 00 00                  842 	.dw #0x0000
+      000094 00 00                  843 	.dw #0x0000
+      000096rE6r04                  844 	.dw ___str_59
+      000098rF2r04                  845 	.dw ___str_60
+      00009A 00 00                  846 	.dw #0x0000
+      00009C 00 00                  847 	.dw #0x0000
+      00009E 00 00                  848 	.dw #0x0000
+      0000A0 00 00                  849 	.dw #0x0000
+      0000A2 00 00                  850 	.dw #0x0000
+      0000A4 00 00                  851 	.dw #0x0000
+      0000A6rF7r04                  852 	.dw ___str_61
+      0000A8rFEr04                  853 	.dw ___str_62
+      0000AAr07r05                  854 	.dw ___str_63
+      0000ACr0Er05                  855 	.dw ___str_64
+      0000AEr1Cr05                  856 	.dw ___str_65
+      0000B0r23r05                  857 	.dw ___str_66
+      0000B2 00 00                  858 	.dw #0x0000
+      0000B4r2Ar05                  859 	.dw ___str_67
+      0000B6r30r05                  860 	.dw ___str_68
+      0000B8r37r05                  861 	.dw ___str_69
+      0000BA 00 00                  862 	.dw #0x0000
+      0000BC 00 00                  863 	.dw #0x0000
+      0000BE 00 00                  864 	.dw #0x0000
+      0000C0 00 00                  865 	.dw #0x0000
+      0000C2 00 00                  866 	.dw #0x0000
+      0000C4 00 00                  867 	.dw #0x0000
+      0000C6 00 00                  868 	.dw #0x0000
+      0000C8r41r05                  869 	.dw ___str_70
+      0000CAr4Ar05                  870 	.dw ___str_71
+      0000CC 00 00                  871 	.dw #0x0000
+      0000CEr50r05                  872 	.dw ___str_72
+      0000D0 00 00                  873 	.dw #0x0000
+      0000D2r57r05                  874 	.dw ___str_73
+      0000D4r5Dr05                  875 	.dw ___str_74
+      0000D6 00 00                  876 	.dw #0x0000
+      0000D8r6Ar05                  877 	.dw ___str_75
+      0000DA 00 00                  878 	.dw #0x0000
+      0000DC 00 00                  879 	.dw #0x0000
+      0000DE 00 00                  880 	.dw #0x0000
+      0000E0 00 00                  881 	.dw #0x0000
+      0000E2 00 00                  882 	.dw #0x0000
+      0000E4 00 00                  883 	.dw #0x0000
+      0000E6r6Fr05                  884 	.dw ___str_76
+      0000E8r78r05                  885 	.dw ___str_77
+      0000EAr80r05                  886 	.dw ___str_78
+      0000ECr8Br05                  887 	.dw ___str_79
+      0000EEr1Cr05                  888 	.dw ___str_65
+      0000F0r9Ar05                  889 	.dw ___str_80
+      0000F2rB0r05                  890 	.dw ___str_81
+      0000F4rB4r05                  891 	.dw ___str_82
+      0000F6rBDr05                  892 	.dw ___str_83
+      0000F8rC4r05                  893 	.dw ___str_84
+      0000FA 00 00                  894 	.dw #0x0000
+      0000FC 00 00                  895 	.dw #0x0000
+      0000FE 00 00                  896 	.dw #0x0000
+      000100 00 00                  897 	.dw #0x0000
+      000102 00 00                  898 	.dw #0x0000
+      000104 00 00                  899 	.dw #0x0000
+      000106rD3r05                  900 	.dw ___str_85
+      000108rD9r05                  901 	.dw ___str_86
+      00010A 00 00                  902 	.dw #0x0000
+      00010C 00 00                  903 	.dw #0x0000
+      00010ErE0r05                  904 	.dw ___str_87
+      000110 00 00                  905 	.dw #0x0000
+      000112 00 00                  906 	.dw #0x0000
+      000114rEAr05                  907 	.dw ___str_88
+      000116 00 00                  908 	.dw #0x0000
+      000118rAAr04                  909 	.dw ___str_52
+      00011A 00 00                  910 	.dw #0x0000
+      00011C 00 00                  911 	.dw #0x0000
+      00011E 00 00                  912 	.dw #0x0000
+      000120 00 00                  913 	.dw #0x0000
+      000122 00 00                  914 	.dw #0x0000
+      000124 00 00                  915 	.dw #0x0000
+      000126rF0r05                  916 	.dw ___str_89
+      000128rFBr05                  917 	.dw ___str_90
+      00012Ar05r06                  918 	.dw ___str_91
+      00012Cr10r06                  919 	.dw ___str_92
+      00012E 00 00                  920 	.dw #0x0000
+      000130r1Br06                  921 	.dw ___str_93
+      000132 00 00                  922 	.dw #0x0000
+      000134 00 00                  923 	.dw #0x0000
+      000136r1Fr06                  924 	.dw ___str_94
+      000138r23r06                  925 	.dw ___str_95
+      00013A 00 00                  926 	.dw #0x0000
+      00013C 00 00                  927 	.dw #0x0000
+      00013E 00 00                  928 	.dw #0x0000
+      000140 00 00                  929 	.dw #0x0000
+      000142 00 00                  930 	.dw #0x0000
+      000144 00 00                  931 	.dw #0x0000
+      000146r2Cr06                  932 	.dw ___str_96
+      000148 00 00                  933 	.dw #0x0000
+      00014A 00 00                  934 	.dw #0x0000
+      00014Cr33r06                  935 	.dw ___str_97
+      00014E 00 00                  936 	.dw #0x0000
+      000150 00 00                  937 	.dw #0x0000
+      000152r38r06                  938 	.dw ___str_98
+      000154r51r06                  939 	.dw ___str_99
+      000156 00 00                  940 	.dw #0x0000
+      000158 00 00                  941 	.dw #0x0000
+      00015A 00 00                  942 	.dw #0x0000
+      00015C 00 00                  943 	.dw #0x0000
+      00015E 00 00                  944 	.dw #0x0000
+      000160 00 00                  945 	.dw #0x0000
+      000162 00 00                  946 	.dw #0x0000
+      000164 00 00                  947 	.dw #0x0000
+      000166 00 00                  948 	.dw #0x0000
+      000168r62r06                  949 	.dw ___str_100
+      00016Ar6Br06                  950 	.dw ___str_101
+      00016Cr0Er05                  951 	.dw ___str_64
+      00016E 00 00                  952 	.dw #0x0000
+      000170r78r06                  953 	.dw ___str_102
+      000172r7Er06                  954 	.dw ___str_103
+      000174r8Fr06                  955 	.dw ___str_104
+      000176 00 00                  956 	.dw #0x0000
+      000178r96r06                  957 	.dw ___str_105
+      00017A 00 00                  958 	.dw #0x0000
+      00017C 00 00                  959 	.dw #0x0000
+      00017E 00 00                  960 	.dw #0x0000
+      000180 00 00                  961 	.dw #0x0000
+      000182 00 00                  962 	.dw #0x0000
+      000184 00 00                  963 	.dw #0x0000
+      000186 00 00                  964 	.dw #0x0000
+      000188 00 00                  965 	.dw #0x0000
+      00018A 00 00                  966 	.dw #0x0000
+      00018C 00 00                  967 	.dw #0x0000
+      00018ErA3r06                  968 	.dw ___str_106
+                                    969 	.area _CABS (ABS)
