@@ -4,5 +4,20 @@ CompileFlags:
     "-I/home/bruno/dev/MSXgl/engine/src",
     "-I/home/bruno/dev/MSXgl/engine/content",
     "-DMSX",
-    "-D__SDCC"
+    "-D__SDCC",
+
+    # Tell clangd to target a small embedded-like arch to avoid type conflicts
+    "--target=z80-unknown-none",
+
+    # Suppress specific warning classes visible in your screenshot
+    "-Wno-incompatible-pointer-types",
+    "-Wno-implicit-function-declaration",
+
+    # SDCC uses non-standard C, so relax the standard
+    "-std=gnu89"
+  ]
+  # Remove flags clangd adds that conflict with SDCC headers
+  Remove: [
+    "-W*",        # strip any default warnings clangd injects
+    "-std=*"      # strip any default std clangd injects before we add gnu89
   ]

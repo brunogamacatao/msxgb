@@ -1,11 +1,14 @@
 #include "dos.h"
 #include "memory.h"
 #include "cart.h"
-#include "msx_printf.h"
 #include "string.h"
 
 // buffer for string manipulation
 c8 g_StrBuffer[128];
+
+#define printf(fmt, ...) \
+    String_Format(g_StrBuffer, fmt "$", ##__VA_ARGS__); \
+    DOS_StringOutput(g_StrBuffer)
 
 typedef struct {
   c8 filename[1024];
@@ -135,24 +138,20 @@ const char *cart_type_name() {
 }
 
 bool cart_load(c8 *filename) {
-  String_Format(g_StrBuffer, "Trying to open %s file...\r\n$", filename);
-  DOS_StringOutput(g_StrBuffer);
+  printf("Trying to open %s file...\r\n", filename);
 
   u8 fp = DOS_FOpen(filename, O_RDONLY);
 
   if (fp == HANDLE_INVALID) {
-    String_Format(g_StrBuffer, "Failed to open: %s\r\n$", filename);
-    DOS_StringOutput(g_StrBuffer);
+    printf("Failed to open: %s\r\n", filename);
     return false;
   }
 
-  String_Format(g_StrBuffer, "Opened: %s\r\n$", filename);
-  DOS_StringOutput(g_StrBuffer);
+  printf("Opened: %s\r\n", filename);
 
   ctx.rom_size = DOS_SeekHandle(fp, 0, SEEK_END); // go to the end to the filename
 
-  String_Format(g_StrBuffer, "File Size: %d KB\r\n$", (u16)(ctx.rom_size/1024L));
-  DOS_StringOutput(g_StrBuffer);
+  printf("File Size: %d KB\r\n", (u16)(ctx.rom_size/1024L));
 
   DOS_SeekHandle(fp, 0, SEEK_SET); // rewind 
 
@@ -164,13 +163,13 @@ bool cart_load(c8 *filename) {
   ctx.header = (rom_header *)(ctx.rom_data + 0x100);
   ctx.header->title[15] = 0;
 
-  msx_printf("Cartridge Loaded:\n");
-  msx_printf("\t Title    : %s\r\n", ctx.header->title);
-  msx_printf("\t Type     : %d (%s)\r\n", ctx.header->type, cart_type_name());
-  msx_printf("\t ROM Size : %d KB\r\n", 32 << ctx.header->rom_size);
-  msx_printf("\t RAM Size : %d\r\n", ctx.header->ram_size);
-  msx_printf("\t LIC Code : %d (%s)\r\n", ctx.header->lic_code, cart_lic_name());
-  msx_printf("\t ROM Vers : %d\r\n", ctx.header->version);
+  printf("Cartridge Loaded:\n");
+  printf("\t Title    : %s\r\n", ctx.header->title);
+  printf("\t Type     : %d (%s)\r\n", ctx.header->type, cart_type_name());
+  printf("\t ROM Size : %d KB\r\n", 32 << ctx.header->rom_size);
+  printf("\t RAM Size : %d\r\n", ctx.header->ram_size);
+  printf("\t LIC Code : %d (%s)\r\n", ctx.header->lic_code, cart_lic_name());
+  printf("\t ROM Vers : %d\r\n", ctx.header->version);
 
   return true;
 }
