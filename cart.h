@@ -19,4 +19,4 @@ typedef struct {
   u16 global_checksum;
 } rom_header;
 
-bool card_load(c8 *filename);
+bool cart_load(c8 *filename);

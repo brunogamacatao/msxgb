@@ -8,8 +8,8 @@
                                       8 ;--------------------------------------------------------
                                       9 ; Public variables in this module
                                      10 ;--------------------------------------------------------
-                                     11 	.globl _cart_load
-                                     12 	.globl _msx_printf
+                                     11 	.globl _msx_printf
+                                     12 	.globl _cart_load
                                      13 	.globl _DOS_TPAUpperAddr
                                      14 	.globl _g_ChrAnim
                                      15 	.globl _g_Font_MGL_Sample6
@@ -49,14 +49,14 @@
                                      49 ; code
                                      50 ;--------------------------------------------------------
                                      51 	.area _CODE
-                                     52 ;./emu.c:11: emu_context *emu_get_context() {
+                                     52 ;./emu.c:12: emu_context *emu_get_context() {
                                      53 ;	---------------------------------
                                      54 ; Function emu_get_context
                                      55 ; ---------------------------------
       000000                         56 _emu_get_context::
-                                     57 ;./emu.c:12: return &ctx;
+                                     57 ;./emu.c:13: return &ctx;
       000000 11r00r00         [10]   58 	ld	de, #_ctx
-                                     59 ;./emu.c:13: }
+                                     59 ;./emu.c:14: }
       000003 C9               [10]   60 	ret
       000004                         61 ___str_0:
       000004 0A                      62 	.db 0x0a
@@ -1609,121 +1609,112 @@
       00060D 2F                    1609 	.db #0x2f	; 47
       00060E 7C                    1610 	.db #0x7c	; 124
       00060F 5C                    1611 	.db #0x5c	; 92
-                                   1612 ;./emu.c:15: bool cart_load(c8 *filename) {
+                                   1612 ;./emu.c:16: u8 emu_run(u8 argc, const c8 **argv) {
                                    1613 ;	---------------------------------
-                                   1614 ; Function cart_load
+                                   1614 ; Function emu_run
                                    1615 ; ---------------------------------
-      000610                       1616 _cart_load::
-                                   1617 ;./emu.c:16: return FALSE;
-      000610 AF               [ 4] 1618 	xor	a, a
-                                   1619 ;./emu.c:17: }
-      000611 C9               [10] 1620 	ret
-                                   1621 ;./emu.c:19: u8 emu_run(u8 argc, const c8 **argv) {
-                                   1622 ;	---------------------------------
-                                   1623 ; Function emu_run
-                                   1624 ; ---------------------------------
-      000612                       1625 _emu_run::
-      000612 DD E5            [15] 1626 	push	ix
-      000614 DD 21 00 00      [14] 1627 	ld	ix,#0
-      000618 DD 39            [15] 1628 	add	ix,sp
-      00061A F5               [11] 1629 	push	af
-      00061B 4F               [ 4] 1630 	ld	c, a
-      00061C 33               [ 6] 1631 	inc	sp
-      00061D 33               [ 6] 1632 	inc	sp
-      00061E D5               [11] 1633 	push	de
-                                   1634 ;./emu.c:20: msx_printf("argc = %d\r\n", argc);
-      00061F 59               [ 4] 1635 	ld	e, c
-      000620 16 00            [ 7] 1636 	ld	d, #0x00
-      000622 C5               [11] 1637 	push	bc
-      000623 D5               [11] 1638 	push	de
-      000624 21r6Cr06         [10] 1639 	ld	hl, #___str_1
-      000627 E5               [11] 1640 	push	hl
-      000628 CDr00r00         [17] 1641 	call	_msx_printf
-      00062B F1               [10] 1642 	pop	af
-      00062C F1               [10] 1643 	pop	af
-      00062D C1               [10] 1644 	pop	bc
-                                   1645 ;./emu.c:22: if (argc < 1) {
-      00062E 79               [ 4] 1646 	ld	a, c
-      00062F D6 01            [ 7] 1647 	sub	a, #0x01
-      000631 30 0C            [12] 1648 	jr	NC, 00102$
-                                   1649 ;./emu.c:23: msx_printf("Usage: gbmsx <rom_file>\r\n");
-      000633 21r78r06         [10] 1650 	ld	hl, #___str_2
-      000636 E5               [11] 1651 	push	hl
-      000637 CDr00r00         [17] 1652 	call	_msx_printf
-      00063A F1               [10] 1653 	pop	af
-                                   1654 ;./emu.c:24: return 0;
-      00063B AF               [ 4] 1655 	xor	a, a
-      00063C C3r67r06         [10] 1656 	jp	00105$
-      00063F                       1657 00102$:
-                                   1658 ;./emu.c:27: if (!cart_load(argv[0])) {
-      00063F E1               [10] 1659 	pop	hl
-      000640 E5               [11] 1660 	push	hl
-      000641 4E               [ 7] 1661 	ld	c, (hl)
-      000642 23               [ 6] 1662 	inc	hl
-      000643 66               [ 7] 1663 	ld	h, (hl)
-                                   1664 ;	spillPairReg hl
-      000644 69               [ 4] 1665 	ld	l, c
-                                   1666 ;	spillPairReg hl
-                                   1667 ;	spillPairReg hl
-      000645 CDr10r06         [17] 1668 	call	_cart_load
-      000648 B7               [ 4] 1669 	or	a, a
-      000649 20 13            [12] 1670 	jr	NZ, 00104$
-                                   1671 ;./emu.c:28: msx_printf("Failed to load ROM file: %s\r\n", argv[0]);
-      00064B E1               [10] 1672 	pop	hl
-      00064C E5               [11] 1673 	push	hl
-      00064D 4E               [ 7] 1674 	ld	c, (hl)
-      00064E 23               [ 6] 1675 	inc	hl
-      00064F 46               [ 7] 1676 	ld	b, (hl)
-      000650 C5               [11] 1677 	push	bc
-      000651 21r92r06         [10] 1678 	ld	hl, #___str_3
-      000654 E5               [11] 1679 	push	hl
-      000655 CDr00r00         [17] 1680 	call	_msx_printf
-      000658 F1               [10] 1681 	pop	af
-      000659 F1               [10] 1682 	pop	af
-                                   1683 ;./emu.c:29: return 0;
-      00065A AF               [ 4] 1684 	xor	a, a
-      00065B C3r67r06         [10] 1685 	jp	00105$
-      00065E                       1686 00104$:
-                                   1687 ;./emu.c:32: msx_printf("Cart loaded\r\n");
-      00065E 21rB0r06         [10] 1688 	ld	hl, #___str_4
-      000661 E5               [11] 1689 	push	hl
-      000662 CDr00r00         [17] 1690 	call	_msx_printf
-      000665 F1               [10] 1691 	pop	af
-                                   1692 ;./emu.c:56: return 0;
-      000666 AF               [ 4] 1693 	xor	a, a
-      000667                       1694 00105$:
-                                   1695 ;./emu.c:57: }
-      000667 DD F9            [10] 1696 	ld	sp, ix
-      000669 DD E1            [14] 1697 	pop	ix
-      00066B C9               [10] 1698 	ret
-      00066C                       1699 ___str_1:
-      00066C 61 72 67 63 20 3D 20  1700 	.ascii "argc = %d"
+      000610                       1616 _emu_run::
+      000610 DD E5            [15] 1617 	push	ix
+      000612 DD 21 00 00      [14] 1618 	ld	ix,#0
+      000616 DD 39            [15] 1619 	add	ix,sp
+      000618 F5               [11] 1620 	push	af
+      000619 4F               [ 4] 1621 	ld	c, a
+      00061A 33               [ 6] 1622 	inc	sp
+      00061B 33               [ 6] 1623 	inc	sp
+      00061C D5               [11] 1624 	push	de
+                                   1625 ;./emu.c:17: msx_printf("argc = %d\r\n", argc);
+      00061D 59               [ 4] 1626 	ld	e, c
+      00061E 16 00            [ 7] 1627 	ld	d, #0x00
+      000620 C5               [11] 1628 	push	bc
+      000621 D5               [11] 1629 	push	de
+      000622 21r6Ar06         [10] 1630 	ld	hl, #___str_1
+      000625 E5               [11] 1631 	push	hl
+      000626 CDr00r00         [17] 1632 	call	_msx_printf
+      000629 F1               [10] 1633 	pop	af
+      00062A F1               [10] 1634 	pop	af
+      00062B C1               [10] 1635 	pop	bc
+                                   1636 ;./emu.c:19: if (argc < 1) {
+      00062C 79               [ 4] 1637 	ld	a, c
+      00062D D6 01            [ 7] 1638 	sub	a, #0x01
+      00062F 30 0C            [12] 1639 	jr	NC, 00102$
+                                   1640 ;./emu.c:20: msx_printf("Usage: gbmsx <rom_file>\r\n");
+      000631 21r76r06         [10] 1641 	ld	hl, #___str_2
+      000634 E5               [11] 1642 	push	hl
+      000635 CDr00r00         [17] 1643 	call	_msx_printf
+      000638 F1               [10] 1644 	pop	af
+                                   1645 ;./emu.c:21: return 0;
+      000639 AF               [ 4] 1646 	xor	a, a
+      00063A C3r65r06         [10] 1647 	jp	00105$
+      00063D                       1648 00102$:
+                                   1649 ;./emu.c:24: if (!cart_load(argv[0])) {
+      00063D E1               [10] 1650 	pop	hl
+      00063E E5               [11] 1651 	push	hl
+      00063F 4E               [ 7] 1652 	ld	c, (hl)
+      000640 23               [ 6] 1653 	inc	hl
+      000641 66               [ 7] 1654 	ld	h, (hl)
+                                   1655 ;	spillPairReg hl
+      000642 69               [ 4] 1656 	ld	l, c
+                                   1657 ;	spillPairReg hl
+                                   1658 ;	spillPairReg hl
+      000643 CDr00r00         [17] 1659 	call	_cart_load
+      000646 B7               [ 4] 1660 	or	a, a
+      000647 20 13            [12] 1661 	jr	NZ, 00104$
+                                   1662 ;./emu.c:25: msx_printf("Failed to load ROM file: %s\r\n", argv[0]);
+      000649 E1               [10] 1663 	pop	hl
+      00064A E5               [11] 1664 	push	hl
+      00064B 4E               [ 7] 1665 	ld	c, (hl)
+      00064C 23               [ 6] 1666 	inc	hl
+      00064D 46               [ 7] 1667 	ld	b, (hl)
+      00064E C5               [11] 1668 	push	bc
+      00064F 21r90r06         [10] 1669 	ld	hl, #___str_3
+      000652 E5               [11] 1670 	push	hl
+      000653 CDr00r00         [17] 1671 	call	_msx_printf
+      000656 F1               [10] 1672 	pop	af
+      000657 F1               [10] 1673 	pop	af
+                                   1674 ;./emu.c:26: return 0;
+      000658 AF               [ 4] 1675 	xor	a, a
+      000659 C3r65r06         [10] 1676 	jp	00105$
+      00065C                       1677 00104$:
+                                   1678 ;./emu.c:29: msx_printf("Cart loaded\r\n");
+      00065C 21rAEr06         [10] 1679 	ld	hl, #___str_4
+      00065F E5               [11] 1680 	push	hl
+      000660 CDr00r00         [17] 1681 	call	_msx_printf
+      000663 F1               [10] 1682 	pop	af
+                                   1683 ;./emu.c:53: return 0;
+      000664 AF               [ 4] 1684 	xor	a, a
+      000665                       1685 00105$:
+                                   1686 ;./emu.c:54: }
+      000665 DD F9            [10] 1687 	ld	sp, ix
+      000667 DD E1            [14] 1688 	pop	ix
+      000669 C9               [10] 1689 	ret
+      00066A                       1690 ___str_1:
+      00066A 61 72 67 63 20 3D 20  1691 	.ascii "argc = %d"
              25 64
-      000675 0D                    1701 	.db 0x0d
-      000676 0A                    1702 	.db 0x0a
-      000677 00                    1703 	.db 0x00
-      000678                       1704 ___str_2:
-      000678 55 73 61 67 65 3A 20  1705 	.ascii "Usage: gbmsx <rom_file>"
+      000673 0D                    1692 	.db 0x0d
+      000674 0A                    1693 	.db 0x0a
+      000675 00                    1694 	.db 0x00
+      000676                       1695 ___str_2:
+      000676 55 73 61 67 65 3A 20  1696 	.ascii "Usage: gbmsx <rom_file>"
              67 62 6D 73 78 20 3C
              72 6F 6D 5F 66 69 6C
              65 3E
-      00068F 0D                    1706 	.db 0x0d
-      000690 0A                    1707 	.db 0x0a
-      000691 00                    1708 	.db 0x00
-      000692                       1709 ___str_3:
-      000692 46 61 69 6C 65 64 20  1710 	.ascii "Failed to load ROM file: %s"
+      00068D 0D                    1697 	.db 0x0d
+      00068E 0A                    1698 	.db 0x0a
+      00068F 00                    1699 	.db 0x00
+      000690                       1700 ___str_3:
+      000690 46 61 69 6C 65 64 20  1701 	.ascii "Failed to load ROM file: %s"
              74 6F 20 6C 6F 61 64
              20 52 4F 4D 20 66 69
              6C 65 3A 20 25 73
-      0006AD 0D                    1711 	.db 0x0d
-      0006AE 0A                    1712 	.db 0x0a
-      0006AF 00                    1713 	.db 0x00
-      0006B0                       1714 ___str_4:
-      0006B0 43 61 72 74 20 6C 6F  1715 	.ascii "Cart loaded"
+      0006AB 0D                    1702 	.db 0x0d
+      0006AC 0A                    1703 	.db 0x0a
+      0006AD 00                    1704 	.db 0x00
+      0006AE                       1705 ___str_4:
+      0006AE 43 61 72 74 20 6C 6F  1706 	.ascii "Cart loaded"
              61 64 65 64
-      0006BB 0D                    1716 	.db 0x0d
-      0006BC 0A                    1717 	.db 0x0a
-      0006BD 00                    1718 	.db 0x00
-                                   1719 	.area _CODE
-                                   1720 	.area _INITIALIZER
-                                   1721 	.area _CABS (ABS)
+      0006B9 0D                    1707 	.db 0x0d
+      0006BA 0A                    1708 	.db 0x0a
+      0006BB 00                    1709 	.db 0x00
+                                   1710 	.area _CODE
+                                   1711 	.area _INITIALIZER
+                                   1712 	.area _CABS (ABS)

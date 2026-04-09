@@ -17,116 +17,125 @@ Symbol Table
   2 _ROM_TYPES                                                     000000 R
   0 ___str_0                                                       000042 R
   0 ___str_1                                                       000046 R
-  0 ___str_10                                                      00013C R
-  0 ___str_11                                                      000141 R
-  0 ___str_12                                                      00014E R
-  0 ___str_13                                                      000157 R
-  0 ___str_14                                                      000161 R
-  0 ___str_15                                                      000173 R
-  0 ___str_16                                                      00017C R
-  0 ___str_17                                                      000182 R
-  0 ___str_18                                                      00018C R
-  0 ___str_19                                                      00019E R
+  0 ___str_10                                                      000255 R
+  0 ___str_100                                                     000618 R
+  0 ___str_101                                                     000621 R
+  0 ___str_102                                                     00062E R
+  0 ___str_103                                                     000634 R
+  0 ___str_104                                                     000645 R
+  0 ___str_105                                                     00064C R
+  0 ___str_106                                                     000659 R
+  0 ___str_11                                                      00026A R
+  0 ___str_12                                                      00027C R
+  0 ___str_13                                                      000293 R
+  0 ___str_14                                                      0002A5 R
+  0 ___str_15                                                      0002AE R
+  0 ___str_16                                                      0002B3 R
+  0 ___str_17                                                      0002BC R
+  0 ___str_18                                                      0002CD R
+  0 ___str_19                                                      0002D6 R
   0 ___str_2                                                       00006B R
-  0 ___str_20                                                      0001A7 R
-  0 ___str_21                                                      0001BA R
-  0 ___str_22                                                      0001D3 R
-  0 ___str_23                                                      0001D8 R
-  0 ___str_24                                                      0001E3 R
-  0 ___str_25                                                      0001F6 R
-  0 ___str_26                                                      0001FF R
-  0 ___str_27                                                      000208 R
-  0 ___str_28                                                      000211 R
-  0 ___str_29                                                      00021A R
-  0 ___str_3                                                       0000E9 R
-  0 ___str_30                                                      000223 R
-  0 ___str_31                                                      000228 R
-  0 ___str_32                                                      000231 R
-  0 ___str_33                                                      000242 R
-  0 ___str_34                                                      00024E R
-  0 ___str_35                                                      00025E R
-  0 ___str_36                                                      000276 R
-  0 ___str_37                                                      00027F R
-  0 ___str_38                                                      000284 R
-  0 ___str_39                                                      00028D R
-  0 ___str_4                                                       0000FE R
-  0 ___str_40                                                      0002AC R
-  0 ___str_41                                                      0002B1 R
-  0 ___str_42                                                      0002BF R
-  0 ___str_43                                                      0002C6 R
-  0 ___str_44                                                      0002D6 R
-  0 ___str_45                                                      0002E2 R
-  0 ___str_46                                                      0002E7 R
-  0 ___str_47                                                      0002EB R
+  0 ___str_20                                                      0002DB R
+  0 ___str_21                                                      0002E8 R
+  0 ___str_22                                                      0002F1 R
+  0 ___str_23                                                      0002FB R
+  0 ___str_24                                                      00030D R
+  0 ___str_25                                                      000316 R
+  0 ___str_26                                                      00031C R
+  0 ___str_27                                                      000326 R
+  0 ___str_28                                                      000338 R
+  0 ___str_29                                                      000341 R
+  0 ___str_3                                                       0001CC R
+  0 ___str_30                                                      000354 R
+  0 ___str_31                                                      00036D R
+  0 ___str_32                                                      000372 R
+  0 ___str_33                                                      00037D R
+  0 ___str_34                                                      000390 R
+  0 ___str_35                                                      000399 R
+  0 ___str_36                                                      0003A2 R
+  0 ___str_37                                                      0003AB R
+  0 ___str_38                                                      0003B4 R
+  0 ___str_39                                                      0003BD R
+  0 ___str_4                                                       0001E8 R
+  0 ___str_40                                                      0003C2 R
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180 / ZX-Next / eZ80), page 2.
 Hexadecimal [24-Bits]
 
 Symbol Table
 
-  0 ___str_48                                                      0002EF R
-  0 ___str_49                                                      0002FC R
-  0 ___str_5                                                       00010B R
-  0 ___str_50                                                      000302 R
-  0 ___str_51                                                      00030E R
-  0 ___str_52                                                      000313 R
-  0 ___str_53                                                      00031A R
-  0 ___str_54                                                      000323 R
-  0 ___str_55                                                      00032A R
-  0 ___str_56                                                      000338 R
-  0 ___str_57                                                      00033F R
-  0 ___str_58                                                      000346 R
-  0 ___str_59                                                      00034C R
-  0 ___str_6                                                       000114 R
-  0 ___str_60                                                      000353 R
-  0 ___str_61                                                      00035D R
-  0 ___str_62                                                      000366 R
-  0 ___str_63                                                      00036C R
-  0 ___str_64                                                      000373 R
-  0 ___str_65                                                      000379 R
-  0 ___str_66                                                      000386 R
-  0 ___str_67                                                      00038B R
-  0 ___str_68                                                      000394 R
-  0 ___str_69                                                      00039C R
-  0 ___str_7                                                       000119 R
-  0 ___str_70                                                      0003A7 R
-  0 ___str_71                                                      0003B6 R
-  0 ___str_72                                                      0003CC R
-  0 ___str_73                                                      0003D0 R
-  0 ___str_74                                                      0003D9 R
-  0 ___str_75                                                      0003E0 R
-  0 ___str_76                                                      0003EF R
-  0 ___str_77                                                      0003F5 R
-  0 ___str_78                                                      0003FC R
-  0 ___str_79                                                      000406 R
-  0 ___str_8                                                       000122 R
-  0 ___str_80                                                      00040C R
-  0 ___str_81                                                      000417 R
-  0 ___str_82                                                      000421 R
-  0 ___str_83                                                      00042C R
-  0 ___str_84                                                      000437 R
-  0 ___str_85                                                      00043B R
-  0 ___str_86                                                      00043F R
-  0 ___str_87                                                      000448 R
-  0 ___str_88                                                      00044F R
-  0 ___str_89                                                      000454 R
-  0 ___str_9                                                       000133 R
-  0 ___str_90                                                      00046D R
-  0 ___str_91                                                      00047E R
-  0 ___str_92                                                      000487 R
-  0 ___str_93                                                      000494 R
-  0 ___str_94                                                      00049A R
-  0 ___str_95                                                      0004AB R
-  0 ___str_96                                                      0004B2 R
-  0 ___str_97                                                      0004BF R
+  0 ___str_41                                                      0003CB R
+  0 ___str_42                                                      0003DC R
+  0 ___str_43                                                      0003E8 R
+  0 ___str_44                                                      0003F8 R
+  0 ___str_45                                                      000410 R
+  0 ___str_46                                                      000419 R
+  0 ___str_47                                                      00041E R
+  0 ___str_48                                                      000427 R
+  0 ___str_49                                                      000446 R
+  0 ___str_5                                                       0001FD R
+  0 ___str_50                                                      00044B R
+  0 ___str_51                                                      000459 R
+  0 ___str_52                                                      000460 R
+  0 ___str_53                                                      000470 R
+  0 ___str_54                                                      00047C R
+  0 ___str_55                                                      000481 R
+  0 ___str_56                                                      000485 R
+  0 ___str_57                                                      000489 R
+  0 ___str_58                                                      000496 R
+  0 ___str_59                                                      00049C R
+  0 ___str_6                                                       00020A R
+  0 ___str_60                                                      0004A8 R
+  0 ___str_61                                                      0004AD R
+  0 ___str_62                                                      0004B4 R
+  0 ___str_63                                                      0004BD R
+  0 ___str_64                                                      0004C4 R
+  0 ___str_65                                                      0004D2 R
+  0 ___str_66                                                      0004D9 R
+  0 ___str_67                                                      0004E0 R
+  0 ___str_68                                                      0004E6 R
+  0 ___str_69                                                      0004ED R
+  0 ___str_7                                                       000219 R
+  0 ___str_70                                                      0004F7 R
+  0 ___str_71                                                      000500 R
+  0 ___str_72                                                      000506 R
+  0 ___str_73                                                      00050D R
+  0 ___str_74                                                      000513 R
+  0 ___str_75                                                      000520 R
+  0 ___str_76                                                      000525 R
+  0 ___str_77                                                      00052E R
+  0 ___str_78                                                      000536 R
+  0 ___str_79                                                      000541 R
+  0 ___str_8                                                       00022C R
+  0 ___str_80                                                      000550 R
+  0 ___str_81                                                      000566 R
+  0 ___str_82                                                      00056A R
+  0 ___str_83                                                      000573 R
+  0 ___str_84                                                      00057A R
+  0 ___str_85                                                      000589 R
+  0 ___str_86                                                      00058F R
+  0 ___str_87                                                      000596 R
+  0 ___str_88                                                      0005A0 R
+  0 ___str_89                                                      0005A6 R
+  0 ___str_9                                                       00023E R
+  0 ___str_90                                                      0005B1 R
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180 / ZX-Next / eZ80), page 3.
 Hexadecimal [24-Bits]
 
 Symbol Table
 
+  0 ___str_91                                                      0005BB R
+  0 ___str_92                                                      0005C6 R
+  0 ___str_93                                                      0005D1 R
+  0 ___str_94                                                      0005D5 R
+  0 ___str_95                                                      0005D9 R
+  0 ___str_96                                                      0005E2 R
+  0 ___str_97                                                      0005E9 R
+  0 ___str_98                                                      0005EE R
+  0 ___str_99                                                      000607 R
   7 __xinit__LIC_CODE                                              000046 R
   7 __xinit__ROM_TYPES                                             000000 R
-  0 _card_load                                                     000073 GR
   0 _cart_lic_name                                                 000000 GR
+  0 _cart_load                                                     000073 GR
   0 _cart_type_name                                                00004E GR
   1 _ctx                                                           000000 R
     _msx_printf                                                    ****** GX
@@ -136,7 +145,7 @@ Hexadecimal [24-Bits]
 
 Area Table
 
-   0 _CODE                                      size    4D2   flags    0
+   0 _CODE                                      size    66C   flags    0
    1 _DATA                                      size    408   flags    0
    2 _INITIALIZED                               size    190   flags    0
    3 _DABS                                      size      0   flags    8

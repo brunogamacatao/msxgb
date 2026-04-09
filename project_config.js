@@ -32,7 +32,7 @@ ProjModules = [ ProjName ];
 //PackSegments = false;
 
 //-- List of library modules to build (array)
-LibModules = ["system", "bios", "memory", "vdp", "print", "input", "memory", "psg", "dos"];
+LibModules = ["system", "bios", "memory", "vdp", "print", "input", "memory", "psg", "dos", "dos_mapper", "string"];
 
 //-- Additional sources to be compiled and linked with the project (array)
 AddSources = [

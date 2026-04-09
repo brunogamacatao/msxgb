@@ -8,8 +8,8 @@
 ;--------------------------------------------------------
 ; Public variables in this module
 ;--------------------------------------------------------
-	.globl _cart_load
 	.globl _msx_printf
+	.globl _cart_load
 	.globl _DOS_TPAUpperAddr
 	.globl _g_ChrAnim
 	.globl _g_Font_MGL_Sample6
@@ -49,14 +49,14 @@ _ctx:
 ; code
 ;--------------------------------------------------------
 	.area _CODE
-;./emu.c:11: emu_context *emu_get_context() {
+;./emu.c:12: emu_context *emu_get_context() {
 ;	---------------------------------
 ; Function emu_get_context
 ; ---------------------------------
 _emu_get_context::
-;./emu.c:12: return &ctx;
+;./emu.c:13: return &ctx;
 	ld	de, #_ctx
-;./emu.c:13: }
+;./emu.c:14: }
 	ret
 ___str_0:
 	.db 0x0a
@@ -1609,16 +1609,7 @@ _g_ChrAnim:
 	.db #0x2f	; 47
 	.db #0x7c	; 124
 	.db #0x5c	; 92
-;./emu.c:15: bool cart_load(c8 *filename) {
-;	---------------------------------
-; Function cart_load
-; ---------------------------------
-_cart_load::
-;./emu.c:16: return FALSE;
-	xor	a, a
-;./emu.c:17: }
-	ret
-;./emu.c:19: u8 emu_run(u8 argc, const c8 **argv) {
+;./emu.c:16: u8 emu_run(u8 argc, const c8 **argv) {
 ;	---------------------------------
 ; Function emu_run
 ; ---------------------------------
@@ -1631,7 +1622,7 @@ _emu_run::
 	inc	sp
 	inc	sp
 	push	de
-;./emu.c:20: msx_printf("argc = %d\r\n", argc);
+;./emu.c:17: msx_printf("argc = %d\r\n", argc);
 	ld	e, c
 	ld	d, #0x00
 	push	bc
@@ -1642,20 +1633,20 @@ _emu_run::
 	pop	af
 	pop	af
 	pop	bc
-;./emu.c:22: if (argc < 1) {
+;./emu.c:19: if (argc < 1) {
 	ld	a, c
 	sub	a, #0x01
 	jr	NC, 00102$
-;./emu.c:23: msx_printf("Usage: gbmsx <rom_file>\r\n");
+;./emu.c:20: msx_printf("Usage: gbmsx <rom_file>\r\n");
 	ld	hl, #___str_2
 	push	hl
 	call	_msx_printf
 	pop	af
-;./emu.c:24: return 0;
+;./emu.c:21: return 0;
 	xor	a, a
 	jp	00105$
 00102$:
-;./emu.c:27: if (!cart_load(argv[0])) {
+;./emu.c:24: if (!cart_load(argv[0])) {
 	pop	hl
 	push	hl
 	ld	c, (hl)
@@ -1668,7 +1659,7 @@ _emu_run::
 	call	_cart_load
 	or	a, a
 	jr	NZ, 00104$
-;./emu.c:28: msx_printf("Failed to load ROM file: %s\r\n", argv[0]);
+;./emu.c:25: msx_printf("Failed to load ROM file: %s\r\n", argv[0]);
 	pop	hl
 	push	hl
 	ld	c, (hl)
@@ -1680,19 +1671,19 @@ _emu_run::
 	call	_msx_printf
 	pop	af
 	pop	af
-;./emu.c:29: return 0;
+;./emu.c:26: return 0;
 	xor	a, a
 	jp	00105$
 00104$:
-;./emu.c:32: msx_printf("Cart loaded\r\n");
+;./emu.c:29: msx_printf("Cart loaded\r\n");
 	ld	hl, #___str_4
 	push	hl
 	call	_msx_printf
 	pop	af
-;./emu.c:56: return 0;
+;./emu.c:53: return 0;
 	xor	a, a
 00105$:
-;./emu.c:57: }
+;./emu.c:54: }
 	ld	sp, ix
 	pop	ix
 	ret

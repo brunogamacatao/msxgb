@@ -9,14 +9,14 @@ Symbol Table
     .__.H$L.                                                    =  000000 L
     _DOS_TPAUpperAddr                                           =  000006 G
   0 ___str_0                                                       000004 R
-  0 ___str_1                                                       00066C R
-  0 ___str_2                                                       000678 R
-  0 ___str_3                                                       000692 R
-  0 ___str_4                                                       0006B0 R
-  0 _cart_load                                                     000610 GR
+  0 ___str_1                                                       00066A R
+  0 ___str_2                                                       000676 R
+  0 ___str_3                                                       000690 R
+  0 ___str_4                                                       0006AE R
+    _cart_load                                                     ****** GX
   1 _ctx                                                           000000 R
   0 _emu_get_context                                               000000 GR
-  0 _emu_run                                                       000612 GR
+  0 _emu_run                                                       000610 GR
   0 _g_ChrAnim                                                     00060C GR
   0 _g_Font_MGL_Sample6                                            000008 GR
     _msx_printf                                                    ****** GX
@@ -27,7 +27,7 @@ Hexadecimal [24-Bits]
 
 Area Table
 
-   0 _CODE                                      size    6BE   flags    0
+   0 _CODE                                      size    6BC   flags    0
    1 _DATA                                      size      A   flags    0
    2 _INITIALIZED                               size      0   flags    0
    3 _DABS                                      size      0   flags    8

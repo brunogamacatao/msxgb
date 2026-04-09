@@ -17,7 +17,7 @@
 	.globl _DOS_CloseHandle
 	.globl _DOS_OpenHandle
 	.globl _DOS_TPAUpperAddr
-	.globl _card_load
+	.globl _cart_load
 ;--------------------------------------------------------
 ; special function registers
 ;--------------------------------------------------------
@@ -152,389 +152,579 @@ _cart_type_name::
 ___str_2:
 	.ascii "UNKNOWN"
 	.db 0x00
-;./cart.c:133: bool card_load(c8 *filename) {
+;./cart.c:133: bool cart_load(c8 *filename) {
 ;	---------------------------------
-; Function card_load
+; Function cart_load
 ; ---------------------------------
-_card_load::
+_cart_load::
 	push	ix
 	ld	ix,#0
 	add	ix,sp
-	dec	sp
-;./cart.c:134: u8 fp = DOS_FOpen(filename, O_RDONLY);
+	push	af
+	push	af
+;./cart.c:134: msx_printf("Trying to open %s file...\r\n", filename);
+	ld	bc, #___str_3+0
+	push	hl
+	push	hl
+	push	bc
+	call	_msx_printf
+	pop	af
+	pop	af
+	pop	hl
+;./cart.c:135: u8 fp = DOS_FOpen(filename, O_RDONLY);
 	push	hl
 	ld	a, #0x01
 	push	af
 	inc	sp
 	call	_DOS_OpenHandle
 	pop	hl
-;./cart.c:136: if (!fp) {
-	ld	-1 (ix), a
-	or	a, a
+;./cart.c:137: if (fp == HANDLE_INVALID) {
+	ld	c, a
+	inc	a
 	jr	NZ, 00102$
-;./cart.c:137: msx_printf("Failed to open: %s\r\n", filename);
-	ld	bc, #___str_3+0
-	push	hl
-	push	bc
-	call	_msx_printf
-	pop	af
-	pop	af
-;./cart.c:138: return false;
-	xor	a, a
-	jp	00103$
-00102$:
-;./cart.c:141: msx_printf("Opened: %s\r\n", filename);
+;./cart.c:138: msx_printf("Failed to open: %s\r\n", filename);
 	ld	bc, #___str_4+0
 	push	hl
 	push	bc
 	call	_msx_printf
 	pop	af
-;./cart.c:143: ctx.rom_size = DOS_SeekHandle(fp, 0, SEEK_END); // go to the end to the filename
-	ld	h,#0x02
-	ex	(sp),hl
+	pop	af
+;./cart.c:139: return false;
+	xor	a, a
+	jp	00103$
+00102$:
+;./cart.c:142: msx_printf("Opened: %s\r\n", filename);
+	ld	de, #___str_5+0
+	push	bc
+	push	hl
+	push	de
+	call	_msx_printf
+	pop	af
+	pop	af
+	pop	bc
+;./cart.c:144: ctx.rom_size = DOS_SeekHandle(fp, 0, SEEK_END); // go to the end to the filename
+	push	bc
+	ld	a, #0x02
+	push	af
 	inc	sp
 	ld	hl, #0x0000
 	push	hl
 	push	hl
-	ld	a, -1 (ix)
+	ld	a, c
 	call	_DOS_SeekHandle
-	ld	c, l
-	ld	b, h
-	ld	((_ctx + 1024)), de
-	ld	((_ctx + 1024)+2), bc
-;./cart.c:145: DOS_SeekHandle(fp, 0, SEEK_SET); // rewind 
+	ld	-4 (ix), e
+	ld	-3 (ix), d
+	ld	-2 (ix), l
+	ld	-1 (ix), h
+	ld	de, #(_ctx + 1024)
+	ld	hl, #2
+	add	hl, sp
+	ld	bc, #0x0004
+	ldir
+	pop	bc
+;./cart.c:146: msx_printf("Rom Size: %d\r\n", (u8)(ctx.rom_size/1024L));
+	ld	e, -3 (ix)
+	ld	d, -2 (ix)
+	ld	l, -1 (ix)
+;	spillPairReg hl
+;	spillPairReg hl
+;	spillPairReg hl
+;	spillPairReg hl
+	ld	b, #0x02
+00112$:
+	srl	l
+	rr	d
+	rr	e
+	djnz	00112$
+	ld	b, e
+	push	bc
+	push	bc
+	inc	sp
+	ld	hl, #___str_6
+	push	hl
+	call	_msx_printf
+	pop	af
+	inc	sp
+	pop	bc
+;./cart.c:148: DOS_SeekHandle(fp, 0, SEEK_SET); // rewind 
+	push	bc
 	xor	a, a
 	push	af
 	inc	sp
 	ld	hl, #0x0000
 	push	hl
 	push	hl
-	ld	a, -1 (ix)
+	ld	a, c
 	call	_DOS_SeekHandle
-;./cart.c:147: ctx.rom_data = Mem_HeapAlloc(ctx.rom_size);
+	pop	bc
+;./cart.c:150: ctx.rom_data = Mem_HeapAlloc(ctx.rom_size);
 	ld	hl, (#(_ctx + 1024) + 0)
+	push	bc
 	call	_Mem_HeapAlloc
+	pop	bc
 	ld	((_ctx + 1028)), de
-;./cart.c:149: DOS_FRead(fp, (void*)ctx.rom_data, ctx.rom_size);
+;./cart.c:152: DOS_FRead(fp, (void*)ctx.rom_data, ctx.rom_size);
 	ld	hl, (#(_ctx + 1024) + 0)
+	push	bc
 	push	hl
-	ld	a, -1 (ix)
+	ld	a, c
 	call	_DOS_ReadHandle
-;./cart.c:150: DOS_FClose(fp); 
-	ld	a, -1 (ix)
+	pop	bc
+;./cart.c:153: DOS_FClose(fp); 
+	ld	a, c
 	call	_DOS_CloseHandle
-;./cart.c:152: return true;
+;./cart.c:155: ctx.header = (rom_header *)(ctx.rom_data + 0x100);
+	ld	hl, (#(_ctx + 1028) + 0)
+	ld	c, l
+	ld	a, h
+	inc	a
+	ld	b, a
+	ld	((_ctx + 1030)), bc
+;./cart.c:156: ctx.header->title[15] = 0;
+	ld	hl, #0x0043
+	add	hl, bc
+	ld	(hl), #0x00
+;./cart.c:158: msx_printf("Cartridge Loaded:\n");
+	ld	hl, #___str_7
+	push	hl
+	call	_msx_printf
+	pop	af
+;./cart.c:159: msx_printf("\t Title    : %s\r\n", ctx.header->title);
+	ld	hl, (#(_ctx + 1030) + 0)
+	ld	bc, #0x0034
+	add	hl, bc
+	ld	bc, #___str_8+0
+	push	hl
+	push	bc
+	call	_msx_printf
+	pop	af
+	pop	af
+;./cart.c:160: msx_printf("\t Type     : %d (%s)\r\n", ctx.header->type, cart_type_name());
+	call	_cart_type_name
+	ld	hl, (#(_ctx + 1030) + 0)
+	ld	bc, #0x0047
+	add	hl, bc
+	ld	c, (hl)
+	ld	b, #0x00
+	push	de
+	push	bc
+	ld	hl, #___str_9
+	push	hl
+	call	_msx_printf
+	ld	hl, #6
+	add	hl, sp
+	ld	sp, hl
+;./cart.c:161: msx_printf("\t ROM Size : %d KB\r\n", 32 << ctx.header->rom_size);
+	ld	hl, (#(_ctx + 1030) + 0)
+	ld	de, #0x0048
+	add	hl, de
+	ld	c, (hl)
+	ld	hl, #0x0020
+	inc	c
+	jp	00115$
+00114$:
+	add	hl, hl
+00115$:
+	dec	c
+	jr	NZ,00114$
+	ld	bc, #___str_10+0
+	push	hl
+	push	bc
+	call	_msx_printf
+	pop	af
+	pop	af
+;./cart.c:162: msx_printf("\t RAM Size : %d\r\n", ctx.header->ram_size);
+	ld	hl, (#(_ctx + 1030) + 0)
+	ld	de, #0x0049
+	add	hl, de
+	ld	c, (hl)
+	ld	b, #0x00
+	push	bc
+	ld	hl, #___str_11
+	push	hl
+	call	_msx_printf
+	pop	af
+	pop	af
+;./cart.c:163: msx_printf("\t LIC Code : %d (%s)\r\n", ctx.header->lic_code, cart_lic_name());
+	call	_cart_lic_name
+	ld	hl, (#(_ctx + 1030) + 0)
+	ld	bc, #0x004b
+	add	hl, bc
+	ld	c, (hl)
+	ld	b, #0x00
+	push	de
+	push	bc
+	ld	hl, #___str_12
+	push	hl
+	call	_msx_printf
+	ld	hl, #6
+	add	hl, sp
+	ld	sp, hl
+;./cart.c:164: msx_printf("\t ROM Vers : %d\r\n", ctx.header->version);
+	ld	hl, (#(_ctx + 1030) + 0)
+	ld	de, #0x004c
+	add	hl, de
+	ld	c, (hl)
+	ld	b, #0x00
+	push	bc
+	ld	hl, #___str_13
+	push	hl
+	call	_msx_printf
+	pop	af
+	pop	af
+;./cart.c:166: return true;
 	ld	a, #0x01
 00103$:
-;./cart.c:153: }
-	inc	sp
+;./cart.c:167: }
+	ld	sp, ix
 	pop	ix
 	ret
 ___str_3:
-	.ascii "Failed to open: %s"
+	.ascii "Trying to open %s file..."
 	.db 0x0d
 	.db 0x0a
 	.db 0x00
 ___str_4:
+	.ascii "Failed to open: %s"
+	.db 0x0d
+	.db 0x0a
+	.db 0x00
+___str_5:
 	.ascii "Opened: %s"
 	.db 0x0d
 	.db 0x0a
 	.db 0x00
-	.area _CODE
-___str_5:
-	.ascii "ROM ONLY"
-	.db 0x00
 ___str_6:
-	.ascii "MBC1"
+	.ascii "Rom Size: %d"
+	.db 0x0d
+	.db 0x0a
 	.db 0x00
 ___str_7:
-	.ascii "MBC1+RAM"
+	.ascii "Cartridge Loaded:"
+	.db 0x0a
 	.db 0x00
 ___str_8:
-	.ascii "MBC1+RAM+BATTERY"
+	.db 0x09
+	.ascii " Title    : %s"
+	.db 0x0d
+	.db 0x0a
 	.db 0x00
 ___str_9:
-	.ascii "0x04 ???"
+	.db 0x09
+	.ascii " Type     : %d (%s)"
+	.db 0x0d
+	.db 0x0a
 	.db 0x00
 ___str_10:
-	.ascii "MBC2"
+	.db 0x09
+	.ascii " ROM Size : %d KB"
+	.db 0x0d
+	.db 0x0a
 	.db 0x00
 ___str_11:
-	.ascii "MBC2+BATTERY"
+	.db 0x09
+	.ascii " RAM Size : %d"
+	.db 0x0d
+	.db 0x0a
 	.db 0x00
 ___str_12:
-	.ascii "0x07 ???"
+	.db 0x09
+	.ascii " LIC Code : %d (%s)"
+	.db 0x0d
+	.db 0x0a
 	.db 0x00
 ___str_13:
-	.ascii "ROM+RAM 1"
+	.db 0x09
+	.ascii " ROM Vers : %d"
+	.db 0x0d
+	.db 0x0a
 	.db 0x00
+	.area _CODE
 ___str_14:
-	.ascii "ROM+RAM+BATTERY 1"
+	.ascii "ROM ONLY"
 	.db 0x00
 ___str_15:
-	.ascii "0x0A ???"
+	.ascii "MBC1"
 	.db 0x00
 ___str_16:
-	.ascii "MMM01"
+	.ascii "MBC1+RAM"
 	.db 0x00
 ___str_17:
-	.ascii "MMM01+RAM"
+	.ascii "MBC1+RAM+BATTERY"
 	.db 0x00
 ___str_18:
-	.ascii "MMM01+RAM+BATTERY"
+	.ascii "0x04 ???"
 	.db 0x00
 ___str_19:
-	.ascii "0x0E ???"
+	.ascii "MBC2"
 	.db 0x00
 ___str_20:
-	.ascii "MBC3+TIMER+BATTERY"
+	.ascii "MBC2+BATTERY"
 	.db 0x00
 ___str_21:
-	.ascii "MBC3+TIMER+RAM+BATTERY 2"
+	.ascii "0x07 ???"
 	.db 0x00
 ___str_22:
-	.ascii "MBC3"
+	.ascii "ROM+RAM 1"
 	.db 0x00
 ___str_23:
-	.ascii "MBC3+RAM 2"
+	.ascii "ROM+RAM+BATTERY 1"
 	.db 0x00
 ___str_24:
-	.ascii "MBC3+RAM+BATTERY 2"
+	.ascii "0x0A ???"
 	.db 0x00
 ___str_25:
-	.ascii "0x14 ???"
+	.ascii "MMM01"
 	.db 0x00
 ___str_26:
-	.ascii "0x15 ???"
+	.ascii "MMM01+RAM"
 	.db 0x00
 ___str_27:
-	.ascii "0x16 ???"
+	.ascii "MMM01+RAM+BATTERY"
 	.db 0x00
 ___str_28:
-	.ascii "0x17 ???"
+	.ascii "0x0E ???"
 	.db 0x00
 ___str_29:
-	.ascii "0x18 ???"
+	.ascii "MBC3+TIMER+BATTERY"
 	.db 0x00
 ___str_30:
-	.ascii "MBC5"
+	.ascii "MBC3+TIMER+RAM+BATTERY 2"
 	.db 0x00
 ___str_31:
-	.ascii "MBC5+RAM"
+	.ascii "MBC3"
 	.db 0x00
 ___str_32:
-	.ascii "MBC5+RAM+BATTERY"
+	.ascii "MBC3+RAM 2"
 	.db 0x00
 ___str_33:
-	.ascii "MBC5+RUMBLE"
+	.ascii "MBC3+RAM+BATTERY 2"
 	.db 0x00
 ___str_34:
-	.ascii "MBC5+RUMBLE+RAM"
+	.ascii "0x14 ???"
 	.db 0x00
 ___str_35:
-	.ascii "MBC5+RUMBLE+RAM+BATTERY"
+	.ascii "0x15 ???"
 	.db 0x00
 ___str_36:
-	.ascii "0x1F ???"
+	.ascii "0x16 ???"
 	.db 0x00
 ___str_37:
-	.ascii "MBC6"
+	.ascii "0x17 ???"
 	.db 0x00
 ___str_38:
-	.ascii "0x21 ???"
+	.ascii "0x18 ???"
 	.db 0x00
 ___str_39:
-	.ascii "MBC7+SENSOR+RUMBLE+RAM+BATTERY"
+	.ascii "MBC5"
 	.db 0x00
 ___str_40:
-	.ascii "None"
+	.ascii "MBC5+RAM"
 	.db 0x00
 ___str_41:
-	.ascii "Nintendo R&D1"
+	.ascii "MBC5+RAM+BATTERY"
 	.db 0x00
 ___str_42:
-	.ascii "Capcom"
+	.ascii "MBC5+RUMBLE"
 	.db 0x00
 ___str_43:
-	.ascii "Electronic Arts"
+	.ascii "MBC5+RUMBLE+RAM"
 	.db 0x00
 ___str_44:
-	.ascii "Hudson Soft"
+	.ascii "MBC5+RUMBLE+RAM+BATTERY"
 	.db 0x00
 ___str_45:
-	.ascii "b-ai"
+	.ascii "0x1F ???"
 	.db 0x00
 ___str_46:
-	.ascii "kss"
+	.ascii "MBC6"
 	.db 0x00
 ___str_47:
-	.ascii "pow"
+	.ascii "0x21 ???"
 	.db 0x00
 ___str_48:
-	.ascii "PCM Complete"
+	.ascii "MBC7+SENSOR+RUMBLE+RAM+BATTERY"
 	.db 0x00
 ___str_49:
-	.ascii "san-x"
+	.ascii "None"
 	.db 0x00
 ___str_50:
-	.ascii "Kemco Japan"
+	.ascii "Nintendo R&D1"
 	.db 0x00
 ___str_51:
-	.ascii "seta"
+	.ascii "Capcom"
 	.db 0x00
 ___str_52:
-	.ascii "Viacom"
+	.ascii "Electronic Arts"
 	.db 0x00
 ___str_53:
-	.ascii "Nintendo"
+	.ascii "Hudson Soft"
 	.db 0x00
 ___str_54:
-	.ascii "Bandai"
+	.ascii "b-ai"
 	.db 0x00
 ___str_55:
-	.ascii "Ocean/Acclaim"
+	.ascii "kss"
 	.db 0x00
 ___str_56:
-	.ascii "Konami"
+	.ascii "pow"
 	.db 0x00
 ___str_57:
-	.ascii "Hector"
+	.ascii "PCM Complete"
 	.db 0x00
 ___str_58:
-	.ascii "Taito"
+	.ascii "san-x"
 	.db 0x00
 ___str_59:
-	.ascii "Hudson"
+	.ascii "Kemco Japan"
 	.db 0x00
 ___str_60:
-	.ascii "Banpresto"
+	.ascii "seta"
 	.db 0x00
 ___str_61:
-	.ascii "Ubi Soft"
+	.ascii "Viacom"
 	.db 0x00
 ___str_62:
-	.ascii "Atlus"
+	.ascii "Nintendo"
 	.db 0x00
 ___str_63:
-	.ascii "Malibu"
+	.ascii "Bandai"
 	.db 0x00
 ___str_64:
-	.ascii "angel"
+	.ascii "Ocean/Acclaim"
 	.db 0x00
 ___str_65:
-	.ascii "Bullet-Proof"
+	.ascii "Konami"
 	.db 0x00
 ___str_66:
-	.ascii "irem"
+	.ascii "Hector"
 	.db 0x00
 ___str_67:
-	.ascii "Absolute"
+	.ascii "Taito"
 	.db 0x00
 ___str_68:
-	.ascii "Acclaim"
+	.ascii "Hudson"
 	.db 0x00
 ___str_69:
-	.ascii "Activision"
+	.ascii "Banpresto"
 	.db 0x00
 ___str_70:
-	.ascii "American sammy"
+	.ascii "Ubi Soft"
 	.db 0x00
 ___str_71:
-	.ascii "Hi tech entertainment"
+	.ascii "Atlus"
 	.db 0x00
 ___str_72:
-	.ascii "LJN"
+	.ascii "Malibu"
 	.db 0x00
 ___str_73:
-	.ascii "Matchbox"
+	.ascii "angel"
 	.db 0x00
 ___str_74:
-	.ascii "Mattel"
+	.ascii "Bullet-Proof"
 	.db 0x00
 ___str_75:
-	.ascii "Milton Bradley"
+	.ascii "irem"
 	.db 0x00
 ___str_76:
-	.ascii "Titus"
+	.ascii "Absolute"
 	.db 0x00
 ___str_77:
-	.ascii "Virgin"
+	.ascii "Acclaim"
 	.db 0x00
 ___str_78:
-	.ascii "LucasArts"
+	.ascii "Activision"
 	.db 0x00
 ___str_79:
-	.ascii "Ocean"
+	.ascii "American sammy"
 	.db 0x00
 ___str_80:
-	.ascii "Infogrames"
+	.ascii "Hi tech entertainment"
 	.db 0x00
 ___str_81:
-	.ascii "Interplay"
+	.ascii "LJN"
 	.db 0x00
 ___str_82:
-	.ascii "Broderbund"
+	.ascii "Matchbox"
 	.db 0x00
 ___str_83:
-	.ascii "sculptured"
+	.ascii "Mattel"
 	.db 0x00
 ___str_84:
-	.ascii "sci"
+	.ascii "Milton Bradley"
 	.db 0x00
 ___str_85:
-	.ascii "THQ"
+	.ascii "Titus"
 	.db 0x00
 ___str_86:
-	.ascii "Accolade"
+	.ascii "Virgin"
 	.db 0x00
 ___str_87:
-	.ascii "misawa"
+	.ascii "LucasArts"
 	.db 0x00
 ___str_88:
-	.ascii "lozc"
+	.ascii "Ocean"
 	.db 0x00
 ___str_89:
-	.ascii "Tokuma Shoten Intermedia"
+	.ascii "Infogrames"
 	.db 0x00
 ___str_90:
-	.ascii "Tsukuda Original"
+	.ascii "Interplay"
 	.db 0x00
 ___str_91:
-	.ascii "Chunsoft"
+	.ascii "Broderbund"
 	.db 0x00
 ___str_92:
-	.ascii "Video system"
+	.ascii "sculptured"
 	.db 0x00
 ___str_93:
-	.ascii "Varie"
+	.ascii "sci"
 	.db 0x00
 ___str_94:
+	.ascii "THQ"
+	.db 0x00
+___str_95:
+	.ascii "Accolade"
+	.db 0x00
+___str_96:
+	.ascii "misawa"
+	.db 0x00
+___str_97:
+	.ascii "lozc"
+	.db 0x00
+___str_98:
+	.ascii "Tokuma Shoten Intermedia"
+	.db 0x00
+___str_99:
+	.ascii "Tsukuda Original"
+	.db 0x00
+___str_100:
+	.ascii "Chunsoft"
+	.db 0x00
+___str_101:
+	.ascii "Video system"
+	.db 0x00
+___str_102:
+	.ascii "Varie"
+	.db 0x00
+___str_103:
 	.ascii "Yonezawa/s"
 	.db 0xe2
 	.db 0x80
 	.db 0x99
 	.ascii "pal"
 	.db 0x00
-___str_95:
+___str_104:
 	.ascii "Kaneko"
 	.db 0x00
-___str_96:
+___str_105:
 	.ascii "Pack in soft"
 	.db 0x00
-___str_97:
+___str_106:
 	.ascii "Konami (Yu-Gi-Oh!)"
 	.db 0x00
 	.area _INITIALIZER
 __xinit__ROM_TYPES:
-	.dw ___str_5
-	.dw ___str_6
-	.dw ___str_7
-	.dw ___str_8
-	.dw ___str_9
-	.dw ___str_10
-	.dw ___str_11
-	.dw ___str_12
-	.dw ___str_13
 	.dw ___str_14
 	.dw ___str_15
 	.dw ___str_16
@@ -561,48 +751,24 @@ __xinit__ROM_TYPES:
 	.dw ___str_37
 	.dw ___str_38
 	.dw ___str_39
-__xinit__LIC_CODE:
 	.dw ___str_40
 	.dw ___str_41
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
 	.dw ___str_42
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
 	.dw ___str_43
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
 	.dw ___str_44
 	.dw ___str_45
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
 	.dw ___str_46
-	.dw #0x0000
 	.dw ___str_47
-	.dw #0x0000
 	.dw ___str_48
+__xinit__LIC_CODE:
 	.dw ___str_49
-	.dw #0x0000
-	.dw #0x0000
 	.dw ___str_50
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
 	.dw ___str_51
 	.dw #0x0000
 	.dw #0x0000
@@ -610,14 +776,31 @@ __xinit__LIC_CODE:
 	.dw #0x0000
 	.dw #0x0000
 	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
 	.dw ___str_52
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
 	.dw ___str_53
 	.dw ___str_54
-	.dw ___str_55
-	.dw ___str_56
-	.dw ___str_57
 	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw ___str_55
+	.dw #0x0000
+	.dw ___str_56
+	.dw #0x0000
+	.dw ___str_57
 	.dw ___str_58
+	.dw #0x0000
+	.dw #0x0000
 	.dw ___str_59
 	.dw ___str_60
 	.dw #0x0000
@@ -626,31 +809,31 @@ __xinit__LIC_CODE:
 	.dw #0x0000
 	.dw #0x0000
 	.dw #0x0000
-	.dw #0x0000
 	.dw ___str_61
 	.dw ___str_62
-	.dw #0x0000
 	.dw ___str_63
-	.dw #0x0000
 	.dw ___str_64
 	.dw ___str_65
-	.dw #0x0000
 	.dw ___str_66
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
 	.dw #0x0000
 	.dw ___str_67
 	.dw ___str_68
 	.dw ___str_69
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
 	.dw ___str_70
-	.dw ___str_56
 	.dw ___str_71
+	.dw #0x0000
 	.dw ___str_72
+	.dw #0x0000
 	.dw ___str_73
 	.dw ___str_74
+	.dw #0x0000
 	.dw ___str_75
 	.dw #0x0000
 	.dw #0x0000
@@ -660,34 +843,22 @@ __xinit__LIC_CODE:
 	.dw #0x0000
 	.dw ___str_76
 	.dw ___str_77
-	.dw #0x0000
-	.dw #0x0000
 	.dw ___str_78
-	.dw #0x0000
-	.dw #0x0000
 	.dw ___str_79
-	.dw #0x0000
-	.dw ___str_43
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
+	.dw ___str_65
 	.dw ___str_80
 	.dw ___str_81
 	.dw ___str_82
 	.dw ___str_83
-	.dw #0x0000
 	.dw ___str_84
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
 	.dw #0x0000
 	.dw #0x0000
 	.dw ___str_85
 	.dw ___str_86
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
 	.dw #0x0000
 	.dw #0x0000
 	.dw ___str_87
@@ -695,36 +866,64 @@ __xinit__LIC_CODE:
 	.dw #0x0000
 	.dw ___str_88
 	.dw #0x0000
+	.dw ___str_52
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
 	.dw #0x0000
 	.dw ___str_89
 	.dw ___str_90
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
 	.dw ___str_91
 	.dw ___str_92
-	.dw ___str_55
 	.dw #0x0000
 	.dw ___str_93
+	.dw #0x0000
+	.dw #0x0000
 	.dw ___str_94
 	.dw ___str_95
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
 	.dw #0x0000
 	.dw ___str_96
 	.dw #0x0000
 	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
-	.dw #0x0000
 	.dw ___str_97
+	.dw #0x0000
+	.dw #0x0000
+	.dw ___str_98
+	.dw ___str_99
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw ___str_100
+	.dw ___str_101
+	.dw ___str_64
+	.dw #0x0000
+	.dw ___str_102
+	.dw ___str_103
+	.dw ___str_104
+	.dw #0x0000
+	.dw ___str_105
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw #0x0000
+	.dw ___str_106
 	.area _CABS (ABS)

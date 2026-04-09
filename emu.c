@@ -1,4 +1,5 @@
 #include "emu.h"
+#include "cart.h"
 #include "msx_printf.h"
 #include "font/font_mgl_sample6.h"
 
@@ -10,10 +11,6 @@ static emu_context ctx;
 
 emu_context *emu_get_context() {
   return &ctx;
-}
-
-bool cart_load(c8 *filename) {
-  return FALSE;
 }
 
 u8 emu_run(u8 argc, const c8 **argv) {

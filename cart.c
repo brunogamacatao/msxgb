@@ -130,10 +130,11 @@ const char *cart_type_name() {
     return "UNKNOWN";
 }
 
-bool card_load(c8 *filename) {
+bool cart_load(c8 *filename) {
+  msx_printf("Trying to open %s file...\r\n", filename);
   u8 fp = DOS_FOpen(filename, O_RDONLY);
 
-  if (!fp) {
+  if (fp == HANDLE_INVALID) {
     msx_printf("Failed to open: %s\r\n", filename);
     return false;
   }
@@ -142,12 +143,25 @@ bool card_load(c8 *filename) {
 
   ctx.rom_size = DOS_SeekHandle(fp, 0, SEEK_END); // go to the end to the filename
 
+  msx_printf("File Size: %d KB\r\n", (u8)(ctx.rom_size/1024L));
+
   DOS_SeekHandle(fp, 0, SEEK_SET); // rewind 
 
   ctx.rom_data = Mem_HeapAlloc(ctx.rom_size);
 
   DOS_FRead(fp, (void*)ctx.rom_data, ctx.rom_size);
   DOS_FClose(fp); 
+
+  ctx.header = (rom_header *)(ctx.rom_data + 0x100);
+  ctx.header->title[15] = 0;
+
+  msx_printf("Cartridge Loaded:\n");
+  msx_printf("\t Title    : %s\r\n", ctx.header->title);
+  msx_printf("\t Type     : %d (%s)\r\n", ctx.header->type, cart_type_name());
+  msx_printf("\t ROM Size : %d KB\r\n", 32 << ctx.header->rom_size);
+  msx_printf("\t RAM Size : %d\r\n", ctx.header->ram_size);
+  msx_printf("\t LIC Code : %d (%s)\r\n", ctx.header->lic_code, cart_lic_name());
+  msx_printf("\t ROM Vers : %d\r\n", ctx.header->version);
 
   return true;
 }
