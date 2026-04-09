@@ -1,0 +1,66 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180 / ZX-Next / eZ80), page 1.
+Hexadecimal [24-Bits]
+
+Symbol Table
+
+    .__.$$$.                                                    =  002710 L
+    .__.ABS.                                                    =  000000 G
+    .__.CPU.                                                    =  000000 L
+    .__.H$L.                                                    =  000000 L
+  0 PSG_End                                                        000137 R
+  0 _PSG_Apply                                                     0000D5 GR
+  0 _PSG_EnableEnvelope                                            000089 GR
+  0 _PSG_EnableNoise                                               00006E GR
+  0 _PSG_EnableTone                                                000053 GR
+  0 _PSG_GetRegister                                               00000A GR
+  0 _PSG_Mute                                                      00009D GR
+  0 _PSG_Resume                                                    0000BA GR
+  0 _PSG_SetEnvelope                                               000047 GR
+  0 _PSG_SetMixer                                                  00002C GR
+  0 _PSG_SetNoise                                                  000022 GR
+  0 _PSG_SetRegister                                               000000 GR
+  0 _PSG_SetShape                                                  00004D GR
+  0 _PSG_SetTone                                                   000013 GR
+  0 _PSG_SetVolume                                                 000038 GR
+    _g_MSXAudio_DataPort                                        =  0000C1 
+    _g_MSXAudio_DataPort2                                       =  0000C3 
+    _g_MSXAudio_IndexPort                                       =  0000C0 
+    _g_MSXAudio_IndexPort2                                      =  0000C2 
+    _g_MSXMusic_DataPort                                        =  00007D 
+    _g_MSXMusic_IndexPort                                       =  00007C 
+    _g_PSG_DataPort                                             =  0000A1 
+    _g_PSG_Ext_DataPort                                         =  000011 
+    _g_PSG_Ext_RegPort                                          =  000010 
+    _g_PSG_Ext_StatPort                                         =  000012 
+    _g_PSG_RegPort                                              =  0000A0 
+  1 _g_PSG_Regs                                                    000000 GR
+    _g_PSG_StatPort                                             =  0000A2 
+  1 _g_PSG_VolumeBackup                                            000010 GR
+    _g_PortAccessKeyboard                                       =  0000AA 
+    _g_PortControl                                              =  0000AB 
+    _g_PortPrimarySlot                                          =  0000A8 
+    _g_PortReadKeyboard                                         =  0000A9 
+    _g_RTC_AddrPort                                             =  0000B4 
+    _g_RTC_DataPort                                             =  0000B5 
+    _g_VDP_AddrPort                                             =  000099 
+    _g_VDP_DataPort                                             =  000098 
+    _g_VDP_IRegPort                                             =  00009B 
+    _g_VDP_PalPort                                              =  00009A 
+    _g_VDP_RegPort                                              =  000099 
+    _g_VDP_StatPort                                             =  000099 
+
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180 / ZX-Next / eZ80), page 2.
+Hexadecimal [24-Bits]
+
+Area Table
+
+   0 _CODE                                      size    13B   flags    0
+   1 _DATA                                      size     13   flags    0
+   2 _INITIALIZED                               size      0   flags    0
+   3 _DABS                                      size      0   flags    8
+   4 _HOME                                      size      0   flags    0
+   5 _GSINIT                                    size      0   flags    0
+   6 _GSFINAL                                   size      0   flags    0
+   7 _INITIALIZER                               size      0   flags    0
+   8 _CABS                                      size      0   flags    8
+

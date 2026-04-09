@@ -1,0 +1,1134 @@
+                                      1 ;--------------------------------------------------------
+                                      2 ; File Created by SDCC : free open source ANSI-C Compiler
+                                      3 ; Version 4.2.0 #13081 (Linux)
+                                      4 ;--------------------------------------------------------
+                                      5 	.module vgm_player
+                                      6 	.optsdcc -mz80
+                                      7 	
+                                      8 ;--------------------------------------------------------
+                                      9 ; Public variables in this module
+                                     10 ;--------------------------------------------------------
+                                     11 	.globl _MSXAudio_Resume
+                                     12 	.globl _MSXAudio_Mute
+                                     13 	.globl _MSXAudio_SetRegister
+                                     14 	.globl _MSXMusic_Resume
+                                     15 	.globl _MSXMusic_Mute
+                                     16 	.globl _MSXMusic_SetRegister
+                                     17 	.globl _SCC_Resume
+                                     18 	.globl _SCC_Mute
+                                     19 	.globl _SCC_SetRegister
+                                     20 	.globl _PSG_Resume
+                                     21 	.globl _PSG_Mute
+                                     22 	.globl _PSG_SetRegister
+                                     23 	.globl _g_VGM_State
+                                     24 	.globl _g_VGM_WaitFrame
+                                     25 	.globl _g_VGM_WaitCount
+                                     26 	.globl _g_VGM_Loop
+                                     27 	.globl _g_VGM_Pointer
+                                     28 	.globl _g_VGM_Header
+                                     29 	.globl _g_SLTSL
+                                     30 	.globl _g_GRPACY
+                                     31 	.globl _g_GRPACX
+                                     32 	.globl _g_LOGOPR
+                                     33 	.globl _g_CMASK
+                                     34 	.globl _g_CLOC
+                                     35 	.globl _g_FNKSTR
+                                     36 	.globl _g_ATRBYT
+                                     37 	.globl _g_BDRCLR
+                                     38 	.globl _g_BAKCLR
+                                     39 	.globl _g_FORCLR
+                                     40 	.globl _g_CSRX
+                                     41 	.globl _g_CSRY
+                                     42 	.globl _g_CLIKSW
+                                     43 	.globl _g_MLTPAT
+                                     44 	.globl _g_MLTATR
+                                     45 	.globl _g_MLTCGP
+                                     46 	.globl _g_MLTCOL
+                                     47 	.globl _g_MLTNAM
+                                     48 	.globl _g_GRPPAT
+                                     49 	.globl _g_GRPATR
+                                     50 	.globl _g_GRPCGP
+                                     51 	.globl _g_GRPCOL
+                                     52 	.globl _g_GRPNAM
+                                     53 	.globl _g_T32PAT
+                                     54 	.globl _g_T32ATR
+                                     55 	.globl _g_T32CGP
+                                     56 	.globl _g_T32COL
+                                     57 	.globl _g_T32NAM
+                                     58 	.globl _g_TXTPAT
+                                     59 	.globl _g_TXTATR
+                                     60 	.globl _g_TXTCGP
+                                     61 	.globl _g_TXTCOL
+                                     62 	.globl _g_TXTNAM
+                                     63 	.globl _g_CLMLST
+                                     64 	.globl _g_CRTCNT
+                                     65 	.globl _g_LINLEN
+                                     66 	.globl _g_LINL32
+                                     67 	.globl _g_LINL40
+                                     68 	.globl _g_CHAR_16
+                                     69 	.globl _g_MSXMID
+                                     70 	.globl _g_MSXVER
+                                     71 	.globl _g_ROMVersion
+                                     72 	.globl _g_BASRVN
+                                     73 	.globl _g_VDP_DW
+                                     74 	.globl _g_VDP_DR
+                                     75 	.globl _g_CGTABL
+                                     76 	.globl _g_SVFFFD
+                                     77 	.globl _g_RG27SAV
+                                     78 	.globl _g_RG26SAV
+                                     79 	.globl _g_RG25SAV
+                                     80 	.globl _g_SVFFF8
+                                     81 	.globl _g_MINROM
+                                     82 	.globl _g_RG23SAV
+                                     83 	.globl _g_RG22SAV
+                                     84 	.globl _g_RG21SAV
+                                     85 	.globl _g_RG20SAV
+                                     86 	.globl _g_RG19SAV
+                                     87 	.globl _g_RG18SAV
+                                     88 	.globl _g_RG17SAV
+                                     89 	.globl _g_RG16SAV
+                                     90 	.globl _g_RG15SAV
+                                     91 	.globl _g_RG14SAV
+                                     92 	.globl _g_RG13SAV
+                                     93 	.globl _g_RG12SAV
+                                     94 	.globl _g_RG11SAV
+                                     95 	.globl _g_RG10SAV
+                                     96 	.globl _g_RG09SAV
+                                     97 	.globl _g_RG08SAV
+                                     98 	.globl _g_PROCNM
+                                     99 	.globl _g_SLTWRK
+                                    100 	.globl _g_SLTATR
+                                    101 	.globl _g_SLTTBL
+                                    102 	.globl _g_EXPTBL
+                                    103 	.globl _g_MNROM
+                                    104 	.globl _g_DRWANG
+                                    105 	.globl _g_DRWSCL
+                                    106 	.globl _g_DRWFLG
+                                    107 	.globl _g_GYPOS
+                                    108 	.globl _g_GXPOS
+                                    109 	.globl _g_BRDATR
+                                    110 	.globl _g_CASPRV
+                                    111 	.globl _g_OLDSCR
+                                    112 	.globl _g_SCRMOD
+                                    113 	.globl _g_FLBMEM
+                                    114 	.globl _g_KANAMD
+                                    115 	.globl _g_KANAST
+                                    116 	.globl _g_CAPST
+                                    117 	.globl _g_CSTYLE
+                                    118 	.globl _g_CSRSW
+                                    119 	.globl _g_INSFLG
+                                    120 	.globl _g_ESCCNT
+                                    121 	.globl _g_GRPHED
+                                    122 	.globl _g_WINWID
+                                    123 	.globl _g_LOWLIM
+                                    124 	.globl _g_INTCNT
+                                    125 	.globl _g_INTVAL
+                                    126 	.globl _g_JIFFY
+                                    127 	.globl _g_PADX
+                                    128 	.globl _g_PADY
+                                    129 	.globl _g_INTFLG
+                                    130 	.globl _g_RTYCNT
+                                    131 	.globl _g_TRPTBL
+                                    132 	.globl _g_HIMEM
+                                    133 	.globl _g_BOTTOM
+                                    134 	.globl _g_PATWRK
+                                    135 	.globl _g_LINWRK
+                                    136 	.globl _g_KEYBUF
+                                    137 	.globl _g_NEWKEY
+                                    138 	.globl _g_OLDKEY
+                                    139 	.globl _g_CLIKFL
+                                    140 	.globl _g_ONGSBF
+                                    141 	.globl _g_FNKFLG
+                                    142 	.globl _g_FNKSWI
+                                    143 	.globl _g_CODSAV
+                                    144 	.globl _g_FSTPOS
+                                    145 	.globl _g_LINTTB
+                                    146 	.globl _g_BASROM
+                                    147 	.globl _g_ENSTOP
+                                    148 	.globl _g_VCBC
+                                    149 	.globl _g_VCBB
+                                    150 	.globl _g_VCBA
+                                    151 	.globl _g_PLYCNT
+                                    152 	.globl _g_MUSICF
+                                    153 	.globl _g_QUEUEN
+                                    154 	.globl _g_MCLPTR
+                                    155 	.globl _g_MCLLEN
+                                    156 	.globl _g_SAVVOL
+                                    157 	.globl _g_VOICEN
+                                    158 	.globl _g_SAVSP
+                                    159 	.globl _g_PRSCNT
+                                    160 	.globl _g_LSTMOD
+                                    161 	.globl _g_LSTCOM
+                                    162 	.globl _g_COMMSK
+                                    163 	.globl _g_ESTBLS
+                                    164 	.globl _g_FLAGS
+                                    165 	.globl _g_ERRORS
+                                    166 	.globl _g_DATCNT
+                                    167 	.globl _g_DEVNUM
+                                    168 	.globl _g_OLDINT
+                                    169 	.globl _g_OLDSTT
+                                    170 	.globl _g_MEXBIh
+                                    171 	.globl _g_RSIQLN
+                                    172 	.globl _g_RSFCB
+                                    173 	.globl _g_TOCNT
+                                    174 	.globl _g_RSTMP
+                                    175 	.globl _g_YSAVE
+                                    176 	.globl _g_XSAVE
+                                    177 	.globl _g_NORUSE
+                                    178 	.globl _g_MODE
+                                    179 	.globl _g_ROMA
+                                    180 	.globl _g_CHRCNT
+                                    181 	.globl _g_EXBRSA
+                                    182 	.globl _g_AVCSAV
+                                    183 	.globl _g_ACPAGE
+                                    184 	.globl _g_DPPAGE
+                                    185 	.globl _g_RS2IQ
+                                    186 	.globl _g_VOICCQ
+                                    187 	.globl _g_VOICBQ
+                                    188 	.globl _g_VOICAQ
+                                    189 	.globl _g_QUEBAK
+                                    190 	.globl _g_QUETAB
+                                    191 	.globl _g_ASPCT2
+                                    192 	.globl _g_ASPCT1
+                                    193 	.globl _g_HEADER
+                                    194 	.globl _g_HIGH
+                                    195 	.globl _g_LOW
+                                    196 	.globl _g_CS240
+                                    197 	.globl _g_CS120
+                                    198 	.globl _g_GETPNT
+                                    199 	.globl _g_PUTPNT
+                                    200 	.globl _g_REPCNT
+                                    201 	.globl _g_SCNCNT
+                                    202 	.globl _g_FRCNEW
+                                    203 	.globl _g_QUEUES
+                                    204 	.globl _g_MINUPD
+                                    205 	.globl _g_MAXUPD
+                                    206 	.globl _g_TRGFLG
+                                    207 	.globl _g_STATFL
+                                    208 	.globl _g_RG7SAV
+                                    209 	.globl _g_RG6SAV
+                                    210 	.globl _g_RG5SAV
+                                    211 	.globl _g_RG4SAV
+                                    212 	.globl _g_RG3SAV
+                                    213 	.globl _g_RG2SAV
+                                    214 	.globl _g_RG1SAV
+                                    215 	.globl _g_RG0SAV
+                                    216 	.globl _g_CNSDFG
+                                    217 	.globl _g_USRTAB
+                                    218 	.globl _g_CLPRIM
+                                    219 	.globl _g_WRPRIM
+                                    220 	.globl _g_RDPRIM
+                                    221 	.globl _VGM_Play
+                                    222 	.globl _VGM_Resume
+                                    223 	.globl _VGM_Pause
+                                    224 	.globl _VGM_Stop
+                                    225 	.globl _VGM_Decode
+                                    226 ;--------------------------------------------------------
+                                    227 ; special function registers
+                                    228 ;--------------------------------------------------------
+                           0000A8   229 _g_PortPrimarySlot	=	0x00a8
+                           0000A9   230 _g_PortReadKeyboard	=	0x00a9
+                           0000AA   231 _g_PortAccessKeyboard	=	0x00aa
+                           0000AB   232 _g_PortControl	=	0x00ab
+                           000098   233 _g_VDP_DataPort	=	0x0098
+                           000099   234 _g_VDP_RegPort	=	0x0099
+                           000099   235 _g_VDP_AddrPort	=	0x0099
+                           000099   236 _g_VDP_StatPort	=	0x0099
+                           00009A   237 _g_VDP_PalPort	=	0x009a
+                           00009B   238 _g_VDP_IRegPort	=	0x009b
+                           0000A0   239 _g_PSG_RegPort	=	0x00a0
+                           0000A1   240 _g_PSG_DataPort	=	0x00a1
+                           0000A2   241 _g_PSG_StatPort	=	0x00a2
+                           000010   242 _g_PSG_Ext_RegPort	=	0x0010
+                           000011   243 _g_PSG_Ext_DataPort	=	0x0011
+                           000012   244 _g_PSG_Ext_StatPort	=	0x0012
+                           00007C   245 _g_MSXMusic_IndexPort	=	0x007c
+                           00007D   246 _g_MSXMusic_DataPort	=	0x007d
+                           0000C0   247 _g_MSXAudio_IndexPort	=	0x00c0
+                           0000C1   248 _g_MSXAudio_DataPort	=	0x00c1
+                           0000C2   249 _g_MSXAudio_IndexPort2	=	0x00c2
+                           0000C3   250 _g_MSXAudio_DataPort2	=	0x00c3
+                           0000B4   251 _g_RTC_AddrPort	=	0x00b4
+                           0000B5   252 _g_RTC_DataPort	=	0x00b5
+                                    253 ;--------------------------------------------------------
+                                    254 ; ram data
+                                    255 ;--------------------------------------------------------
+                                    256 	.area _DATA
+                           00F3AE   257 _g_LINL40	=	0xf3ae
+                           00F3AF   258 _g_LINL32	=	0xf3af
+                           00F3B0   259 _g_LINLEN	=	0xf3b0
+                           00F3B1   260 _g_CRTCNT	=	0xf3b1
+                           00F3B2   261 _g_CLMLST	=	0xf3b2
+                           00F3B3   262 _g_TXTNAM	=	0xf3b3
+                           00F3B5   263 _g_TXTCOL	=	0xf3b5
+                           00F3B7   264 _g_TXTCGP	=	0xf3b7
+                           00F3B9   265 _g_TXTATR	=	0xf3b9
+                           00F3BB   266 _g_TXTPAT	=	0xf3bb
+                           00F3BD   267 _g_T32NAM	=	0xf3bd
+                           00F3BF   268 _g_T32COL	=	0xf3bf
+                           00F3C1   269 _g_T32CGP	=	0xf3c1
+                           00F3C3   270 _g_T32ATR	=	0xf3c3
+                           00F3C5   271 _g_T32PAT	=	0xf3c5
+                           00F3C7   272 _g_GRPNAM	=	0xf3c7
+                           00F3C9   273 _g_GRPCOL	=	0xf3c9
+                           00F3CB   274 _g_GRPCGP	=	0xf3cb
+                           00F3CD   275 _g_GRPATR	=	0xf3cd
+                           00F3CF   276 _g_GRPPAT	=	0xf3cf
+                           00F3D1   277 _g_MLTNAM	=	0xf3d1
+                           00F3D3   278 _g_MLTCOL	=	0xf3d3
+                           00F3D5   279 _g_MLTCGP	=	0xf3d5
+                           00F3D7   280 _g_MLTATR	=	0xf3d7
+                           00F3D9   281 _g_MLTPAT	=	0xf3d9
+                           00F3DB   282 _g_CLIKSW	=	0xf3db
+                           00F3DC   283 _g_CSRY	=	0xf3dc
+                           00F3DD   284 _g_CSRX	=	0xf3dd
+                           00F3E9   285 _g_FORCLR	=	0xf3e9
+                           00F3EA   286 _g_BAKCLR	=	0xf3ea
+                           00F3EB   287 _g_BDRCLR	=	0xf3eb
+                           00F3F2   288 _g_ATRBYT	=	0xf3f2
+                           00F87F   289 _g_FNKSTR	=	0xf87f
+                           00F92A   290 _g_CLOC	=	0xf92a
+                           00F92C   291 _g_CMASK	=	0xf92c
+                           00FB02   292 _g_LOGOPR	=	0xfb02
+                           00FCB7   293 _g_GRPACX	=	0xfcb7
+                           00FCB9   294 _g_GRPACY	=	0xfcb9
+                           00FFFF   295 _g_SLTSL	=	0xffff
+      000000                        296 _g_VGM_Header::
+      000000                        297 	.ds 2
+      000002                        298 _g_VGM_Pointer::
+      000002                        299 	.ds 2
+      000004                        300 _g_VGM_Loop::
+      000004                        301 	.ds 2
+      000006                        302 _g_VGM_WaitCount::
+      000006                        303 	.ds 2
+      000008                        304 _g_VGM_WaitFrame::
+      000008                        305 	.ds 2
+      00000A                        306 _g_VGM_State::
+      00000A                        307 	.ds 1
+                                    308 ;--------------------------------------------------------
+                                    309 ; ram data
+                                    310 ;--------------------------------------------------------
+                                    311 	.area _INITIALIZED
+                                    312 ;--------------------------------------------------------
+                                    313 ; absolute external ram data
+                                    314 ;--------------------------------------------------------
+                                    315 	.area _DABS (ABS)
+                                    316 ;--------------------------------------------------------
+                                    317 ; global & static initialisations
+                                    318 ;--------------------------------------------------------
+                                    319 	.area _HOME
+                                    320 	.area _GSINIT
+                                    321 	.area _GSFINAL
+                                    322 	.area _GSINIT
+                                    323 ;--------------------------------------------------------
+                                    324 ; Home
+                                    325 ;--------------------------------------------------------
+                                    326 	.area _HOME
+                                    327 	.area _HOME
+                                    328 ;--------------------------------------------------------
+                                    329 ; code
+                                    330 ;--------------------------------------------------------
+                                    331 	.area _CODE
+                                    332 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:46: bool VGM_Play(const void* addr, bool loop)
+                                    333 ;	---------------------------------
+                                    334 ; Function VGM_Play
+                                    335 ; ---------------------------------
+      000000                        336 _VGM_Play::
+      000000 DD E5            [15]  337 	push	ix
+      000002 DD 21 00 00      [14]  338 	ld	ix,#0
+      000006 DD 39            [15]  339 	add	ix,sp
+      000008 F5               [11]  340 	push	af
+      000009 F5               [11]  341 	push	af
+      00000A F5               [11]  342 	push	af
+                                    343 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:48: VGM_Pause(); // Mute all sound chip
+      00000B E5               [11]  344 	push	hl
+      00000C CDr89r01         [17]  345 	call	_VGM_Pause
+      00000F E1               [10]  346 	pop	hl
+                                    347 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:50: g_VGM_Header = (struct VGM_Header*)addr;
+      000010 22r00r00         [16]  348 	ld	(_g_VGM_Header), hl
+                                    349 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:52: if(g_VGM_Header->Ident != VGM_IDENT)
+      000013 2Ar00r00         [16]  350 	ld	hl, (_g_VGM_Header)
+      000016 E3               [19]  351 	ex	(sp), hl
+      000017 D1               [10]  352 	pop	de
+      000018 D5               [11]  353 	push	de
+      000019 21 02 00         [10]  354 	ld	hl, #2
+      00001C 39               [11]  355 	add	hl, sp
+      00001D EB               [ 4]  356 	ex	de, hl
+      00001E 01 04 00         [10]  357 	ld	bc, #0x0004
+      000021 ED B0            [21]  358 	ldir
+      000023 2ArBCr00         [16]  359 	ld	hl, (#___str_0 + 0)
+      000026 ED 4BrBEr00      [20]  360 	ld	bc, (#___str_0 + 2)
+      00002A DD 5E FC         [19]  361 	ld	e, -4 (ix)
+      00002D DD 56 FD         [19]  362 	ld	d, -3 (ix)
+      000030 BF               [ 4]  363 	cp	a, a
+      000031 ED 52            [15]  364 	sbc	hl, de
+      000033 20 0B            [12]  365 	jr	NZ, 00135$
+      000035 DD 6E FE         [19]  366 	ld	l, -2 (ix)
+      000038 DD 66 FF         [19]  367 	ld	h, -1 (ix)
+      00003B BF               [ 4]  368 	cp	a, a
+      00003C ED 42            [15]  369 	sbc	hl, bc
+      00003E 28 04            [12]  370 	jr	Z, 00102$
+      000040                        371 00135$:
+                                    372 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:53: return FALSE;
+      000040 AF               [ 4]  373 	xor	a, a
+      000041 C3rB5r00         [10]  374 	jp	00113$
+      000044                        375 00102$:
+                                    376 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:55: g_VGM_State = VGM_STATE_PLAY;
+      000044 FD 21r0Ar00      [14]  377 	ld	iy, #_g_VGM_State
+      000048 FD 36 00 80      [19]  378 	ld	0 (iy), #0x80
+                                    379 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:56: if(loop)
+      00004C DD 7E 04         [19]  380 	ld	a, 4 (ix)
+      00004F B7               [ 4]  381 	or	a, a
+      000050 28 04            [12]  382 	jr	Z, 00104$
+                                    383 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:57: g_VGM_State |= VGM_STATE_LOOP;
+      000052 FD 36 00 82      [19]  384 	ld	0 (iy), #0x82
+      000056                        385 00104$:
+                                    386 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:59: g_VGM_Pointer = (u8*)((u16)&g_VGM_Header->Data_offset + (u16)g_VGM_Header->Data_offset);
+      000056 E1               [10]  387 	pop	hl
+      000057 E5               [11]  388 	push	hl
+      000058 11 34 00         [10]  389 	ld	de, #0x0034
+      00005B 19               [11]  390 	add	hl, de
+      00005C 4D               [ 4]  391 	ld	c, l
+      00005D 44               [ 4]  392 	ld	b, h
+      00005E 7E               [ 7]  393 	ld	a, (hl)
+      00005F 23               [ 6]  394 	inc	hl
+      000060 66               [ 7]  395 	ld	h, (hl)
+                                    396 ;	spillPairReg hl
+      000061 6F               [ 4]  397 	ld	l, a
+      000062 09               [11]  398 	add	hl, bc
+      000063 22r02r00         [16]  399 	ld	(_g_VGM_Pointer), hl
+                                    400 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:60: if(g_VGM_Header->Loop_offset)
+      000066 E1               [10]  401 	pop	hl
+      000067 E5               [11]  402 	push	hl
+      000068 11 1C 00         [10]  403 	ld	de, #0x001c
+      00006B 19               [11]  404 	add	hl, de
+      00006C E5               [11]  405 	push	hl
+      00006D 4E               [ 7]  406 	ld	c, (hl)
+      00006E 23               [ 6]  407 	inc	hl
+      00006F 46               [ 7]  408 	ld	b, (hl)
+      000070 23               [ 6]  409 	inc	hl
+      000071 5E               [ 7]  410 	ld	e, (hl)
+      000072 23               [ 6]  411 	inc	hl
+      000073 56               [ 7]  412 	ld	d, (hl)
+      000074 E1               [10]  413 	pop	hl
+      000075 7A               [ 4]  414 	ld	a, d
+      000076 B3               [ 4]  415 	or	a, e
+      000077 B0               [ 4]  416 	or	a, b
+      000078 B1               [ 4]  417 	or	a, c
+      000079 28 07            [12]  418 	jr	Z, 00106$
+                                    419 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:61: g_VGM_Loop = (u8*)((u16)&g_VGM_Header->Loop_offset + (u16)g_VGM_Header->Loop_offset);
+      00007B 09               [11]  420 	add	hl, bc
+      00007C 22r04r00         [16]  421 	ld	(_g_VGM_Loop), hl
+      00007F C3r88r00         [10]  422 	jp	00107$
+      000082                        423 00106$:
+                                    424 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:63: g_VGM_Loop = 0;
+      000082 21 00 00         [10]  425 	ld	hl, #0x0000
+      000085 22r04r00         [16]  426 	ld	(_g_VGM_Loop), hl
+      000088                        427 00107$:
+                                    428 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:64: g_VGM_WaitCount = 0;
+      000088 21 00 00         [10]  429 	ld	hl, #0x0000
+      00008B 22r06r00         [16]  430 	ld	(_g_VGM_WaitCount), hl
+                                    431 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:66: if(g_ROMVersion.VSF)
+      00008E 3A 2B 00         [13]  432 	ld	a, (#_g_ROMVersion + 0)
+      000091 07               [ 4]  433 	rlca
+      000092 30 11            [12]  434 	jr	NC, 00109$
+                                    435 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.h:113: inline void VGM_SetFrequency50Hz() { g_VGM_State |= VGM_STATE_50HZ; g_VGM_WaitFrame = VGM_WAIT_50HZ; }
+      000094 3Ar0Ar00         [13]  436 	ld	a, (_g_VGM_State+0)
+      000097 F6 01            [ 7]  437 	or	a, #0x01
+      000099 32r0Ar00         [13]  438 	ld	(_g_VGM_State+0), a
+      00009C 21 72 03         [10]  439 	ld	hl, #0x0372
+      00009F 22r08r00         [16]  440 	ld	(_g_VGM_WaitFrame), hl
+                                    441 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:67: VGM_SetFrequency50Hz();
+      0000A2 C3rB3r00         [10]  442 	jp	00110$
+      0000A5                        443 00109$:
+                                    444 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.h:117: inline void VGM_SetFrequency60Hz() { g_VGM_State &= ~VGM_STATE_50HZ; g_VGM_WaitFrame = VGM_WAIT_60HZ; }
+      0000A5 3Ar0Ar00         [13]  445 	ld	a, (_g_VGM_State+0)
+      0000A8 E6 FE            [ 7]  446 	and	a, #0xfe
+      0000AA 32r0Ar00         [13]  447 	ld	(_g_VGM_State+0), a
+      0000AD 21 DF 02         [10]  448 	ld	hl, #0x02df
+      0000B0 22r08r00         [16]  449 	ld	(_g_VGM_WaitFrame), hl
+                                    450 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:69: VGM_SetFrequency60Hz();
+      0000B3                        451 00110$:
+                                    452 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:71: return TRUE;
+      0000B3 3E 01            [ 7]  453 	ld	a, #0x01
+      0000B5                        454 00113$:
+                                    455 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:72: }
+      0000B5 DD F9            [10]  456 	ld	sp, ix
+      0000B7 DD E1            [14]  457 	pop	ix
+      0000B9 E1               [10]  458 	pop	hl
+      0000BA 33               [ 6]  459 	inc	sp
+      0000BB E9               [ 4]  460 	jp	(hl)
+                           00F380   461 _g_RDPRIM	=	0xf380
+                           00F385   462 _g_WRPRIM	=	0xf385
+                           00F38C   463 _g_CLPRIM	=	0xf38c
+                           00F39A   464 _g_USRTAB	=	0xf39a
+                           00F3DE   465 _g_CNSDFG	=	0xf3de
+                           00F3DF   466 _g_RG0SAV	=	0xf3df
+                           00F3E0   467 _g_RG1SAV	=	0xf3e0
+                           00F3E1   468 _g_RG2SAV	=	0xf3e1
+                           00F3E2   469 _g_RG3SAV	=	0xf3e2
+                           00F3E3   470 _g_RG4SAV	=	0xf3e3
+                           00F3E4   471 _g_RG5SAV	=	0xf3e4
+                           00F3E5   472 _g_RG6SAV	=	0xf3e5
+                           00F3E6   473 _g_RG7SAV	=	0xf3e6
+                           00F3E7   474 _g_STATFL	=	0xf3e7
+                           00F3E8   475 _g_TRGFLG	=	0xf3e8
+                           00F3EC   476 _g_MAXUPD	=	0xf3ec
+                           00F3EF   477 _g_MINUPD	=	0xf3ef
+                           00F3F3   478 _g_QUEUES	=	0xf3f3
+                           00F3F5   479 _g_FRCNEW	=	0xf3f5
+                           00F3F6   480 _g_SCNCNT	=	0xf3f6
+                           00F3F7   481 _g_REPCNT	=	0xf3f7
+                           00F3F8   482 _g_PUTPNT	=	0xf3f8
+                           00F3FA   483 _g_GETPNT	=	0xf3fa
+                           00F3FC   484 _g_CS120	=	0xf3fc
+                           00F401   485 _g_CS240	=	0xf401
+                           00F406   486 _g_LOW	=	0xf406
+                           00F408   487 _g_HIGH	=	0xf408
+                           00F40A   488 _g_HEADER	=	0xf40a
+                           00F40B   489 _g_ASPCT1	=	0xf40b
+                           00F40D   490 _g_ASPCT2	=	0xf40d
+                           00F959   491 _g_QUETAB	=	0xf959
+                           00F971   492 _g_QUEBAK	=	0xf971
+                           00F975   493 _g_VOICAQ	=	0xf975
+                           00F9F5   494 _g_VOICBQ	=	0xf9f5
+                           00FA75   495 _g_VOICCQ	=	0xfa75
+                           00FAF5   496 _g_RS2IQ	=	0xfaf5
+                           00FAF5   497 _g_DPPAGE	=	0xfaf5
+                           00FAF6   498 _g_ACPAGE	=	0xfaf6
+                           00FAF7   499 _g_AVCSAV	=	0xfaf7
+                           00FAF8   500 _g_EXBRSA	=	0xfaf8
+                           00FAF9   501 _g_CHRCNT	=	0xfaf9
+                           00FAFA   502 _g_ROMA	=	0xfafa
+                           00FAFC   503 _g_MODE	=	0xfafc
+                           00FAFD   504 _g_NORUSE	=	0xfafd
+                           00FAFE   505 _g_XSAVE	=	0xfafe
+                           00FB00   506 _g_YSAVE	=	0xfb00
+                           00FB03   507 _g_RSTMP	=	0xfb03
+                           00FB03   508 _g_TOCNT	=	0xfb03
+                           00FB04   509 _g_RSFCB	=	0xfb04
+                           00FB06   510 _g_RSIQLN	=	0xfb06
+                           00FB07   511 _g_MEXBIh	=	0xfb07
+                           00FB0C   512 _g_OLDSTT	=	0xfb0c
+                           00FB0C   513 _g_OLDINT	=	0xfb0c
+                           00FB16   514 _g_DEVNUM	=	0xfb16
+                           00FB17   515 _g_DATCNT	=	0xfb17
+                           00FB1A   516 _g_ERRORS	=	0xfb1a
+                           00FB1B   517 _g_FLAGS	=	0xfb1b
+                           00FB1C   518 _g_ESTBLS	=	0xfb1c
+                           00FB1D   519 _g_COMMSK	=	0xfb1d
+                           00FB1E   520 _g_LSTCOM	=	0xfb1e
+                           00FB1F   521 _g_LSTMOD	=	0xfb1f
+                           00FB35   522 _g_PRSCNT	=	0xfb35
+                           00FB36   523 _g_SAVSP	=	0xfb36
+                           00FB38   524 _g_VOICEN	=	0xfb38
+                           00FB39   525 _g_SAVVOL	=	0xfb39
+                           00FB3B   526 _g_MCLLEN	=	0xfb3b
+                           00FB3C   527 _g_MCLPTR	=	0xfb3c
+                           00FB3E   528 _g_QUEUEN	=	0xfb3e
+                           00FB3F   529 _g_MUSICF	=	0xfb3f
+                           00FB40   530 _g_PLYCNT	=	0xfb40
+                           00FB41   531 _g_VCBA	=	0xfb41
+                           00FB66   532 _g_VCBB	=	0xfb66
+                           00FB8B   533 _g_VCBC	=	0xfb8b
+                           00FBB0   534 _g_ENSTOP	=	0xfbb0
+                           00FBB1   535 _g_BASROM	=	0xfbb1
+                           00FBB2   536 _g_LINTTB	=	0xfbb2
+                           00FBCA   537 _g_FSTPOS	=	0xfbca
+                           00FBCC   538 _g_CODSAV	=	0xfbcc
+                           00FBCD   539 _g_FNKSWI	=	0xfbcd
+                           00FBCE   540 _g_FNKFLG	=	0xfbce
+                           00FBD8   541 _g_ONGSBF	=	0xfbd8
+                           00FBD9   542 _g_CLIKFL	=	0xfbd9
+                           00FBDA   543 _g_OLDKEY	=	0xfbda
+                           00FBE5   544 _g_NEWKEY	=	0xfbe5
+                           00FBF0   545 _g_KEYBUF	=	0xfbf0
+                           00FC18   546 _g_LINWRK	=	0xfc18
+                           00FC40   547 _g_PATWRK	=	0xfc40
+                           00FC48   548 _g_BOTTOM	=	0xfc48
+                           00FC4A   549 _g_HIMEM	=	0xfc4a
+                           00FC4C   550 _g_TRPTBL	=	0xfc4c
+                           00FC9A   551 _g_RTYCNT	=	0xfc9a
+                           00FC9B   552 _g_INTFLG	=	0xfc9b
+                           00FC9C   553 _g_PADY	=	0xfc9c
+                           00FC9D   554 _g_PADX	=	0xfc9d
+                           00FC9E   555 _g_JIFFY	=	0xfc9e
+                           00FCA0   556 _g_INTVAL	=	0xfca0
+                           00FCA2   557 _g_INTCNT	=	0xfca2
+                           00FCA4   558 _g_LOWLIM	=	0xfca4
+                           00FCA5   559 _g_WINWID	=	0xfca5
+                           00FCA6   560 _g_GRPHED	=	0xfca6
+                           00FCA7   561 _g_ESCCNT	=	0xfca7
+                           00FCA8   562 _g_INSFLG	=	0xfca8
+                           00FCA9   563 _g_CSRSW	=	0xfca9
+                           00FCAA   564 _g_CSTYLE	=	0xfcaa
+                           00FCAB   565 _g_CAPST	=	0xfcab
+                           00FCAC   566 _g_KANAST	=	0xfcac
+                           00FCAD   567 _g_KANAMD	=	0xfcad
+                           00FCAE   568 _g_FLBMEM	=	0xfcae
+                           00FCAF   569 _g_SCRMOD	=	0xfcaf
+                           00FCB0   570 _g_OLDSCR	=	0xfcb0
+                           00FCB1   571 _g_CASPRV	=	0xfcb1
+                           00FCB2   572 _g_BRDATR	=	0xfcb2
+                           00FCB3   573 _g_GXPOS	=	0xfcb3
+                           00FCB5   574 _g_GYPOS	=	0xfcb5
+                           00FCBB   575 _g_DRWFLG	=	0xfcbb
+                           00FCBC   576 _g_DRWSCL	=	0xfcbc
+                           00FCBD   577 _g_DRWANG	=	0xfcbd
+                           00FCC1   578 _g_MNROM	=	0xfcc1
+                           00FCC1   579 _g_EXPTBL	=	0xfcc1
+                           00FCC5   580 _g_SLTTBL	=	0xfcc5
+                           00FCC9   581 _g_SLTATR	=	0xfcc9
+                           00FD09   582 _g_SLTWRK	=	0xfd09
+                           00FD89   583 _g_PROCNM	=	0xfd89
+                           00FFE7   584 _g_RG08SAV	=	0xffe7
+                           00FFE8   585 _g_RG09SAV	=	0xffe8
+                           00FFE9   586 _g_RG10SAV	=	0xffe9
+                           00FFEA   587 _g_RG11SAV	=	0xffea
+                           00FFEB   588 _g_RG12SAV	=	0xffeb
+                           00FFEC   589 _g_RG13SAV	=	0xffec
+                           00FFED   590 _g_RG14SAV	=	0xffed
+                           00FFEE   591 _g_RG15SAV	=	0xffee
+                           00FFEF   592 _g_RG16SAV	=	0xffef
+                           00FFF0   593 _g_RG17SAV	=	0xfff0
+                           00FFF1   594 _g_RG18SAV	=	0xfff1
+                           00FFF2   595 _g_RG19SAV	=	0xfff2
+                           00FFF3   596 _g_RG20SAV	=	0xfff3
+                           00FFF4   597 _g_RG21SAV	=	0xfff4
+                           00FFF5   598 _g_RG22SAV	=	0xfff5
+                           00FFF6   599 _g_RG23SAV	=	0xfff6
+                           00FFF7   600 _g_MINROM	=	0xfff7
+                           00FFF8   601 _g_SVFFF8	=	0xfff8
+                           00FFFA   602 _g_RG25SAV	=	0xfffa
+                           00FFFB   603 _g_RG26SAV	=	0xfffb
+                           00FFFC   604 _g_RG27SAV	=	0xfffc
+                           00FFFD   605 _g_SVFFFD	=	0xfffd
+                           000004   606 _g_CGTABL	=	0x0004
+                           000006   607 _g_VDP_DR	=	0x0006
+                           000007   608 _g_VDP_DW	=	0x0007
+                           00002B   609 _g_BASRVN	=	0x002b
+                           00002B   610 _g_ROMVersion	=	0x002b
+                           00002D   611 _g_MSXVER	=	0x002d
+                           00002E   612 _g_MSXMID	=	0x002e
+                           000034   613 _g_CHAR_16	=	0x0034
+      0000BC                        614 ___str_0:
+      0000BC 56 67 6D 20            615 	.ascii "Vgm "
+      0000C0 00                     616 	.db 0x00
+                                    617 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:76: void VGM_Resume()
+                                    618 ;	---------------------------------
+                                    619 ; Function VGM_Resume
+                                    620 ; ---------------------------------
+      0000C1                        621 _VGM_Resume::
+                                    622 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:78: g_VGM_State |= VGM_STATE_PLAY;
+      0000C1 3Ar0Ar00         [13]  623 	ld	a, (_g_VGM_State+0)
+      0000C4 F6 80            [ 7]  624 	or	a, #0x80
+      0000C6 32r0Ar00         [13]  625 	ld	(_g_VGM_State+0), a
+                                    626 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.h:143: inline bool VGM_ContainsPSG() { return (g_VGM_Header->Version >= 0x0151) && g_VGM_Header->AY8910_clock; }
+      0000C9 ED 4Br00r00      [20]  627 	ld	bc, (_g_VGM_Header)
+      0000CD 59               [ 4]  628 	ld	e, c
+      0000CE 50               [ 4]  629 	ld	d, b
+      0000CF 21 08 00         [10]  630 	ld	hl, #8
+      0000D2 19               [11]  631 	add	hl, de
+      0000D3 5E               [ 7]  632 	ld	e, (hl)
+      0000D4 23               [ 6]  633 	inc	hl
+      0000D5 56               [ 7]  634 	ld	d, (hl)
+      0000D6 23               [ 6]  635 	inc	hl
+      0000D7 23               [ 6]  636 	inc	hl
+      0000D8 7E               [ 7]  637 	ld	a, (hl)
+      0000D9 2B               [ 6]  638 	dec	hl
+      0000DA 6E               [ 7]  639 	ld	l, (hl)
+                                    640 ;	spillPairReg hl
+      0000DB 67               [ 4]  641 	ld	h, a
+                                    642 ;	spillPairReg hl
+                                    643 ;	spillPairReg hl
+      0000DC 7B               [ 4]  644 	ld	a, e
+      0000DD D6 51            [ 7]  645 	sub	a, #0x51
+      0000DF 7A               [ 4]  646 	ld	a, d
+      0000E0 DE 01            [ 7]  647 	sbc	a, #0x01
+      0000E2 11 00 00         [10]  648 	ld	de, #0x0000
+      0000E5 ED 52            [15]  649 	sbc	hl, de
+      0000E7 38 0F            [12]  650 	jr	C, 00115$
+      0000E9 21 74 00         [10]  651 	ld	hl, #116
+      0000EC 09               [11]  652 	add	hl, bc
+      0000ED 4E               [ 7]  653 	ld	c, (hl)
+      0000EE 23               [ 6]  654 	inc	hl
+      0000EF 46               [ 7]  655 	ld	b, (hl)
+      0000F0 23               [ 6]  656 	inc	hl
+      0000F1 7E               [ 7]  657 	ld	a, (hl)
+      0000F2 23               [ 6]  658 	inc	hl
+      0000F3 B6               [ 7]  659 	or	a, (hl)
+      0000F4 B0               [ 4]  660 	or	a, b
+      0000F5 B1               [ 4]  661 	or	a, c
+      0000F6 20 04            [12]  662 	jr	NZ, 00116$
+      0000F8                        663 00115$:
+      0000F8 AF               [ 4]  664 	xor	a, a
+      0000F9 C3rFEr00         [10]  665 	jp	00117$
+      0000FC                        666 00116$:
+      0000FC 3E 01            [ 7]  667 	ld	a, #0x01
+      0000FE                        668 00117$:
+                                    669 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:81: if(VGM_ContainsPSG())
+      0000FE B7               [ 4]  670 	or	a, a
+      0000FF 28 03            [12]  671 	jr	Z, 00102$
+                                    672 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:82: PSG_Resume();
+      000101 CDr00r00         [17]  673 	call	_PSG_Resume
+      000104                        674 00102$:
+                                    675 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.h:150: inline bool VGM_ContainsMSXMusic() { return g_VGM_Header->YM2413_clock; }
+      000104 2Ar00r00         [16]  676 	ld	hl, (_g_VGM_Header)
+      000107 11 10 00         [10]  677 	ld	de, #0x0010
+      00010A 19               [11]  678 	add	hl, de
+      00010B 7E               [ 7]  679 	ld	a, (hl)
+                                    680 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:86: if(VGM_ContainsMSXMusic())
+      00010C B7               [ 4]  681 	or	a, a
+      00010D 28 03            [12]  682 	jr	Z, 00104$
+                                    683 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:87: MSXMusic_Resume();
+      00010F CDr00r00         [17]  684 	call	_MSXMusic_Resume
+      000112                        685 00104$:
+                                    686 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.h:143: inline bool VGM_ContainsPSG() { return (g_VGM_Header->Version >= 0x0151) && g_VGM_Header->AY8910_clock; }
+      000112 ED 4Br00r00      [20]  687 	ld	bc, (_g_VGM_Header)
+                                    688 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.h:157: inline bool VGM_ContainsMSXAudio() { return (g_VGM_Header->Version >= 0x0151) && g_VGM_Header->Y8950_clock; }
+      000116 59               [ 4]  689 	ld	e, c
+      000117 50               [ 4]  690 	ld	d, b
+      000118 21 08 00         [10]  691 	ld	hl, #8
+      00011B 19               [11]  692 	add	hl, de
+      00011C 5E               [ 7]  693 	ld	e, (hl)
+      00011D 23               [ 6]  694 	inc	hl
+      00011E 56               [ 7]  695 	ld	d, (hl)
+      00011F 23               [ 6]  696 	inc	hl
+      000120 23               [ 6]  697 	inc	hl
+      000121 7E               [ 7]  698 	ld	a, (hl)
+      000122 2B               [ 6]  699 	dec	hl
+      000123 6E               [ 7]  700 	ld	l, (hl)
+                                    701 ;	spillPairReg hl
+      000124 67               [ 4]  702 	ld	h, a
+                                    703 ;	spillPairReg hl
+                                    704 ;	spillPairReg hl
+      000125 7B               [ 4]  705 	ld	a, e
+      000126 D6 51            [ 7]  706 	sub	a, #0x51
+      000128 7A               [ 4]  707 	ld	a, d
+      000129 DE 01            [ 7]  708 	sbc	a, #0x01
+      00012B 11 00 00         [10]  709 	ld	de, #0x0000
+      00012E ED 52            [15]  710 	sbc	hl, de
+      000130 38 0F            [12]  711 	jr	C, 00118$
+      000132 21 58 00         [10]  712 	ld	hl, #88
+      000135 09               [11]  713 	add	hl, bc
+      000136 4E               [ 7]  714 	ld	c, (hl)
+      000137 23               [ 6]  715 	inc	hl
+      000138 46               [ 7]  716 	ld	b, (hl)
+      000139 23               [ 6]  717 	inc	hl
+      00013A 7E               [ 7]  718 	ld	a, (hl)
+      00013B 23               [ 6]  719 	inc	hl
+      00013C B6               [ 7]  720 	or	a, (hl)
+      00013D B0               [ 4]  721 	or	a, b
+      00013E B1               [ 4]  722 	or	a, c
+      00013F 20 04            [12]  723 	jr	NZ, 00119$
+      000141                        724 00118$:
+      000141 AF               [ 4]  725 	xor	a, a
+      000142 C3r47r01         [10]  726 	jp	00120$
+      000145                        727 00119$:
+      000145 3E 01            [ 7]  728 	ld	a, #0x01
+      000147                        729 00120$:
+                                    730 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:91: if(VGM_ContainsMSXAudio())
+      000147 B7               [ 4]  731 	or	a, a
+      000148 28 03            [12]  732 	jr	Z, 00106$
+                                    733 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:92: MSXAudio_Resume();
+      00014A CDr00r00         [17]  734 	call	_MSXAudio_Resume
+      00014D                        735 00106$:
+                                    736 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.h:143: inline bool VGM_ContainsPSG() { return (g_VGM_Header->Version >= 0x0151) && g_VGM_Header->AY8910_clock; }
+      00014D ED 4Br00r00      [20]  737 	ld	bc, (_g_VGM_Header)
+                                    738 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.h:164: inline bool VGM_ContainsSCC() { return (g_VGM_Header->Version >= 0x0161) && g_VGM_Header->K051649_clock; }
+      000151 59               [ 4]  739 	ld	e, c
+      000152 50               [ 4]  740 	ld	d, b
+      000153 21 08 00         [10]  741 	ld	hl, #8
+      000156 19               [11]  742 	add	hl, de
+      000157 5E               [ 7]  743 	ld	e, (hl)
+      000158 23               [ 6]  744 	inc	hl
+      000159 56               [ 7]  745 	ld	d, (hl)
+      00015A 23               [ 6]  746 	inc	hl
+      00015B 23               [ 6]  747 	inc	hl
+      00015C 7E               [ 7]  748 	ld	a, (hl)
+      00015D 2B               [ 6]  749 	dec	hl
+      00015E 6E               [ 7]  750 	ld	l, (hl)
+                                    751 ;	spillPairReg hl
+      00015F 67               [ 4]  752 	ld	h, a
+                                    753 ;	spillPairReg hl
+                                    754 ;	spillPairReg hl
+      000160 7B               [ 4]  755 	ld	a, e
+      000161 D6 61            [ 7]  756 	sub	a, #0x61
+      000163 7A               [ 4]  757 	ld	a, d
+      000164 DE 01            [ 7]  758 	sbc	a, #0x01
+      000166 11 00 00         [10]  759 	ld	de, #0x0000
+      000169 ED 52            [15]  760 	sbc	hl, de
+      00016B 38 11            [12]  761 	jr	C, 00121$
+      00016D 21 9C 00         [10]  762 	ld	hl, #156
+      000170 09               [11]  763 	add	hl, bc
+      000171 4E               [ 7]  764 	ld	c, (hl)
+      000172 23               [ 6]  765 	inc	hl
+      000173 46               [ 7]  766 	ld	b, (hl)
+      000174 23               [ 6]  767 	inc	hl
+      000175 5E               [ 7]  768 	ld	e, (hl)
+      000176 23               [ 6]  769 	inc	hl
+      000177 56               [ 7]  770 	ld	d, (hl)
+      000178 7A               [ 4]  771 	ld	a, d
+      000179 B3               [ 4]  772 	or	a, e
+      00017A B0               [ 4]  773 	or	a, b
+      00017B B1               [ 4]  774 	or	a, c
+      00017C 20 04            [12]  775 	jr	NZ, 00122$
+      00017E                        776 00121$:
+      00017E AF               [ 4]  777 	xor	a, a
+      00017F C3r84r01         [10]  778 	jp	00123$
+      000182                        779 00122$:
+      000182 3E 01            [ 7]  780 	ld	a, #0x01
+      000184                        781 00123$:
+                                    782 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:96: if(VGM_ContainsSCC())
+      000184 B7               [ 4]  783 	or	a, a
+                                    784 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:97: SCC_Resume();
+      000185 C2r00r00         [10]  785 	jp	NZ,_SCC_Resume
+                                    786 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:99: }
+      000188 C9               [10]  787 	ret
+                                    788 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:103: void VGM_Pause()
+                                    789 ;	---------------------------------
+                                    790 ; Function VGM_Pause
+                                    791 ; ---------------------------------
+      000189                        792 _VGM_Pause::
+                                    793 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:105: g_VGM_State &= ~VGM_STATE_PLAY;
+      000189 3Ar0Ar00         [13]  794 	ld	a, (_g_VGM_State+0)
+      00018C E6 7F            [ 7]  795 	and	a, #0x7f
+      00018E 32r0Ar00         [13]  796 	ld	(_g_VGM_State+0), a
+                                    797 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:107: PSG_Mute();
+      000191 CDr00r00         [17]  798 	call	_PSG_Mute
+                                    799 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:110: MSXMusic_Mute();
+      000194 CDr00r00         [17]  800 	call	_MSXMusic_Mute
+                                    801 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:114: MSXAudio_Mute();
+      000197 CDr00r00         [17]  802 	call	_MSXAudio_Mute
+                                    803 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:118: SCC_Mute();
+                                    804 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:120: }
+      00019A C3r00r00         [10]  805 	jp	_SCC_Mute
+                                    806 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:124: void VGM_Stop()
+                                    807 ;	---------------------------------
+                                    808 ; Function VGM_Stop
+                                    809 ; ---------------------------------
+      00019D                        810 _VGM_Stop::
+                                    811 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:126: VGM_Pause();
+      00019D CDr89r01         [17]  812 	call	_VGM_Pause
+                                    813 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:127: g_VGM_Pointer = (u8*)((u16)&g_VGM_Header->Data_offset + (u16)g_VGM_Header->Data_offset);
+      0001A0 2Ar00r00         [16]  814 	ld	hl, (_g_VGM_Header)
+      0001A3 01 34 00         [10]  815 	ld	bc, #0x0034
+      0001A6 09               [11]  816 	add	hl, bc
+      0001A7 4D               [ 4]  817 	ld	c, l
+      0001A8 44               [ 4]  818 	ld	b, h
+      0001A9 7E               [ 7]  819 	ld	a, (hl)
+      0001AA 23               [ 6]  820 	inc	hl
+      0001AB 66               [ 7]  821 	ld	h, (hl)
+                                    822 ;	spillPairReg hl
+      0001AC 6F               [ 4]  823 	ld	l, a
+      0001AD 09               [11]  824 	add	hl, bc
+      0001AE 22r02r00         [16]  825 	ld	(_g_VGM_Pointer), hl
+                                    826 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:128: g_VGM_WaitCount = 0;
+      0001B1 21 00 00         [10]  827 	ld	hl, #0x0000
+      0001B4 22r06r00         [16]  828 	ld	(_g_VGM_WaitCount), hl
+                                    829 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:129: }
+      0001B7 C9               [10]  830 	ret
+                                    831 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:133: void VGM_Decode()
+                                    832 ;	---------------------------------
+                                    833 ; Function VGM_Decode
+                                    834 ; ---------------------------------
+      0001B8                        835 _VGM_Decode::
+      0001B8 DD E5            [15]  836 	push	ix
+      0001BA DD 21 00 00      [14]  837 	ld	ix,#0
+      0001BE DD 39            [15]  838 	add	ix,sp
+      0001C0 3B               [ 6]  839 	dec	sp
+                                    840 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:135: if(!(g_VGM_State & VGM_STATE_PLAY))
+      0001C1 3Ar0Ar00         [13]  841 	ld	a, (_g_VGM_State+0)
+      0001C4 07               [ 4]  842 	rlca
+      0001C5 D2r60r03         [10]  843 	jp	NC,00148$
+                                    844 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:136: return;
+      0001C8 C3rCBr01         [10]  845 	jp	00145$
+                                    846 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:138: while(g_VGM_WaitCount < g_VGM_WaitFrame)
+      0001CB                        847 00145$:
+      0001CB 21r08r00         [10]  848 	ld	hl, #_g_VGM_WaitFrame
+      0001CE 3Ar06r00         [13]  849 	ld	a, (_g_VGM_WaitCount+0)
+      0001D1 96               [ 7]  850 	sub	a, (hl)
+      0001D2 23               [ 6]  851 	inc	hl
+      0001D3 3Ar07r00         [13]  852 	ld	a, (_g_VGM_WaitCount+1)
+      0001D6 9E               [ 7]  853 	sbc	a, (hl)
+      0001D7 D2r50r03         [10]  854 	jp	NC, 00147$
+                                    855 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:140: if(*g_VGM_Pointer == 0xA0) // AY8910, write value dd to register aa
+      0001DA 2Ar02r00         [16]  856 	ld	hl, (_g_VGM_Pointer)
+      0001DD 7E               [ 7]  857 	ld	a, (hl)
+      0001DE DD 77 FF         [19]  858 	ld	-1 (ix), a
+      0001E1 D6 A0            [ 7]  859 	sub	a, #0xa0
+      0001E3 20 1B            [12]  860 	jr	NZ, 00143$
+                                    861 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:142: PSG_SetRegister(g_VGM_Pointer[1], g_VGM_Pointer[2]);
+      0001E5 2Ar02r00         [16]  862 	ld	hl, (_g_VGM_Pointer)
+      0001E8 23               [ 6]  863 	inc	hl
+      0001E9 23               [ 6]  864 	inc	hl
+      0001EA 46               [ 7]  865 	ld	b, (hl)
+      0001EB 2Ar02r00         [16]  866 	ld	hl, (_g_VGM_Pointer)
+      0001EE 23               [ 6]  867 	inc	hl
+      0001EF 4E               [ 7]  868 	ld	c, (hl)
+      0001F0 68               [ 4]  869 	ld	l, b
+                                    870 ;	spillPairReg hl
+                                    871 ;	spillPairReg hl
+      0001F1 79               [ 4]  872 	ld	a, c
+      0001F2 CDr00r00         [17]  873 	call	_PSG_SetRegister
+                                    874 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:143: g_VGM_Pointer += 2;
+      0001F5 2Ar02r00         [16]  875 	ld	hl, (_g_VGM_Pointer)
+      0001F8 23               [ 6]  876 	inc	hl
+      0001F9 23               [ 6]  877 	inc	hl
+      0001FA 22r02r00         [16]  878 	ld	(_g_VGM_Pointer), hl
+      0001FD C3r46r03         [10]  879 	jp	00144$
+      000200                        880 00143$:
+                                    881 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:146: else if(*g_VGM_Pointer == 0xD2) // SCC1, port pp, write value dd to register aa
+      000200 DD 7E FF         [19]  882 	ld	a, -1 (ix)
+                                    883 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:148: u8 reg = 0;
+      000203 D6 D2            [ 7]  884 	sub	a,#0xd2
+      000205 20 56            [12]  885 	jr	NZ, 00140$
+      000207 4F               [ 4]  886 	ld	c,a
+                                    887 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:149: switch(g_VGM_Pointer[1])
+      000208 2Ar02r00         [16]  888 	ld	hl, (_g_VGM_Pointer)
+      00020B 23               [ 6]  889 	inc	hl
+      00020C 7E               [ 7]  890 	ld	a, (hl)
+      00020D FE 01            [ 7]  891 	cp	a, #0x01
+      00020F 28 13            [12]  892 	jr	Z, 00103$
+      000211 FE 02            [ 7]  893 	cp	a, #0x02
+      000213 28 14            [12]  894 	jr	Z, 00104$
+      000215 FE 03            [ 7]  895 	cp	a, #0x03
+      000217 28 15            [12]  896 	jr	Z, 00105$
+      000219 FE 04            [ 7]  897 	cp	a, #0x04
+      00021B 28 16            [12]  898 	jr	Z, 00106$
+      00021D D6 05            [ 7]  899 	sub	a, #0x05
+      00021F 28 17            [12]  900 	jr	Z, 00107$
+      000221 C3r3Ar02         [10]  901 	jp	00108$
+                                    902 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:152: case 1:	reg = 0x80;	break; // 0x01 - frequency
+      000224                        903 00103$:
+      000224 0E 80            [ 7]  904 	ld	c, #0x80
+      000226 C3r3Ar02         [10]  905 	jp	00108$
+                                    906 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:153: case 2:	reg = 0x8A;	break; // 0x02 - volume
+      000229                        907 00104$:
+      000229 0E 8A            [ 7]  908 	ld	c, #0x8a
+      00022B C3r3Ar02         [10]  909 	jp	00108$
+                                    910 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:154: case 3:	reg = 0x8F;	break; // 0x03 - key on/off
+      00022E                        911 00105$:
+      00022E 0E 8F            [ 7]  912 	ld	c, #0x8f
+      000230 C3r3Ar02         [10]  913 	jp	00108$
+                                    914 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:155: case 4:	reg = 0xA0;	break; // 0x04 - waveform (0x00 used to do SCC access, 0x04 SCC+)
+      000233                        915 00106$:
+      000233 0E A0            [ 7]  916 	ld	c, #0xa0
+      000235 C3r3Ar02         [10]  917 	jp	00108$
+                                    918 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:156: case 5:	reg = 0xE0;	break; // 0x05 - test register
+      000238                        919 00107$:
+      000238 0E E0            [ 7]  920 	ld	c, #0xe0
+                                    921 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:157: }
+      00023A                        922 00108$:
+                                    923 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:158: SCC_SetRegister(reg + g_VGM_Pointer[2], g_VGM_Pointer[3]);
+      00023A 2Ar02r00         [16]  924 	ld	hl, (_g_VGM_Pointer)
+      00023D 23               [ 6]  925 	inc	hl
+      00023E 23               [ 6]  926 	inc	hl
+      00023F 23               [ 6]  927 	inc	hl
+      000240 46               [ 7]  928 	ld	b, (hl)
+      000241 2Ar02r00         [16]  929 	ld	hl, (_g_VGM_Pointer)
+      000244 23               [ 6]  930 	inc	hl
+      000245 23               [ 6]  931 	inc	hl
+      000246 7E               [ 7]  932 	ld	a, (hl)
+      000247 81               [ 4]  933 	add	a, c
+      000248 4F               [ 4]  934 	ld	c, a
+      000249 68               [ 4]  935 	ld	l, b
+                                    936 ;	spillPairReg hl
+                                    937 ;	spillPairReg hl
+      00024A 79               [ 4]  938 	ld	a, c
+      00024B CDr00r00         [17]  939 	call	_SCC_SetRegister
+                                    940 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:159: g_VGM_Pointer += 3;
+      00024E 21r02r00         [10]  941 	ld	hl, #_g_VGM_Pointer
+      000251 7E               [ 7]  942 	ld	a, (hl)
+      000252 C6 03            [ 7]  943 	add	a, #0x03
+      000254 77               [ 7]  944 	ld	(hl), a
+      000255 D2r46r03         [10]  945 	jp	NC,00144$
+      000258 23               [ 6]  946 	inc	hl
+      000259 34               [11]  947 	inc	(hl)
+      00025A C3r46r03         [10]  948 	jp	00144$
+      00025D                        949 00140$:
+                                    950 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:163: else if(*g_VGM_Pointer == 0x51) // YM2413, write value dd to register aa
+      00025D DD 7E FF         [19]  951 	ld	a, -1 (ix)
+      000260 D6 51            [ 7]  952 	sub	a, #0x51
+      000262 20 1B            [12]  953 	jr	NZ, 00137$
+                                    954 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:165: MSXMusic_SetRegister(g_VGM_Pointer[1], g_VGM_Pointer[2]);
+      000264 2Ar02r00         [16]  955 	ld	hl, (_g_VGM_Pointer)
+      000267 23               [ 6]  956 	inc	hl
+      000268 23               [ 6]  957 	inc	hl
+      000269 46               [ 7]  958 	ld	b, (hl)
+      00026A 2Ar02r00         [16]  959 	ld	hl, (_g_VGM_Pointer)
+      00026D 23               [ 6]  960 	inc	hl
+      00026E 4E               [ 7]  961 	ld	c, (hl)
+      00026F 68               [ 4]  962 	ld	l, b
+                                    963 ;	spillPairReg hl
+                                    964 ;	spillPairReg hl
+      000270 79               [ 4]  965 	ld	a, c
+      000271 CDr00r00         [17]  966 	call	_MSXMusic_SetRegister
+                                    967 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:166: g_VGM_Pointer += 2;
+      000274 2Ar02r00         [16]  968 	ld	hl, (_g_VGM_Pointer)
+      000277 23               [ 6]  969 	inc	hl
+      000278 23               [ 6]  970 	inc	hl
+      000279 22r02r00         [16]  971 	ld	(_g_VGM_Pointer), hl
+      00027C C3r46r03         [10]  972 	jp	00144$
+      00027F                        973 00137$:
+                                    974 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:170: else if(*g_VGM_Pointer == 0x5C) // Y8950, write value dd to register aa
+      00027F DD 7E FF         [19]  975 	ld	a, -1 (ix)
+      000282 D6 5C            [ 7]  976 	sub	a, #0x5c
+      000284 20 30            [12]  977 	jr	NZ, 00134$
+                                    978 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:172: u8 reg = g_VGM_Pointer[1];
+      000286 2Ar02r00         [16]  979 	ld	hl, (_g_VGM_Pointer)
+      000289 23               [ 6]  980 	inc	hl
+      00028A 4E               [ 7]  981 	ld	c, (hl)
+                                    982 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:173: if((reg != 0x04) && (reg != 0x18) && (reg != 0x19))
+      00028B 79               [ 4]  983 	ld	a,c
+      00028C FE 04            [ 7]  984 	cp	a,#0x04
+      00028E 28 1B            [12]  985 	jr	Z, 00112$
+      000290 FE 18            [ 7]  986 	cp	a,#0x18
+      000292 28 17            [12]  987 	jr	Z, 00112$
+      000294 D6 19            [ 7]  988 	sub	a, #0x19
+      000296 28 13            [12]  989 	jr	Z, 00112$
+                                    990 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:175: u8 value = g_VGM_Pointer[2];
+      000298 2Ar02r00         [16]  991 	ld	hl, (_g_VGM_Pointer)
+      00029B 23               [ 6]  992 	inc	hl
+      00029C 23               [ 6]  993 	inc	hl
+      00029D 6E               [ 7]  994 	ld	l, (hl)
+                                    995 ;	spillPairReg hl
+                                    996 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:176: if(reg == 0x08)
+      00029E 79               [ 4]  997 	ld	a, c
+      00029F D6 08            [ 7]  998 	sub	a, #0x08
+      0002A1 20 04            [12]  999 	jr	NZ, 00110$
+                                   1000 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:177: value &= 0b11000100;
+      0002A3 7D               [ 4] 1001 	ld	a, l
+      0002A4 E6 C4            [ 7] 1002 	and	a, #0xc4
+      0002A6 6F               [ 4] 1003 	ld	l, a
+                                   1004 ;	spillPairReg hl
+                                   1005 ;	spillPairReg hl
+      0002A7                       1006 00110$:
+                                   1007 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:178: MSXAudio_SetRegister(reg, value);
+      0002A7 79               [ 4] 1008 	ld	a, c
+      0002A8 CDr00r00         [17] 1009 	call	_MSXAudio_SetRegister
+      0002AB                       1010 00112$:
+                                   1011 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:180: g_VGM_Pointer += 2;
+      0002AB 2Ar02r00         [16] 1012 	ld	hl, (_g_VGM_Pointer)
+      0002AE 23               [ 6] 1013 	inc	hl
+      0002AF 23               [ 6] 1014 	inc	hl
+      0002B0 22r02r00         [16] 1015 	ld	(_g_VGM_Pointer), hl
+      0002B3 C3r46r03         [10] 1016 	jp	00144$
+      0002B6                       1017 00134$:
+                                   1018 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:183: else if(*g_VGM_Pointer == 0x61) // Wait n samples, n can range from 0 to 65535 (approx 1.49 seconds). Longer pauses than this are represented by multiple wait commands.
+      0002B6 DD 7E FF         [19] 1019 	ld	a, -1 (ix)
+      0002B9 D6 61            [ 7] 1020 	sub	a, #0x61
+      0002BB 20 1C            [12] 1021 	jr	NZ, 00131$
+                                   1022 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:185: g_VGM_WaitCount += *(u16*)(g_VGM_Pointer+1);
+      0002BD 2Ar02r00         [16] 1023 	ld	hl, (_g_VGM_Pointer)
+      0002C0 23               [ 6] 1024 	inc	hl
+      0002C1 4E               [ 7] 1025 	ld	c, (hl)
+      0002C2 23               [ 6] 1026 	inc	hl
+      0002C3 46               [ 7] 1027 	ld	b, (hl)
+      0002C4 21r06r00         [10] 1028 	ld	hl, #_g_VGM_WaitCount
+      0002C7 7E               [ 7] 1029 	ld	a, (hl)
+      0002C8 81               [ 4] 1030 	add	a, c
+      0002C9 77               [ 7] 1031 	ld	(hl), a
+      0002CA 23               [ 6] 1032 	inc	hl
+      0002CB 7E               [ 7] 1033 	ld	a, (hl)
+      0002CC 88               [ 4] 1034 	adc	a, b
+      0002CD 77               [ 7] 1035 	ld	(hl), a
+                                   1036 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:186: g_VGM_Pointer += 2;
+      0002CE 2Ar02r00         [16] 1037 	ld	hl, (_g_VGM_Pointer)
+      0002D1 23               [ 6] 1038 	inc	hl
+      0002D2 23               [ 6] 1039 	inc	hl
+      0002D3 22r02r00         [16] 1040 	ld	(_g_VGM_Pointer), hl
+      0002D6 C3r46r03         [10] 1041 	jp	00144$
+      0002D9                       1042 00131$:
+                                   1043 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:188: else if(*g_VGM_Pointer == 0x62) // Wait 735 samples (60th of a second), a shortcut for 0x61 0xdf 0x02
+      0002D9 DD 7E FF         [19] 1044 	ld	a, -1 (ix)
+      0002DC D6 62            [ 7] 1045 	sub	a, #0x62
+      0002DE 20 0D            [12] 1046 	jr	NZ, 00128$
+                                   1047 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:190: g_VGM_WaitCount += 735;
+      0002E0 2Ar06r00         [16] 1048 	ld	hl, (_g_VGM_WaitCount)
+      0002E3 01 DF 02         [10] 1049 	ld	bc, #0x02df
+      0002E6 09               [11] 1050 	add	hl, bc
+      0002E7 22r06r00         [16] 1051 	ld	(_g_VGM_WaitCount), hl
+      0002EA C3r46r03         [10] 1052 	jp	00144$
+      0002ED                       1053 00128$:
+                                   1054 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:192: else if(*g_VGM_Pointer == 0x63) // Wait 882 samples (50th of a second), a shortcut for 0x61 0x72 0x03
+      0002ED DD 7E FF         [19] 1055 	ld	a, -1 (ix)
+      0002F0 D6 63            [ 7] 1056 	sub	a, #0x63
+      0002F2 20 0D            [12] 1057 	jr	NZ, 00125$
+                                   1058 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:194: g_VGM_WaitCount += 882;
+      0002F4 2Ar06r00         [16] 1059 	ld	hl, (_g_VGM_WaitCount)
+      0002F7 01 72 03         [10] 1060 	ld	bc, #0x0372
+      0002FA 09               [11] 1061 	add	hl, bc
+      0002FB 22r06r00         [16] 1062 	ld	(_g_VGM_WaitCount), hl
+      0002FE C3r46r03         [10] 1063 	jp	00144$
+      000301                       1064 00125$:
+                                   1065 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:196: else if(*g_VGM_Pointer == 0x66) // End of sound data
+      000301 DD 7E FF         [19] 1066 	ld	a, -1 (ix)
+      000304 D6 66            [ 7] 1067 	sub	a, #0x66
+      000306 20 1F            [12] 1068 	jr	NZ, 00122$
+                                   1069 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:198: if((g_VGM_Loop != 0) && (g_VGM_State & VGM_STATE_LOOP))
+      000308 3Ar05r00         [13] 1070 	ld	a, (_g_VGM_Loop+1)
+      00030B 21r04r00         [10] 1071 	ld	hl, #_g_VGM_Loop
+      00030E B6               [ 7] 1072 	or	a, (hl)
+      00030F 28 10            [12] 1073 	jr	Z, 00116$
+      000311 3Ar0Ar00         [13] 1074 	ld	a, (_g_VGM_State+0)
+      000314 CB 4F            [ 8] 1075 	bit	1, a
+      000316 28 09            [12] 1076 	jr	Z, 00116$
+                                   1077 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:200: g_VGM_Pointer = g_VGM_Loop;
+      000318 2Ar04r00         [16] 1078 	ld	hl, (_g_VGM_Loop)
+      00031B 22r02r00         [16] 1079 	ld	(_g_VGM_Pointer), hl
+      00031E C3r46r03         [10] 1080 	jp	00144$
+      000321                       1081 00116$:
+                                   1082 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:204: VGM_Stop();
+      000321 CDr9Dr01         [17] 1083 	call	_VGM_Stop
+                                   1084 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:205: return;
+      000324 C3r60r03         [10] 1085 	jp	00148$
+      000327                       1086 00122$:
+                                   1087 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:208: else if ((*g_VGM_Pointer & 0xF0) == 0x70) // wait n+1 samples, n can range from 0 to 15.
+      000327 DD 4E FF         [19] 1088 	ld	c, -1 (ix)
+      00032A 06 00            [ 7] 1089 	ld	b, #0x00
+      00032C 79               [ 4] 1090 	ld	a, c
+      00032D E6 F0            [ 7] 1091 	and	a, #0xf0
+      00032F 5F               [ 4] 1092 	ld	e, a
+      000330 16 00            [ 7] 1093 	ld	d, #0x00
+      000332 7B               [ 4] 1094 	ld	a, e
+      000333 D6 70            [ 7] 1095 	sub	a, #0x70
+      000335 B2               [ 4] 1096 	or	a, d
+      000336 20 0E            [12] 1097 	jr	NZ, 00144$
+                                   1098 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:210: g_VGM_WaitCount += 1 + *g_VGM_Pointer & 0x0F;
+      000338 03               [ 6] 1099 	inc	bc
+      000339 79               [ 4] 1100 	ld	a, c
+      00033A E6 0F            [ 7] 1101 	and	a, #0x0f
+      00033C 06 00            [ 7] 1102 	ld	b, #0x00
+      00033E 2Ar06r00         [16] 1103 	ld	hl, (_g_VGM_WaitCount)
+      000341 4F               [ 4] 1104 	ld	c, a
+      000342 09               [11] 1105 	add	hl, bc
+      000343 22r06r00         [16] 1106 	ld	(_g_VGM_WaitCount), hl
+      000346                       1107 00144$:
+                                   1108 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:215: g_VGM_Pointer++;
+      000346 2Ar02r00         [16] 1109 	ld	hl, (_g_VGM_Pointer)
+      000349 23               [ 6] 1110 	inc	hl
+      00034A 22r02r00         [16] 1111 	ld	(_g_VGM_Pointer), hl
+      00034D C3rCBr01         [10] 1112 	jp	00145$
+      000350                       1113 00147$:
+                                   1114 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:217: g_VGM_WaitCount -= g_VGM_WaitFrame;
+      000350 21r08r00         [10] 1115 	ld	hl, #_g_VGM_WaitFrame
+      000353 D5               [11] 1116 	push	de
+      000354 11r06r00         [10] 1117 	ld	de, #_g_VGM_WaitCount
+      000357 1A               [ 7] 1118 	ld	a, (de)
+      000358 96               [ 7] 1119 	sub	a, (hl)
+      000359 23               [ 6] 1120 	inc	hl
+      00035A 12               [ 7] 1121 	ld	(de), a
+      00035B 13               [ 6] 1122 	inc	de
+      00035C 1A               [ 7] 1123 	ld	a, (de)
+      00035D 9E               [ 7] 1124 	sbc	a, (hl)
+      00035E 12               [ 7] 1125 	ld	(de), a
+      00035F D1               [10] 1126 	pop	de
+      000360                       1127 00148$:
+                                   1128 ;/home/bruno/dev/MSXgl/engine/src/vgm/vgm_player.c:218: }
+      000360 33               [ 6] 1129 	inc	sp
+      000361 DD E1            [14] 1130 	pop	ix
+      000363 C9               [10] 1131 	ret
+                                   1132 	.area _CODE
+                                   1133 	.area _INITIALIZER
+                                   1134 	.area _CABS (ABS)

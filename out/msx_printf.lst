@@ -1,0 +1,265 @@
+                                      1 ;--------------------------------------------------------
+                                      2 ; File Created by SDCC : free open source ANSI-C Compiler
+                                      3 ; Version 4.2.0 #13081 (Linux)
+                                      4 ;--------------------------------------------------------
+                                      5 	.module msx_printf
+                                      6 	.optsdcc -mz80
+                                      7 	
+                                      8 ;--------------------------------------------------------
+                                      9 ; Public variables in this module
+                                     10 ;--------------------------------------------------------
+                                     11 	.globl _DOS_CharOutput
+                                     12 	.globl _DOS_TPAUpperAddr
+                                     13 	.globl _print_string
+                                     14 	.globl _print_int
+                                     15 	.globl _msx_printf
+                                     16 ;--------------------------------------------------------
+                                     17 ; special function registers
+                                     18 ;--------------------------------------------------------
+                                     19 ;--------------------------------------------------------
+                                     20 ; ram data
+                                     21 ;--------------------------------------------------------
+                                     22 	.area _DATA
+                           000006    23 _DOS_TPAUpperAddr	=	0x0006
+                                     24 ;--------------------------------------------------------
+                                     25 ; ram data
+                                     26 ;--------------------------------------------------------
+                                     27 	.area _INITIALIZED
+                                     28 ;--------------------------------------------------------
+                                     29 ; absolute external ram data
+                                     30 ;--------------------------------------------------------
+                                     31 	.area _DABS (ABS)
+                                     32 ;--------------------------------------------------------
+                                     33 ; global & static initialisations
+                                     34 ;--------------------------------------------------------
+                                     35 	.area _HOME
+                                     36 	.area _GSINIT
+                                     37 	.area _GSFINAL
+                                     38 	.area _GSINIT
+                                     39 ;--------------------------------------------------------
+                                     40 ; Home
+                                     41 ;--------------------------------------------------------
+                                     42 	.area _HOME
+                                     43 	.area _HOME
+                                     44 ;--------------------------------------------------------
+                                     45 ; code
+                                     46 ;--------------------------------------------------------
+                                     47 	.area _CODE
+                                     48 ;./msx_printf.c:5: void print_string(const char *s) {
+                                     49 ;	---------------------------------
+                                     50 ; Function print_string
+                                     51 ; ---------------------------------
+      000000                         52 _print_string::
+                                     53 ;./msx_printf.c:6: while (*s) {
+      000000                         54 00101$:
+      000000 7E               [ 7]   55 	ld	a, (hl)
+      000001 B7               [ 4]   56 	or	a, a
+      000002 C8               [11]   57 	ret	Z
+                                     58 ;./msx_printf.c:7: DOS_CharOutput(*s++);
+      000003 23               [ 6]   59 	inc	hl
+      000004 4F               [ 4]   60 	ld	c, a
+      000005 E5               [11]   61 	push	hl
+      000006 79               [ 4]   62 	ld	a, c
+      000007 CDr00r00         [17]   63 	call	_DOS_CharOutput
+      00000A E1               [10]   64 	pop	hl
+                                     65 ;./msx_printf.c:9: }
+      00000B C3r00r00         [10]   66 	jp	00101$
+      00000E                         67 ___str_0:
+      00000E 0A                      68 	.db 0x0a
+      00000F 0D                      69 	.db 0x0d
+      000010 24                      70 	.ascii "$"
+      000011 00                      71 	.db 0x00
+                                     72 ;./msx_printf.c:12: void print_int(int n) {
+                                     73 ;	---------------------------------
+                                     74 ; Function print_int
+                                     75 ; ---------------------------------
+      000012                         76 _print_int::
+                                     77 ;./msx_printf.c:13: if (n < 0) {
+      000012 CB 7C            [ 8]   78 	bit	7, h
+      000014 28 0D            [12]   79 	jr	Z, 00102$
+                                     80 ;./msx_printf.c:14: DOS_CharOutput('-');
+      000016 E5               [11]   81 	push	hl
+      000017 3E 2D            [ 7]   82 	ld	a, #0x2d
+      000019 CDr00r00         [17]   83 	call	_DOS_CharOutput
+      00001C E1               [10]   84 	pop	hl
+                                     85 ;./msx_printf.c:15: n = -n;
+      00001D AF               [ 4]   86 	xor	a, a
+      00001E 95               [ 4]   87 	sub	a, l
+      00001F 6F               [ 4]   88 	ld	l, a
+                                     89 ;	spillPairReg hl
+                                     90 ;	spillPairReg hl
+      000020 9F               [ 4]   91 	sbc	a, a
+      000021 94               [ 4]   92 	sub	a, h
+      000022 67               [ 4]   93 	ld	h, a
+                                     94 ;	spillPairReg hl
+                                     95 ;	spillPairReg hl
+      000023                         96 00102$:
+                                     97 ;./msx_printf.c:18: if (n >= 10) {
+      000023 7D               [ 4]   98 	ld	a, l
+      000024 D6 0A            [ 7]   99 	sub	a, #0x0a
+      000026 7C               [ 4]  100 	ld	a, h
+      000027 17               [ 4]  101 	rla
+      000028 3F               [ 4]  102 	ccf
+      000029 1F               [ 4]  103 	rra
+      00002A DE 80            [ 7]  104 	sbc	a, #0x80
+      00002C 38 0E            [12]  105 	jr	C, 00104$
+                                    106 ;./msx_printf.c:19: print_int(n / 10);
+      00002E E5               [11]  107 	push	hl
+      00002F 11 0A 00         [10]  108 	ld	de, #0x000a
+      000032 CDr00r00         [17]  109 	call	__divsint
+      000035 E1               [10]  110 	pop	hl
+      000036 EB               [ 4]  111 	ex	de, hl
+      000037 D5               [11]  112 	push	de
+      000038 CDr12r00         [17]  113 	call	_print_int
+      00003B E1               [10]  114 	pop	hl
+      00003C                        115 00104$:
+                                    116 ;./msx_printf.c:22: DOS_CharOutput((n % 10) + '0');
+      00003C 11 0A 00         [10]  117 	ld	de, #0x000a
+      00003F CDr00r00         [17]  118 	call	__modsint
+      000042 7B               [ 4]  119 	ld	a, e
+      000043 C6 30            [ 7]  120 	add	a, #0x30
+      000045 4F               [ 4]  121 	ld	c, a
+                                    122 ;./msx_printf.c:23: }
+      000046 C3r00r00         [10]  123 	jp	_DOS_CharOutput
+                                    124 ;./msx_printf.c:25: void msx_printf(const char *format, ...) {
+                                    125 ;	---------------------------------
+                                    126 ; Function msx_printf
+                                    127 ; ---------------------------------
+      000049                        128 _msx_printf::
+      000049 DD E5            [15]  129 	push	ix
+      00004B DD 21 00 00      [14]  130 	ld	ix,#0
+      00004F DD 39            [15]  131 	add	ix,sp
+      000051 F5               [11]  132 	push	af
+                                    133 ;./msx_printf.c:29: arg_ptr = (char*)(&format);
+                                    134 ;./msx_printf.c:30: arg_ptr += 2;  // skip format pointer (16-bit)
+      000052 21 08 00         [10]  135 	ld	hl, #8
+      000055 39               [11]  136 	add	hl, sp
+      000056 E3               [19]  137 	ex	(sp), hl
+                                    138 ;./msx_printf.c:32: while (*format) {
+      000057                        139 00110$:
+      000057 DD 4E 04         [19]  140 	ld	c, 4 (ix)
+      00005A DD 46 05         [19]  141 	ld	b, 5 (ix)
+      00005D 0A               [ 7]  142 	ld	a, (bc)
+                                    143 ;./msx_printf.c:33: if (*format == '%') {
+      00005E 5F               [ 4]  144 	ld	e,a
+      00005F B7               [ 4]  145 	or	a,a
+      000060 CArF2r00         [10]  146 	jp	Z,00113$
+      000063 D6 25            [ 7]  147 	sub	a, #0x25
+      000065 20 7B            [12]  148 	jr	NZ, 00108$
+                                    149 ;./msx_printf.c:34: format++;
+      000067 03               [ 6]  150 	inc	bc
+                                    151 ;./msx_printf.c:36: switch (*format) {
+      000068 DD 71 04         [19]  152 	ld	4 (ix), c
+      00006B DD 70 05         [19]  153 	ld	5 (ix), b
+      00006E 0A               [ 7]  154 	ld	a, (bc)
+      00006F FE 25            [ 7]  155 	cp	a, #0x25
+      000071 28 55            [12]  156 	jr	Z, 00104$
+      000073 FE 63            [ 7]  157 	cp	a, #0x63
+      000075 28 3A            [12]  158 	jr	Z, 00103$
+      000077 FE 64            [ 7]  159 	cp	a, #0x64
+      000079 28 1D            [12]  160 	jr	Z, 00102$
+      00007B D6 73            [ 7]  161 	sub	a, #0x73
+      00007D 20 51            [12]  162 	jr	NZ, 00105$
+                                    163 ;./msx_printf.c:38: char *s = *(char**)arg_ptr;
+      00007F E1               [10]  164 	pop	hl
+      000080 E5               [11]  165 	push	hl
+      000081 4E               [ 7]  166 	ld	c, (hl)
+      000082 23               [ 6]  167 	inc	hl
+      000083 66               [ 7]  168 	ld	h, (hl)
+                                    169 ;	spillPairReg hl
+                                    170 ;./msx_printf.c:39: arg_ptr += 2;
+      000084 DD 7E FE         [19]  171 	ld	a, -2 (ix)
+      000087 C6 02            [ 7]  172 	add	a, #0x02
+      000089 DD 77 FE         [19]  173 	ld	-2 (ix), a
+      00008C 30 03            [12]  174 	jr	NC, 00157$
+      00008E DD 34 FF         [23]  175 	inc	-1 (ix)
+      000091                        176 00157$:
+                                    177 ;./msx_printf.c:40: print_string(s);
+      000091 69               [ 4]  178 	ld	l, c
+                                    179 ;	spillPairReg hl
+                                    180 ;	spillPairReg hl
+      000092 CDr00r00         [17]  181 	call	_print_string
+                                    182 ;./msx_printf.c:41: break;
+      000095 C3rE6r00         [10]  183 	jp	00109$
+                                    184 ;./msx_printf.c:44: case 'd': {
+      000098                        185 00102$:
+                                    186 ;./msx_printf.c:45: int n = *(int*)arg_ptr;
+      000098 E1               [10]  187 	pop	hl
+      000099 E5               [11]  188 	push	hl
+      00009A 4E               [ 7]  189 	ld	c, (hl)
+      00009B 23               [ 6]  190 	inc	hl
+      00009C 66               [ 7]  191 	ld	h, (hl)
+                                    192 ;	spillPairReg hl
+                                    193 ;./msx_printf.c:46: arg_ptr += 2;
+      00009D DD 7E FE         [19]  194 	ld	a, -2 (ix)
+      0000A0 C6 02            [ 7]  195 	add	a, #0x02
+      0000A2 DD 77 FE         [19]  196 	ld	-2 (ix), a
+      0000A5 30 03            [12]  197 	jr	NC, 00158$
+      0000A7 DD 34 FF         [23]  198 	inc	-1 (ix)
+      0000AA                        199 00158$:
+                                    200 ;./msx_printf.c:47: print_int(n);
+      0000AA 69               [ 4]  201 	ld	l, c
+                                    202 ;	spillPairReg hl
+                                    203 ;	spillPairReg hl
+      0000AB CDr12r00         [17]  204 	call	_print_int
+                                    205 ;./msx_printf.c:48: break;
+      0000AE C3rE6r00         [10]  206 	jp	00109$
+                                    207 ;./msx_printf.c:51: case 'c': {
+      0000B1                        208 00103$:
+                                    209 ;./msx_printf.c:52: char c = *(char*)arg_ptr;
+      0000B1 E1               [10]  210 	pop	hl
+      0000B2 E5               [11]  211 	push	hl
+      0000B3 4E               [ 7]  212 	ld	c, (hl)
+                                    213 ;./msx_printf.c:53: arg_ptr += 2;
+      0000B4 DD 7E FE         [19]  214 	ld	a, -2 (ix)
+      0000B7 C6 02            [ 7]  215 	add	a, #0x02
+      0000B9 DD 77 FE         [19]  216 	ld	-2 (ix), a
+      0000BC 30 03            [12]  217 	jr	NC, 00159$
+      0000BE DD 34 FF         [23]  218 	inc	-1 (ix)
+      0000C1                        219 00159$:
+                                    220 ;./msx_printf.c:54: DOS_CharOutput(c);
+      0000C1 79               [ 4]  221 	ld	a, c
+      0000C2 CDr00r00         [17]  222 	call	_DOS_CharOutput
+                                    223 ;./msx_printf.c:55: break;
+      0000C5 C3rE6r00         [10]  224 	jp	00109$
+                                    225 ;./msx_printf.c:58: case '%': {
+      0000C8                        226 00104$:
+                                    227 ;./msx_printf.c:59: DOS_CharOutput('%');
+      0000C8 3E 25            [ 7]  228 	ld	a, #0x25
+      0000CA CDr00r00         [17]  229 	call	_DOS_CharOutput
+                                    230 ;./msx_printf.c:60: break;
+      0000CD C3rE6r00         [10]  231 	jp	00109$
+                                    232 ;./msx_printf.c:63: default: {
+      0000D0                        233 00105$:
+                                    234 ;./msx_printf.c:64: DOS_CharOutput('%');
+      0000D0 3E 25            [ 7]  235 	ld	a, #0x25
+      0000D2 CDr00r00         [17]  236 	call	_DOS_CharOutput
+                                    237 ;./msx_printf.c:65: DOS_CharOutput(*format);
+      0000D5 DD 6E 04         [19]  238 	ld	l, 4 (ix)
+                                    239 ;	spillPairReg hl
+                                    240 ;	spillPairReg hl
+      0000D8 DD 66 05         [19]  241 	ld	h, 5 (ix)
+                                    242 ;	spillPairReg hl
+                                    243 ;	spillPairReg hl
+      0000DB 7E               [ 7]  244 	ld	a, (hl)
+      0000DC CDr00r00         [17]  245 	call	_DOS_CharOutput
+                                    246 ;./msx_printf.c:67: }
+      0000DF C3rE6r00         [10]  247 	jp	00109$
+      0000E2                        248 00108$:
+                                    249 ;./msx_printf.c:69: DOS_CharOutput(*format);
+      0000E2 7B               [ 4]  250 	ld	a, e
+      0000E3 CDr00r00         [17]  251 	call	_DOS_CharOutput
+      0000E6                        252 00109$:
+                                    253 ;./msx_printf.c:72: format++;
+      0000E6 DD 34 04         [23]  254 	inc	4 (ix)
+      0000E9 C2r57r00         [10]  255 	jp	NZ,00110$
+      0000EC DD 34 05         [23]  256 	inc	5 (ix)
+      0000EF C3r57r00         [10]  257 	jp	00110$
+      0000F2                        258 00113$:
+                                    259 ;./msx_printf.c:74: }
+      0000F2 DD F9            [10]  260 	ld	sp, ix
+      0000F4 DD E1            [14]  261 	pop	ix
+      0000F6 C9               [10]  262 	ret
+                                    263 	.area _CODE
+                                    264 	.area _INITIALIZER
+                                    265 	.area _CABS (ABS)

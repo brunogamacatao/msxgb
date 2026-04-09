@@ -1,0 +1,803 @@
+                                      1 ;--------------------------------------------------------
+                                      2 ; File Created by SDCC : free open source ANSI-C Compiler
+                                      3 ; Version 4.2.0 #13081 (Linux)
+                                      4 ;--------------------------------------------------------
+                                      5 	.module scc
+                                      6 	.optsdcc -mz80
+                                      7 	
+                                      8 ;--------------------------------------------------------
+                                      9 ; Public variables in this module
+                                     10 ;--------------------------------------------------------
+                                     11 	.globl _SCC_AutoDetect
+                                     12 	.globl _SCC_CheckSlotID
+                                     13 	.globl _Bios_InterSlotWrite
+                                     14 	.globl _Bios_InterSlotRead
+                                     15 	.globl _Sys_CheckSlot
+                                     16 	.globl _g_SCC_SlotId
+                                     17 	.globl _g_SCC_MixerBackup
+                                     18 	.globl _g_SLTSL
+                                     19 	.globl _g_GRPACY
+                                     20 	.globl _g_GRPACX
+                                     21 	.globl _g_LOGOPR
+                                     22 	.globl _g_CMASK
+                                     23 	.globl _g_CLOC
+                                     24 	.globl _g_FNKSTR
+                                     25 	.globl _g_ATRBYT
+                                     26 	.globl _g_BDRCLR
+                                     27 	.globl _g_BAKCLR
+                                     28 	.globl _g_FORCLR
+                                     29 	.globl _g_CSRX
+                                     30 	.globl _g_CSRY
+                                     31 	.globl _g_CLIKSW
+                                     32 	.globl _g_MLTPAT
+                                     33 	.globl _g_MLTATR
+                                     34 	.globl _g_MLTCGP
+                                     35 	.globl _g_MLTCOL
+                                     36 	.globl _g_MLTNAM
+                                     37 	.globl _g_GRPPAT
+                                     38 	.globl _g_GRPATR
+                                     39 	.globl _g_GRPCGP
+                                     40 	.globl _g_GRPCOL
+                                     41 	.globl _g_GRPNAM
+                                     42 	.globl _g_T32PAT
+                                     43 	.globl _g_T32ATR
+                                     44 	.globl _g_T32CGP
+                                     45 	.globl _g_T32COL
+                                     46 	.globl _g_T32NAM
+                                     47 	.globl _g_TXTPAT
+                                     48 	.globl _g_TXTATR
+                                     49 	.globl _g_TXTCGP
+                                     50 	.globl _g_TXTCOL
+                                     51 	.globl _g_TXTNAM
+                                     52 	.globl _g_CLMLST
+                                     53 	.globl _g_CRTCNT
+                                     54 	.globl _g_LINLEN
+                                     55 	.globl _g_LINL32
+                                     56 	.globl _g_LINL40
+                                     57 	.globl _g_SCC_WaveformAddr
+                                     58 	.globl _g_BDOS
+                                     59 	.globl _g_MASTER
+                                     60 	.globl _g_RAMAD3
+                                     61 	.globl _g_RAMAD2
+                                     62 	.globl _g_RAMAD1
+                                     63 	.globl _g_RAMAD0
+                                     64 	.globl _g_BREAKV
+                                     65 	.globl _g_DISKVE
+                                     66 	.globl _g_KANJTABLE
+                                     67 	.globl _g_STRSRC
+                                     68 	.globl _g_SUBRID
+                                     69 	.globl _g_CHAR_16
+                                     70 	.globl _g_MSXMID
+                                     71 	.globl _g_MSXVER
+                                     72 	.globl _g_ROMVersion
+                                     73 	.globl _g_BASRVN
+                                     74 	.globl _g_VDP_DW
+                                     75 	.globl _g_VDP_DR
+                                     76 	.globl _g_CGTABL
+                                     77 	.globl _g_SVFFFD
+                                     78 	.globl _g_RG27SAV
+                                     79 	.globl _g_RG26SAV
+                                     80 	.globl _g_RG25SAV
+                                     81 	.globl _g_SVFFF8
+                                     82 	.globl _g_MINROM
+                                     83 	.globl _g_RG23SAV
+                                     84 	.globl _g_RG22SAV
+                                     85 	.globl _g_RG21SAV
+                                     86 	.globl _g_RG20SAV
+                                     87 	.globl _g_RG19SAV
+                                     88 	.globl _g_RG18SAV
+                                     89 	.globl _g_RG17SAV
+                                     90 	.globl _g_RG16SAV
+                                     91 	.globl _g_RG15SAV
+                                     92 	.globl _g_RG14SAV
+                                     93 	.globl _g_RG13SAV
+                                     94 	.globl _g_RG12SAV
+                                     95 	.globl _g_RG11SAV
+                                     96 	.globl _g_RG10SAV
+                                     97 	.globl _g_RG09SAV
+                                     98 	.globl _g_RG08SAV
+                                     99 	.globl _g_PROCNM
+                                    100 	.globl _g_SLTWRK
+                                    101 	.globl _g_SLTATR
+                                    102 	.globl _g_SLTTBL
+                                    103 	.globl _g_EXPTBL
+                                    104 	.globl _g_MNROM
+                                    105 	.globl _g_DRWANG
+                                    106 	.globl _g_DRWSCL
+                                    107 	.globl _g_DRWFLG
+                                    108 	.globl _g_GYPOS
+                                    109 	.globl _g_GXPOS
+                                    110 	.globl _g_BRDATR
+                                    111 	.globl _g_CASPRV
+                                    112 	.globl _g_OLDSCR
+                                    113 	.globl _g_SCRMOD
+                                    114 	.globl _g_FLBMEM
+                                    115 	.globl _g_KANAMD
+                                    116 	.globl _g_KANAST
+                                    117 	.globl _g_CAPST
+                                    118 	.globl _g_CSTYLE
+                                    119 	.globl _g_CSRSW
+                                    120 	.globl _g_INSFLG
+                                    121 	.globl _g_ESCCNT
+                                    122 	.globl _g_GRPHED
+                                    123 	.globl _g_WINWID
+                                    124 	.globl _g_LOWLIM
+                                    125 	.globl _g_INTCNT
+                                    126 	.globl _g_INTVAL
+                                    127 	.globl _g_JIFFY
+                                    128 	.globl _g_PADX
+                                    129 	.globl _g_PADY
+                                    130 	.globl _g_INTFLG
+                                    131 	.globl _g_RTYCNT
+                                    132 	.globl _g_TRPTBL
+                                    133 	.globl _g_HIMEM
+                                    134 	.globl _g_BOTTOM
+                                    135 	.globl _g_PATWRK
+                                    136 	.globl _g_LINWRK
+                                    137 	.globl _g_KEYBUF
+                                    138 	.globl _g_NEWKEY
+                                    139 	.globl _g_OLDKEY
+                                    140 	.globl _g_CLIKFL
+                                    141 	.globl _g_ONGSBF
+                                    142 	.globl _g_FNKFLG
+                                    143 	.globl _g_FNKSWI
+                                    144 	.globl _g_CODSAV
+                                    145 	.globl _g_FSTPOS
+                                    146 	.globl _g_LINTTB
+                                    147 	.globl _g_BASROM
+                                    148 	.globl _g_ENSTOP
+                                    149 	.globl _g_VCBC
+                                    150 	.globl _g_VCBB
+                                    151 	.globl _g_VCBA
+                                    152 	.globl _g_PLYCNT
+                                    153 	.globl _g_MUSICF
+                                    154 	.globl _g_QUEUEN
+                                    155 	.globl _g_MCLPTR
+                                    156 	.globl _g_MCLLEN
+                                    157 	.globl _g_SAVVOL
+                                    158 	.globl _g_VOICEN
+                                    159 	.globl _g_SAVSP
+                                    160 	.globl _g_PRSCNT
+                                    161 	.globl _g_LSTMOD
+                                    162 	.globl _g_LSTCOM
+                                    163 	.globl _g_COMMSK
+                                    164 	.globl _g_ESTBLS
+                                    165 	.globl _g_FLAGS
+                                    166 	.globl _g_ERRORS
+                                    167 	.globl _g_DATCNT
+                                    168 	.globl _g_DEVNUM
+                                    169 	.globl _g_OLDINT
+                                    170 	.globl _g_OLDSTT
+                                    171 	.globl _g_MEXBIh
+                                    172 	.globl _g_RSIQLN
+                                    173 	.globl _g_RSFCB
+                                    174 	.globl _g_TOCNT
+                                    175 	.globl _g_RSTMP
+                                    176 	.globl _g_YSAVE
+                                    177 	.globl _g_XSAVE
+                                    178 	.globl _g_NORUSE
+                                    179 	.globl _g_MODE
+                                    180 	.globl _g_ROMA
+                                    181 	.globl _g_CHRCNT
+                                    182 	.globl _g_EXBRSA
+                                    183 	.globl _g_AVCSAV
+                                    184 	.globl _g_ACPAGE
+                                    185 	.globl _g_DPPAGE
+                                    186 	.globl _g_RS2IQ
+                                    187 	.globl _g_VOICCQ
+                                    188 	.globl _g_VOICBQ
+                                    189 	.globl _g_VOICAQ
+                                    190 	.globl _g_QUEBAK
+                                    191 	.globl _g_QUETAB
+                                    192 	.globl _g_ASPCT2
+                                    193 	.globl _g_ASPCT1
+                                    194 	.globl _g_HEADER
+                                    195 	.globl _g_HIGH
+                                    196 	.globl _g_LOW
+                                    197 	.globl _g_CS240
+                                    198 	.globl _g_CS120
+                                    199 	.globl _g_GETPNT
+                                    200 	.globl _g_PUTPNT
+                                    201 	.globl _g_REPCNT
+                                    202 	.globl _g_SCNCNT
+                                    203 	.globl _g_FRCNEW
+                                    204 	.globl _g_QUEUES
+                                    205 	.globl _g_MINUPD
+                                    206 	.globl _g_MAXUPD
+                                    207 	.globl _g_TRGFLG
+                                    208 	.globl _g_STATFL
+                                    209 	.globl _g_RG7SAV
+                                    210 	.globl _g_RG6SAV
+                                    211 	.globl _g_RG5SAV
+                                    212 	.globl _g_RG4SAV
+                                    213 	.globl _g_RG3SAV
+                                    214 	.globl _g_RG2SAV
+                                    215 	.globl _g_RG1SAV
+                                    216 	.globl _g_RG0SAV
+                                    217 	.globl _g_CNSDFG
+                                    218 	.globl _g_USRTAB
+                                    219 	.globl _g_CLPRIM
+                                    220 	.globl _g_WRPRIM
+                                    221 	.globl _g_RDPRIM
+                                    222 	.globl _SCC_Initialize
+                                    223 	.globl _SCC_Select
+                                    224 	.globl _SCC_SetRegister
+                                    225 	.globl _SCC_GetRegister
+                                    226 	.globl _SCC_Mute
+                                    227 	.globl _SCC_Resume
+                                    228 	.globl _SCC_LoadWaveform
+                                    229 	.globl _SCC_SetFrequency
+                                    230 ;--------------------------------------------------------
+                                    231 ; special function registers
+                                    232 ;--------------------------------------------------------
+                           0000A8   233 _g_PortPrimarySlot	=	0x00a8
+                           0000A9   234 _g_PortReadKeyboard	=	0x00a9
+                           0000AA   235 _g_PortAccessKeyboard	=	0x00aa
+                           0000AB   236 _g_PortControl	=	0x00ab
+                           000098   237 _g_VDP_DataPort	=	0x0098
+                           000099   238 _g_VDP_RegPort	=	0x0099
+                           000099   239 _g_VDP_AddrPort	=	0x0099
+                           000099   240 _g_VDP_StatPort	=	0x0099
+                           00009A   241 _g_VDP_PalPort	=	0x009a
+                           00009B   242 _g_VDP_IRegPort	=	0x009b
+                           0000A0   243 _g_PSG_RegPort	=	0x00a0
+                           0000A1   244 _g_PSG_DataPort	=	0x00a1
+                           0000A2   245 _g_PSG_StatPort	=	0x00a2
+                           000010   246 _g_PSG_Ext_RegPort	=	0x0010
+                           000011   247 _g_PSG_Ext_DataPort	=	0x0011
+                           000012   248 _g_PSG_Ext_StatPort	=	0x0012
+                           00007C   249 _g_MSXMusic_IndexPort	=	0x007c
+                           00007D   250 _g_MSXMusic_DataPort	=	0x007d
+                           0000C0   251 _g_MSXAudio_IndexPort	=	0x00c0
+                           0000C1   252 _g_MSXAudio_DataPort	=	0x00c1
+                           0000C2   253 _g_MSXAudio_IndexPort2	=	0x00c2
+                           0000C3   254 _g_MSXAudio_DataPort2	=	0x00c3
+                           0000B4   255 _g_RTC_AddrPort	=	0x00b4
+                           0000B5   256 _g_RTC_DataPort	=	0x00b5
+                                    257 ;--------------------------------------------------------
+                                    258 ; ram data
+                                    259 ;--------------------------------------------------------
+                                    260 	.area _DATA
+                           00F3AE   261 _g_LINL40	=	0xf3ae
+                           00F3AF   262 _g_LINL32	=	0xf3af
+                           00F3B0   263 _g_LINLEN	=	0xf3b0
+                           00F3B1   264 _g_CRTCNT	=	0xf3b1
+                           00F3B2   265 _g_CLMLST	=	0xf3b2
+                           00F3B3   266 _g_TXTNAM	=	0xf3b3
+                           00F3B5   267 _g_TXTCOL	=	0xf3b5
+                           00F3B7   268 _g_TXTCGP	=	0xf3b7
+                           00F3B9   269 _g_TXTATR	=	0xf3b9
+                           00F3BB   270 _g_TXTPAT	=	0xf3bb
+                           00F3BD   271 _g_T32NAM	=	0xf3bd
+                           00F3BF   272 _g_T32COL	=	0xf3bf
+                           00F3C1   273 _g_T32CGP	=	0xf3c1
+                           00F3C3   274 _g_T32ATR	=	0xf3c3
+                           00F3C5   275 _g_T32PAT	=	0xf3c5
+                           00F3C7   276 _g_GRPNAM	=	0xf3c7
+                           00F3C9   277 _g_GRPCOL	=	0xf3c9
+                           00F3CB   278 _g_GRPCGP	=	0xf3cb
+                           00F3CD   279 _g_GRPATR	=	0xf3cd
+                           00F3CF   280 _g_GRPPAT	=	0xf3cf
+                           00F3D1   281 _g_MLTNAM	=	0xf3d1
+                           00F3D3   282 _g_MLTCOL	=	0xf3d3
+                           00F3D5   283 _g_MLTCGP	=	0xf3d5
+                           00F3D7   284 _g_MLTATR	=	0xf3d7
+                           00F3D9   285 _g_MLTPAT	=	0xf3d9
+                           00F3DB   286 _g_CLIKSW	=	0xf3db
+                           00F3DC   287 _g_CSRY	=	0xf3dc
+                           00F3DD   288 _g_CSRX	=	0xf3dd
+                           00F3E9   289 _g_FORCLR	=	0xf3e9
+                           00F3EA   290 _g_BAKCLR	=	0xf3ea
+                           00F3EB   291 _g_BDRCLR	=	0xf3eb
+                           00F3F2   292 _g_ATRBYT	=	0xf3f2
+                           00F87F   293 _g_FNKSTR	=	0xf87f
+                           00F92A   294 _g_CLOC	=	0xf92a
+                           00F92C   295 _g_CMASK	=	0xf92c
+                           00FB02   296 _g_LOGOPR	=	0xfb02
+                           00FCB7   297 _g_GRPACX	=	0xfcb7
+                           00FCB9   298 _g_GRPACY	=	0xfcb9
+                           00FFFF   299 _g_SLTSL	=	0xffff
+      000000                        300 _g_SCC_MixerBackup::
+      000000                        301 	.ds 1
+                                    302 ;--------------------------------------------------------
+                                    303 ; ram data
+                                    304 ;--------------------------------------------------------
+                                    305 	.area _INITIALIZED
+      000000                        306 _g_SCC_SlotId::
+      000000                        307 	.ds 1
+                                    308 ;--------------------------------------------------------
+                                    309 ; absolute external ram data
+                                    310 ;--------------------------------------------------------
+                                    311 	.area _DABS (ABS)
+                                    312 ;--------------------------------------------------------
+                                    313 ; global & static initialisations
+                                    314 ;--------------------------------------------------------
+                                    315 	.area _HOME
+                                    316 	.area _GSINIT
+                                    317 	.area _GSFINAL
+                                    318 	.area _GSINIT
+                                    319 ;--------------------------------------------------------
+                                    320 ; Home
+                                    321 ;--------------------------------------------------------
+                                    322 	.area _HOME
+                                    323 	.area _HOME
+                                    324 ;--------------------------------------------------------
+                                    325 ; code
+                                    326 ;--------------------------------------------------------
+                                    327 	.area _CODE
+                                    328 ;/home/bruno/dev/MSXgl/engine/src/scc.c:50: bool SCC_CheckSlotID(u8 slotId)
+                                    329 ;	---------------------------------
+                                    330 ; Function SCC_CheckSlotID
+                                    331 ; ---------------------------------
+      000000                        332 _SCC_CheckSlotID::
+      000000 47               [ 4]  333 	ld	b, a
+                                    334 ;/home/bruno/dev/MSXgl/engine/src/scc.c:53: u8 val = Bios_InterSlotRead(slotId, 0x8000);
+      000001 C5               [11]  335 	push	bc
+      000002 11 00 80         [10]  336 	ld	de, #0x8000
+      000005 78               [ 4]  337 	ld	a, b
+      000006 CDr00r00         [17]  338 	call	_Bios_InterSlotRead
+      000009 C1               [10]  339 	pop	bc
+                                    340 ;/home/bruno/dev/MSXgl/engine/src/scc.c:54: Bios_InterSlotWrite(slotId, 0x8000, ~val);
+      00000A 4F               [ 4]  341 	ld	c, a
+      00000B 2F               [ 4]  342 	cpl
+      00000C C5               [11]  343 	push	bc
+      00000D F5               [11]  344 	push	af
+      00000E 33               [ 6]  345 	inc	sp
+      00000F 11 00 80         [10]  346 	ld	de, #0x8000
+      000012 78               [ 4]  347 	ld	a, b
+      000013 CDr00r00         [17]  348 	call	_Bios_InterSlotWrite
+      000016 C1               [10]  349 	pop	bc
+                                    350 ;/home/bruno/dev/MSXgl/engine/src/scc.c:55: if(Bios_InterSlotRead(slotId, 0x8000) != val) // Is RAM?
+      000017 C5               [11]  351 	push	bc
+      000018 11 00 80         [10]  352 	ld	de, #0x8000
+      00001B 78               [ 4]  353 	ld	a, b
+      00001C CDr00r00         [17]  354 	call	_Bios_InterSlotRead
+      00001F C1               [10]  355 	pop	bc
+      000020 91               [ 4]  356 	sub	a, c
+      000021 28 0C            [12]  357 	jr	Z, 00102$
+                                    358 ;/home/bruno/dev/MSXgl/engine/src/scc.c:57: Bios_InterSlotWrite(slotId, 0x8000, val); // backup RAM value
+      000023 79               [ 4]  359 	ld	a, c
+      000024 F5               [11]  360 	push	af
+      000025 33               [ 6]  361 	inc	sp
+      000026 11 00 80         [10]  362 	ld	de, #0x8000
+      000029 78               [ 4]  363 	ld	a, b
+      00002A CDr00r00         [17]  364 	call	_Bios_InterSlotWrite
+                                    365 ;/home/bruno/dev/MSXgl/engine/src/scc.c:58: return FALSE;
+      00002D AF               [ 4]  366 	xor	a, a
+      00002E C9               [10]  367 	ret
+      00002F                        368 00102$:
+                                    369 ;/home/bruno/dev/MSXgl/engine/src/scc.c:62: Bios_InterSlotWrite(slotId, 0x9000, 0x3F);
+      00002F C5               [11]  370 	push	bc
+      000030 3E 3F            [ 7]  371 	ld	a, #0x3f
+      000032 F5               [11]  372 	push	af
+      000033 33               [ 6]  373 	inc	sp
+      000034 11 00 90         [10]  374 	ld	de, #0x9000
+      000037 78               [ 4]  375 	ld	a, b
+      000038 CDr00r00         [17]  376 	call	_Bios_InterSlotWrite
+      00003B C1               [10]  377 	pop	bc
+                                    378 ;/home/bruno/dev/MSXgl/engine/src/scc.c:65: val = Bios_InterSlotRead(slotId, 0x9800);
+      00003C C5               [11]  379 	push	bc
+      00003D 11 00 98         [10]  380 	ld	de, #0x9800
+      000040 78               [ 4]  381 	ld	a, b
+      000041 CDr00r00         [17]  382 	call	_Bios_InterSlotRead
+      000044 C1               [10]  383 	pop	bc
+                                    384 ;/home/bruno/dev/MSXgl/engine/src/scc.c:66: Bios_InterSlotWrite(slotId, 0x9800, ~val);
+      000045 4F               [ 4]  385 	ld	c, a
+      000046 2F               [ 4]  386 	cpl
+      000047 C5               [11]  387 	push	bc
+      000048 F5               [11]  388 	push	af
+      000049 33               [ 6]  389 	inc	sp
+      00004A 11 00 98         [10]  390 	ld	de, #0x9800
+      00004D 78               [ 4]  391 	ld	a, b
+      00004E CDr00r00         [17]  392 	call	_Bios_InterSlotWrite
+      000051 C1               [10]  393 	pop	bc
+                                    394 ;/home/bruno/dev/MSXgl/engine/src/scc.c:67: if(Bios_InterSlotRead(slotId, 0x9800) != val) // Is SCC RAM?
+      000052 C5               [11]  395 	push	bc
+      000053 11 00 98         [10]  396 	ld	de, #0x9800
+      000056 78               [ 4]  397 	ld	a, b
+      000057 CDr00r00         [17]  398 	call	_Bios_InterSlotRead
+      00005A C1               [10]  399 	pop	bc
+      00005B 91               [ 4]  400 	sub	a, c
+      00005C 28 0D            [12]  401 	jr	Z, 00104$
+                                    402 ;/home/bruno/dev/MSXgl/engine/src/scc.c:69: Bios_InterSlotWrite(slotId, 0x9800, val); // backup SCC RAM value
+      00005E 79               [ 4]  403 	ld	a, c
+      00005F F5               [11]  404 	push	af
+      000060 33               [ 6]  405 	inc	sp
+      000061 11 00 98         [10]  406 	ld	de, #0x9800
+      000064 78               [ 4]  407 	ld	a, b
+      000065 CDr00r00         [17]  408 	call	_Bios_InterSlotWrite
+                                    409 ;/home/bruno/dev/MSXgl/engine/src/scc.c:70: return TRUE;
+      000068 3E 01            [ 7]  410 	ld	a, #0x01
+      00006A C9               [10]  411 	ret
+      00006B                        412 00104$:
+                                    413 ;/home/bruno/dev/MSXgl/engine/src/scc.c:73: return FALSE;
+      00006B AF               [ 4]  414 	xor	a, a
+                                    415 ;/home/bruno/dev/MSXgl/engine/src/scc.c:74: }
+      00006C C9               [10]  416 	ret
+                           00F380   417 _g_RDPRIM	=	0xf380
+                           00F385   418 _g_WRPRIM	=	0xf385
+                           00F38C   419 _g_CLPRIM	=	0xf38c
+                           00F39A   420 _g_USRTAB	=	0xf39a
+                           00F3DE   421 _g_CNSDFG	=	0xf3de
+                           00F3DF   422 _g_RG0SAV	=	0xf3df
+                           00F3E0   423 _g_RG1SAV	=	0xf3e0
+                           00F3E1   424 _g_RG2SAV	=	0xf3e1
+                           00F3E2   425 _g_RG3SAV	=	0xf3e2
+                           00F3E3   426 _g_RG4SAV	=	0xf3e3
+                           00F3E4   427 _g_RG5SAV	=	0xf3e4
+                           00F3E5   428 _g_RG6SAV	=	0xf3e5
+                           00F3E6   429 _g_RG7SAV	=	0xf3e6
+                           00F3E7   430 _g_STATFL	=	0xf3e7
+                           00F3E8   431 _g_TRGFLG	=	0xf3e8
+                           00F3EC   432 _g_MAXUPD	=	0xf3ec
+                           00F3EF   433 _g_MINUPD	=	0xf3ef
+                           00F3F3   434 _g_QUEUES	=	0xf3f3
+                           00F3F5   435 _g_FRCNEW	=	0xf3f5
+                           00F3F6   436 _g_SCNCNT	=	0xf3f6
+                           00F3F7   437 _g_REPCNT	=	0xf3f7
+                           00F3F8   438 _g_PUTPNT	=	0xf3f8
+                           00F3FA   439 _g_GETPNT	=	0xf3fa
+                           00F3FC   440 _g_CS120	=	0xf3fc
+                           00F401   441 _g_CS240	=	0xf401
+                           00F406   442 _g_LOW	=	0xf406
+                           00F408   443 _g_HIGH	=	0xf408
+                           00F40A   444 _g_HEADER	=	0xf40a
+                           00F40B   445 _g_ASPCT1	=	0xf40b
+                           00F40D   446 _g_ASPCT2	=	0xf40d
+                           00F959   447 _g_QUETAB	=	0xf959
+                           00F971   448 _g_QUEBAK	=	0xf971
+                           00F975   449 _g_VOICAQ	=	0xf975
+                           00F9F5   450 _g_VOICBQ	=	0xf9f5
+                           00FA75   451 _g_VOICCQ	=	0xfa75
+                           00FAF5   452 _g_RS2IQ	=	0xfaf5
+                           00FAF5   453 _g_DPPAGE	=	0xfaf5
+                           00FAF6   454 _g_ACPAGE	=	0xfaf6
+                           00FAF7   455 _g_AVCSAV	=	0xfaf7
+                           00FAF8   456 _g_EXBRSA	=	0xfaf8
+                           00FAF9   457 _g_CHRCNT	=	0xfaf9
+                           00FAFA   458 _g_ROMA	=	0xfafa
+                           00FAFC   459 _g_MODE	=	0xfafc
+                           00FAFD   460 _g_NORUSE	=	0xfafd
+                           00FAFE   461 _g_XSAVE	=	0xfafe
+                           00FB00   462 _g_YSAVE	=	0xfb00
+                           00FB03   463 _g_RSTMP	=	0xfb03
+                           00FB03   464 _g_TOCNT	=	0xfb03
+                           00FB04   465 _g_RSFCB	=	0xfb04
+                           00FB06   466 _g_RSIQLN	=	0xfb06
+                           00FB07   467 _g_MEXBIh	=	0xfb07
+                           00FB0C   468 _g_OLDSTT	=	0xfb0c
+                           00FB0C   469 _g_OLDINT	=	0xfb0c
+                           00FB16   470 _g_DEVNUM	=	0xfb16
+                           00FB17   471 _g_DATCNT	=	0xfb17
+                           00FB1A   472 _g_ERRORS	=	0xfb1a
+                           00FB1B   473 _g_FLAGS	=	0xfb1b
+                           00FB1C   474 _g_ESTBLS	=	0xfb1c
+                           00FB1D   475 _g_COMMSK	=	0xfb1d
+                           00FB1E   476 _g_LSTCOM	=	0xfb1e
+                           00FB1F   477 _g_LSTMOD	=	0xfb1f
+                           00FB35   478 _g_PRSCNT	=	0xfb35
+                           00FB36   479 _g_SAVSP	=	0xfb36
+                           00FB38   480 _g_VOICEN	=	0xfb38
+                           00FB39   481 _g_SAVVOL	=	0xfb39
+                           00FB3B   482 _g_MCLLEN	=	0xfb3b
+                           00FB3C   483 _g_MCLPTR	=	0xfb3c
+                           00FB3E   484 _g_QUEUEN	=	0xfb3e
+                           00FB3F   485 _g_MUSICF	=	0xfb3f
+                           00FB40   486 _g_PLYCNT	=	0xfb40
+                           00FB41   487 _g_VCBA	=	0xfb41
+                           00FB66   488 _g_VCBB	=	0xfb66
+                           00FB8B   489 _g_VCBC	=	0xfb8b
+                           00FBB0   490 _g_ENSTOP	=	0xfbb0
+                           00FBB1   491 _g_BASROM	=	0xfbb1
+                           00FBB2   492 _g_LINTTB	=	0xfbb2
+                           00FBCA   493 _g_FSTPOS	=	0xfbca
+                           00FBCC   494 _g_CODSAV	=	0xfbcc
+                           00FBCD   495 _g_FNKSWI	=	0xfbcd
+                           00FBCE   496 _g_FNKFLG	=	0xfbce
+                           00FBD8   497 _g_ONGSBF	=	0xfbd8
+                           00FBD9   498 _g_CLIKFL	=	0xfbd9
+                           00FBDA   499 _g_OLDKEY	=	0xfbda
+                           00FBE5   500 _g_NEWKEY	=	0xfbe5
+                           00FBF0   501 _g_KEYBUF	=	0xfbf0
+                           00FC18   502 _g_LINWRK	=	0xfc18
+                           00FC40   503 _g_PATWRK	=	0xfc40
+                           00FC48   504 _g_BOTTOM	=	0xfc48
+                           00FC4A   505 _g_HIMEM	=	0xfc4a
+                           00FC4C   506 _g_TRPTBL	=	0xfc4c
+                           00FC9A   507 _g_RTYCNT	=	0xfc9a
+                           00FC9B   508 _g_INTFLG	=	0xfc9b
+                           00FC9C   509 _g_PADY	=	0xfc9c
+                           00FC9D   510 _g_PADX	=	0xfc9d
+                           00FC9E   511 _g_JIFFY	=	0xfc9e
+                           00FCA0   512 _g_INTVAL	=	0xfca0
+                           00FCA2   513 _g_INTCNT	=	0xfca2
+                           00FCA4   514 _g_LOWLIM	=	0xfca4
+                           00FCA5   515 _g_WINWID	=	0xfca5
+                           00FCA6   516 _g_GRPHED	=	0xfca6
+                           00FCA7   517 _g_ESCCNT	=	0xfca7
+                           00FCA8   518 _g_INSFLG	=	0xfca8
+                           00FCA9   519 _g_CSRSW	=	0xfca9
+                           00FCAA   520 _g_CSTYLE	=	0xfcaa
+                           00FCAB   521 _g_CAPST	=	0xfcab
+                           00FCAC   522 _g_KANAST	=	0xfcac
+                           00FCAD   523 _g_KANAMD	=	0xfcad
+                           00FCAE   524 _g_FLBMEM	=	0xfcae
+                           00FCAF   525 _g_SCRMOD	=	0xfcaf
+                           00FCB0   526 _g_OLDSCR	=	0xfcb0
+                           00FCB1   527 _g_CASPRV	=	0xfcb1
+                           00FCB2   528 _g_BRDATR	=	0xfcb2
+                           00FCB3   529 _g_GXPOS	=	0xfcb3
+                           00FCB5   530 _g_GYPOS	=	0xfcb5
+                           00FCBB   531 _g_DRWFLG	=	0xfcbb
+                           00FCBC   532 _g_DRWSCL	=	0xfcbc
+                           00FCBD   533 _g_DRWANG	=	0xfcbd
+                           00FCC1   534 _g_MNROM	=	0xfcc1
+                           00FCC1   535 _g_EXPTBL	=	0xfcc1
+                           00FCC5   536 _g_SLTTBL	=	0xfcc5
+                           00FCC9   537 _g_SLTATR	=	0xfcc9
+                           00FD09   538 _g_SLTWRK	=	0xfd09
+                           00FD89   539 _g_PROCNM	=	0xfd89
+                           00FFE7   540 _g_RG08SAV	=	0xffe7
+                           00FFE8   541 _g_RG09SAV	=	0xffe8
+                           00FFE9   542 _g_RG10SAV	=	0xffe9
+                           00FFEA   543 _g_RG11SAV	=	0xffea
+                           00FFEB   544 _g_RG12SAV	=	0xffeb
+                           00FFEC   545 _g_RG13SAV	=	0xffec
+                           00FFED   546 _g_RG14SAV	=	0xffed
+                           00FFEE   547 _g_RG15SAV	=	0xffee
+                           00FFEF   548 _g_RG16SAV	=	0xffef
+                           00FFF0   549 _g_RG17SAV	=	0xfff0
+                           00FFF1   550 _g_RG18SAV	=	0xfff1
+                           00FFF2   551 _g_RG19SAV	=	0xfff2
+                           00FFF3   552 _g_RG20SAV	=	0xfff3
+                           00FFF4   553 _g_RG21SAV	=	0xfff4
+                           00FFF5   554 _g_RG22SAV	=	0xfff5
+                           00FFF6   555 _g_RG23SAV	=	0xfff6
+                           00FFF7   556 _g_MINROM	=	0xfff7
+                           00FFF8   557 _g_SVFFF8	=	0xfff8
+                           00FFFA   558 _g_RG25SAV	=	0xfffa
+                           00FFFB   559 _g_RG26SAV	=	0xfffb
+                           00FFFC   560 _g_RG27SAV	=	0xfffc
+                           00FFFD   561 _g_SVFFFD	=	0xfffd
+                           000004   562 _g_CGTABL	=	0x0004
+                           000006   563 _g_VDP_DR	=	0x0006
+                           000007   564 _g_VDP_DW	=	0x0007
+                           00002B   565 _g_BASRVN	=	0x002b
+                           00002B   566 _g_ROMVersion	=	0x002b
+                           00002D   567 _g_MSXVER	=	0x002d
+                           00002E   568 _g_MSXMID	=	0x002e
+                           000034   569 _g_CHAR_16	=	0x0034
+                           000000   570 _g_SUBRID	=	0x0000
+                           000002   571 _g_STRSRC	=	0x0002
+                           00F30F   572 _g_KANJTABLE	=	0xf30f
+                           00F323   573 _g_DISKVE	=	0xf323
+                           00F325   574 _g_BREAKV	=	0xf325
+                           00F341   575 _g_RAMAD0	=	0xf341
+                           00F342   576 _g_RAMAD1	=	0xf342
+                           00F343   577 _g_RAMAD2	=	0xf343
+                           00F344   578 _g_RAMAD3	=	0xf344
+                           00F348   579 _g_MASTER	=	0xf348
+                           00F37D   580 _g_BDOS	=	0xf37d
+      00006D                        581 _g_SCC_WaveformAddr:
+      00006D 00 98                  582 	.dw #0x9800
+      00006F 20 98                  583 	.dw #0x9820
+      000071 40 98                  584 	.dw #0x9840
+      000073 60 98                  585 	.dw #0x9860
+      000075 A0 98                  586 	.dw #0x98a0
+                                    587 ;/home/bruno/dev/MSXgl/engine/src/scc.c:78: u8 SCC_AutoDetect()
+                                    588 ;	---------------------------------
+                                    589 ; Function SCC_AutoDetect
+                                    590 ; ---------------------------------
+      000077                        591 _SCC_AutoDetect::
+                                    592 ;/home/bruno/dev/MSXgl/engine/src/scc.c:80: return Sys_CheckSlot(SCC_CheckSlotID);
+      000077 21r00r00         [10]  593 	ld	hl, #_SCC_CheckSlotID
+                                    594 ;/home/bruno/dev/MSXgl/engine/src/scc.c:81: }
+      00007A C3r00r00         [10]  595 	jp	_Sys_CheckSlot
+                                    596 ;/home/bruno/dev/MSXgl/engine/src/scc.c:282: bool SCC_Initialize()
+                                    597 ;	---------------------------------
+                                    598 ; Function SCC_Initialize
+                                    599 ; ---------------------------------
+      00007D                        600 _SCC_Initialize::
+                                    601 ;/home/bruno/dev/MSXgl/engine/src/scc.c:285: g_SCC_SlotId = SCC_AutoDetect();
+      00007D CDr77r00         [17]  602 	call	_SCC_AutoDetect
+                                    603 ;/home/bruno/dev/MSXgl/engine/src/scc.c:286: if(g_SCC_SlotId == SLOT_NOTFOUND)
+      000080 32r00r00         [13]  604 	ld	(_g_SCC_SlotId+0), a
+                                    605 ;/home/bruno/dev/MSXgl/engine/src/scc.c:287: return FALSE;
+      000083 3C               [ 4]  606 	inc	a
+      000084 C8               [11]  607 	ret	Z
+                                    608 ;/home/bruno/dev/MSXgl/engine/src/scc.c:292: SCC_Select();
+      000085 CDr8Br00         [17]  609 	call	_SCC_Select
+                                    610 ;/home/bruno/dev/MSXgl/engine/src/scc.c:293: return TRUE;
+      000088 3E 01            [ 7]  611 	ld	a, #0x01
+                                    612 ;/home/bruno/dev/MSXgl/engine/src/scc.c:294: }
+      00008A C9               [10]  613 	ret
+                                    614 ;/home/bruno/dev/MSXgl/engine/src/scc.c:298: void SCC_Select()
+                                    615 ;	---------------------------------
+                                    616 ; Function SCC_Select
+                                    617 ; ---------------------------------
+      00008B                        618 _SCC_Select::
+                                    619 ;/home/bruno/dev/MSXgl/engine/src/scc.c:303: Bios_InterSlotWrite(SCC_SLOT, 0x9000, 0x3F);
+      00008B 3E 3F            [ 7]  620 	ld	a, #0x3f
+      00008D F5               [11]  621 	push	af
+      00008E 33               [ 6]  622 	inc	sp
+      00008F 11 00 90         [10]  623 	ld	de, #0x9000
+      000092 3Ar00r00         [13]  624 	ld	a, (_g_SCC_SlotId+0)
+      000095 CDr00r00         [17]  625 	call	_Bios_InterSlotWrite
+                                    626 ;/home/bruno/dev/MSXgl/engine/src/scc.c:305: }
+      000098 C9               [10]  627 	ret
+                                    628 ;/home/bruno/dev/MSXgl/engine/src/scc.c:310: void SCC_SetRegister(u8 reg, u8 value)
+                                    629 ;	---------------------------------
+                                    630 ; Function SCC_SetRegister
+                                    631 ; ---------------------------------
+      000099                        632 _SCC_SetRegister::
+      000099 67               [ 4]  633 	ld	h, a
+                                    634 ;	spillPairReg hl
+                                    635 ;	spillPairReg hl
+                                    636 ;/home/bruno/dev/MSXgl/engine/src/scc.c:315: Bios_InterSlotWrite(SCC_SLOT, 0x9800 + reg, value);
+      00009A 5C               [ 4]  637 	ld	e, h
+      00009B AF               [ 4]  638 	xor	a, a
+      00009C C6 98            [ 7]  639 	add	a, #0x98
+      00009E 57               [ 4]  640 	ld	d, a
+      00009F E5               [11]  641 	push	hl
+      0000A0 7D               [ 4]  642 	ld	a, l
+      0000A1 F5               [11]  643 	push	af
+      0000A2 33               [ 6]  644 	inc	sp
+      0000A3 3Ar00r00         [13]  645 	ld	a, (_g_SCC_SlotId+0)
+      0000A6 CDr00r00         [17]  646 	call	_Bios_InterSlotWrite
+      0000A9 E1               [10]  647 	pop	hl
+                                    648 ;/home/bruno/dev/MSXgl/engine/src/scc.c:319: if(reg == SCC_REG_MIXER)
+      0000AA 7C               [ 4]  649 	ld	a, h
+      0000AB D6 8F            [ 7]  650 	sub	a, #0x8f
+      0000AD C0               [11]  651 	ret	NZ
+                                    652 ;/home/bruno/dev/MSXgl/engine/src/scc.c:320: g_SCC_MixerBackup = value;
+      0000AE 7D               [ 4]  653 	ld	a, l
+      0000AF 32r00r00         [13]  654 	ld	(#_g_SCC_MixerBackup), a
+                                    655 ;/home/bruno/dev/MSXgl/engine/src/scc.c:322: }
+      0000B2 C9               [10]  656 	ret
+                                    657 ;/home/bruno/dev/MSXgl/engine/src/scc.c:326: u8 SCC_GetRegister(u8 reg)
+                                    658 ;	---------------------------------
+                                    659 ; Function SCC_GetRegister
+                                    660 ; ---------------------------------
+      0000B3                        661 _SCC_GetRegister::
+      0000B3 6F               [ 4]  662 	ld	l, a
+                                    663 ;	spillPairReg hl
+                                    664 ;	spillPairReg hl
+                                    665 ;/home/bruno/dev/MSXgl/engine/src/scc.c:331: return Bios_InterSlotRead(SCC_SLOT, 0x9800 + reg);
+      0000B4 26 00            [ 7]  666 	ld	h, #0x00
+                                    667 ;	spillPairReg hl
+                                    668 ;	spillPairReg hl
+      0000B6 5D               [ 4]  669 	ld	e, l
+      0000B7 7C               [ 4]  670 	ld	a, h
+      0000B8 C6 98            [ 7]  671 	add	a, #0x98
+      0000BA 57               [ 4]  672 	ld	d, a
+      0000BB 3Ar00r00         [13]  673 	ld	a, (_g_SCC_SlotId+0)
+                                    674 ;/home/bruno/dev/MSXgl/engine/src/scc.c:333: }
+      0000BE C3r00r00         [10]  675 	jp	_Bios_InterSlotRead
+                                    676 ;/home/bruno/dev/MSXgl/engine/src/scc.c:337: void SCC_Mute()
+                                    677 ;	---------------------------------
+                                    678 ; Function SCC_Mute
+                                    679 ; ---------------------------------
+      0000C1                        680 _SCC_Mute::
+                                    681 ;/home/bruno/dev/MSXgl/engine/src/scc.c:342: Bios_InterSlotWrite(SCC_SLOT, SCC_ADDR_MIXER, 0x00);
+      0000C1 AF               [ 4]  682 	xor	a, a
+      0000C2 F5               [11]  683 	push	af
+      0000C3 33               [ 6]  684 	inc	sp
+      0000C4 11 8F 98         [10]  685 	ld	de, #0x988f
+      0000C7 3Ar00r00         [13]  686 	ld	a, (_g_SCC_SlotId+0)
+      0000CA CDr00r00         [17]  687 	call	_Bios_InterSlotWrite
+                                    688 ;/home/bruno/dev/MSXgl/engine/src/scc.c:344: }
+      0000CD C9               [10]  689 	ret
+                                    690 ;/home/bruno/dev/MSXgl/engine/src/scc.c:349: void SCC_Resume()
+                                    691 ;	---------------------------------
+                                    692 ; Function SCC_Resume
+                                    693 ; ---------------------------------
+      0000CE                        694 _SCC_Resume::
+                                    695 ;/home/bruno/dev/MSXgl/engine/src/scc.c:354: Bios_InterSlotWrite(SCC_SLOT, SCC_ADDR_MIXER, g_SCC_MixerBackup);
+      0000CE 3Ar00r00         [13]  696 	ld	a, (_g_SCC_MixerBackup+0)
+      0000D1 F5               [11]  697 	push	af
+      0000D2 33               [ 6]  698 	inc	sp
+      0000D3 11 8F 98         [10]  699 	ld	de, #0x988f
+      0000D6 3Ar00r00         [13]  700 	ld	a, (_g_SCC_SlotId+0)
+      0000D9 CDr00r00         [17]  701 	call	_Bios_InterSlotWrite
+                                    702 ;/home/bruno/dev/MSXgl/engine/src/scc.c:356: }
+      0000DC C9               [10]  703 	ret
+                                    704 ;/home/bruno/dev/MSXgl/engine/src/scc.c:367: void SCC_LoadWaveform(u8 channel, const u8* data)
+                                    705 ;	---------------------------------
+                                    706 ; Function SCC_LoadWaveform
+                                    707 ; ---------------------------------
+      0000DD                        708 _SCC_LoadWaveform::
+      0000DD DD E5            [15]  709 	push	ix
+      0000DF DD 21 00 00      [14]  710 	ld	ix,#0
+      0000E3 DD 39            [15]  711 	add	ix,sp
+      0000E5 F5               [11]  712 	push	af
+      0000E6 3B               [ 6]  713 	dec	sp
+      0000E7 6F               [ 4]  714 	ld	l, a
+                                    715 ;	spillPairReg hl
+                                    716 ;	spillPairReg hl
+      0000E8 33               [ 6]  717 	inc	sp
+      0000E9 33               [ 6]  718 	inc	sp
+      0000EA D5               [11]  719 	push	de
+                                    720 ;/home/bruno/dev/MSXgl/engine/src/scc.c:369: u16 addr = g_SCC_WaveformAddr[channel];
+      0000EB 01r6Dr00         [10]  721 	ld	bc, #_g_SCC_WaveformAddr+0
+      0000EE 26 00            [ 7]  722 	ld	h, #0x00
+                                    723 ;	spillPairReg hl
+                                    724 ;	spillPairReg hl
+      0000F0 29               [11]  725 	add	hl, hl
+      0000F1 09               [11]  726 	add	hl, bc
+      0000F2 4E               [ 7]  727 	ld	c, (hl)
+      0000F3 23               [ 6]  728 	inc	hl
+      0000F4 46               [ 7]  729 	ld	b, (hl)
+                                    730 ;/home/bruno/dev/MSXgl/engine/src/scc.c:373: loopx(32)
+      0000F5 DD 36 FF 00      [19]  731 	ld	-1 (ix), #0x00
+      0000F9                        732 00103$:
+      0000F9 DD 7E FF         [19]  733 	ld	a, -1 (ix)
+      0000FC D6 20            [ 7]  734 	sub	a, #0x20
+      0000FE 30 1E            [12]  735 	jr	NC, 00105$
+                                    736 ;/home/bruno/dev/MSXgl/engine/src/scc.c:374: Bios_InterSlotWrite(SCC_SLOT, addr++, *data++);
+      000100 E1               [10]  737 	pop	hl
+      000101 E5               [11]  738 	push	hl
+      000102 7E               [ 7]  739 	ld	a, (hl)
+      000103 DD 34 FD         [23]  740 	inc	-3 (ix)
+      000106 20 03            [12]  741 	jr	NZ, 00118$
+      000108 DD 34 FE         [23]  742 	inc	-2 (ix)
+      00010B                        743 00118$:
+      00010B 59               [ 4]  744 	ld	e, c
+      00010C 50               [ 4]  745 	ld	d, b
+      00010D 03               [ 6]  746 	inc	bc
+      00010E C5               [11]  747 	push	bc
+      00010F F5               [11]  748 	push	af
+      000110 33               [ 6]  749 	inc	sp
+      000111 3Ar00r00         [13]  750 	ld	a, (_g_SCC_SlotId+0)
+      000114 CDr00r00         [17]  751 	call	_Bios_InterSlotWrite
+      000117 C1               [10]  752 	pop	bc
+                                    753 ;/home/bruno/dev/MSXgl/engine/src/scc.c:373: loopx(32)
+      000118 DD 34 FF         [23]  754 	inc	-1 (ix)
+      00011B C3rF9r00         [10]  755 	jp	00103$
+      00011E                        756 00105$:
+                                    757 ;/home/bruno/dev/MSXgl/engine/src/scc.c:376: }
+      00011E DD F9            [10]  758 	ld	sp, ix
+      000120 DD E1            [14]  759 	pop	ix
+      000122 C9               [10]  760 	ret
+                                    761 ;/home/bruno/dev/MSXgl/engine/src/scc.c:380: void SCC_SetFrequency(u8 channel, u16 freq)
+                                    762 ;	---------------------------------
+                                    763 ; Function SCC_SetFrequency
+                                    764 ; ---------------------------------
+      000123                        765 _SCC_SetFrequency::
+      000123 6F               [ 4]  766 	ld	l, a
+                                    767 ;	spillPairReg hl
+                                    768 ;	spillPairReg hl
+      000124 4B               [ 4]  769 	ld	c, e
+      000125 42               [ 4]  770 	ld	b, d
+                                    771 ;/home/bruno/dev/MSXgl/engine/src/scc.c:382: u16 addr = SCC_ADDR_FREQ_1 + (channel * 2);
+      000126 26 00            [ 7]  772 	ld	h, #0x00
+                                    773 ;	spillPairReg hl
+                                    774 ;	spillPairReg hl
+      000128 29               [11]  775 	add	hl, hl
+      000129 11 80 98         [10]  776 	ld	de, #0x9880
+      00012C 19               [11]  777 	add	hl, de
+                                    778 ;/home/bruno/dev/MSXgl/engine/src/scc.c:386: Bios_InterSlotWrite(SCC_SLOT, addr++, (u8)freq);
+      00012D 79               [ 4]  779 	ld	a, c
+      00012E 5D               [ 4]  780 	ld	e, l
+      00012F 54               [ 4]  781 	ld	d, h
+      000130 23               [ 6]  782 	inc	hl
+      000131 E5               [11]  783 	push	hl
+      000132 C5               [11]  784 	push	bc
+      000133 F5               [11]  785 	push	af
+      000134 33               [ 6]  786 	inc	sp
+      000135 3Ar00r00         [13]  787 	ld	a, (_g_SCC_SlotId+0)
+      000138 CDr00r00         [17]  788 	call	_Bios_InterSlotWrite
+      00013B C1               [10]  789 	pop	bc
+      00013C E1               [10]  790 	pop	hl
+                                    791 ;/home/bruno/dev/MSXgl/engine/src/scc.c:387: Bios_InterSlotWrite(SCC_SLOT, addr, freq >> 8);
+      00013D C5               [11]  792 	push	bc
+      00013E 33               [ 6]  793 	inc	sp
+      00013F EB               [ 4]  794 	ex	de, hl
+      000140 3Ar00r00         [13]  795 	ld	a, (_g_SCC_SlotId+0)
+      000143 CDr00r00         [17]  796 	call	_Bios_InterSlotWrite
+                                    797 ;/home/bruno/dev/MSXgl/engine/src/scc.c:390: }
+      000146 C9               [10]  798 	ret
+                                    799 	.area _CODE
+                                    800 	.area _INITIALIZER
+      000000                        801 __xinit__g_SCC_SlotId:
+      000000 FF                     802 	.db #0xff	; 255
+                                    803 	.area _CABS (ABS)

@@ -1,0 +1,41 @@
+#!/usr/bin/env python3
+import sys
+
+def normalize_input(s: str) -> str:
+    """
+    Converte:
+    '.' -> '0'
+    '#' -> '1'
+    e mantém 0/1 como estão.
+    """
+    s = s.strip()
+    if all(c in ".#" for c in s):
+        return s.replace('.', '0').replace('#', '1')
+    elif all(c in "01" for c in s):
+        return s
+    else:
+        raise ValueError("Entrada inválida. Use apenas 0/1 ou ./#")
+
+def to_hex(bin_str: str) -> str:
+    return hex(int(bin_str, 2))
+
+def main():
+    if len(sys.argv) != 2:
+        print(f"Uso: {sys.argv[0]} <binario|pattern>")
+        print("Exemplos:")
+        print(f"  {sys.argv[0]} 00011110")
+        print(f"  {sys.argv[0]} .....###")
+        sys.exit(1)
+
+    raw = sys.argv[1]
+
+    try:
+        normalized = normalize_input(raw)
+        result = to_hex(normalized)
+        print(result)
+    except ValueError as e:
+        print(f"Erro: {e}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()

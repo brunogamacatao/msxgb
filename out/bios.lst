@@ -1,0 +1,966 @@
+                                      1 ;--------------------------------------------------------
+                                      2 ; File Created by SDCC : free open source ANSI-C Compiler
+                                      3 ; Version 4.2.0 #13081 (Linux)
+                                      4 ;--------------------------------------------------------
+                                      5 	.module bios
+                                      6 	.optsdcc -mz80
+                                      7 	
+                                      8 ;--------------------------------------------------------
+                                      9 ; Public variables in this module
+                                     10 ;--------------------------------------------------------
+                                     11 	.globl _Sys_GetPageSlot
+                                     12 	.globl _DOS_TPAUpperAddr
+                                     13 	.globl _g_SLTSL
+                                     14 	.globl _g_GRPACY
+                                     15 	.globl _g_GRPACX
+                                     16 	.globl _g_LOGOPR
+                                     17 	.globl _g_CMASK
+                                     18 	.globl _g_CLOC
+                                     19 	.globl _g_FNKSTR
+                                     20 	.globl _g_ATRBYT
+                                     21 	.globl _g_BDRCLR
+                                     22 	.globl _g_BAKCLR
+                                     23 	.globl _g_FORCLR
+                                     24 	.globl _g_CSRX
+                                     25 	.globl _g_CSRY
+                                     26 	.globl _g_CLIKSW
+                                     27 	.globl _g_MLTPAT
+                                     28 	.globl _g_MLTATR
+                                     29 	.globl _g_MLTCGP
+                                     30 	.globl _g_MLTCOL
+                                     31 	.globl _g_MLTNAM
+                                     32 	.globl _g_GRPPAT
+                                     33 	.globl _g_GRPATR
+                                     34 	.globl _g_GRPCGP
+                                     35 	.globl _g_GRPCOL
+                                     36 	.globl _g_GRPNAM
+                                     37 	.globl _g_T32PAT
+                                     38 	.globl _g_T32ATR
+                                     39 	.globl _g_T32CGP
+                                     40 	.globl _g_T32COL
+                                     41 	.globl _g_T32NAM
+                                     42 	.globl _g_TXTPAT
+                                     43 	.globl _g_TXTATR
+                                     44 	.globl _g_TXTCGP
+                                     45 	.globl _g_TXTCOL
+                                     46 	.globl _g_TXTNAM
+                                     47 	.globl _g_CLMLST
+                                     48 	.globl _g_CRTCNT
+                                     49 	.globl _g_LINLEN
+                                     50 	.globl _g_LINL32
+                                     51 	.globl _g_LINL40
+                                     52 	.globl _g_BDOS
+                                     53 	.globl _g_MASTER
+                                     54 	.globl _g_RAMAD3
+                                     55 	.globl _g_RAMAD2
+                                     56 	.globl _g_RAMAD1
+                                     57 	.globl _g_RAMAD0
+                                     58 	.globl _g_BREAKV
+                                     59 	.globl _g_DISKVE
+                                     60 	.globl _g_KANJTABLE
+                                     61 	.globl _g_STRSRC
+                                     62 	.globl _g_SUBRID
+                                     63 	.globl _g_CHAR_16
+                                     64 	.globl _g_MSXMID
+                                     65 	.globl _g_MSXVER
+                                     66 	.globl _g_ROMVersion
+                                     67 	.globl _g_BASRVN
+                                     68 	.globl _g_VDP_DW
+                                     69 	.globl _g_VDP_DR
+                                     70 	.globl _g_CGTABL
+                                     71 	.globl _g_SVFFFD
+                                     72 	.globl _g_RG27SAV
+                                     73 	.globl _g_RG26SAV
+                                     74 	.globl _g_RG25SAV
+                                     75 	.globl _g_SVFFF8
+                                     76 	.globl _g_MINROM
+                                     77 	.globl _g_RG23SAV
+                                     78 	.globl _g_RG22SAV
+                                     79 	.globl _g_RG21SAV
+                                     80 	.globl _g_RG20SAV
+                                     81 	.globl _g_RG19SAV
+                                     82 	.globl _g_RG18SAV
+                                     83 	.globl _g_RG17SAV
+                                     84 	.globl _g_RG16SAV
+                                     85 	.globl _g_RG15SAV
+                                     86 	.globl _g_RG14SAV
+                                     87 	.globl _g_RG13SAV
+                                     88 	.globl _g_RG12SAV
+                                     89 	.globl _g_RG11SAV
+                                     90 	.globl _g_RG10SAV
+                                     91 	.globl _g_RG09SAV
+                                     92 	.globl _g_RG08SAV
+                                     93 	.globl _g_PROCNM
+                                     94 	.globl _g_SLTWRK
+                                     95 	.globl _g_SLTATR
+                                     96 	.globl _g_SLTTBL
+                                     97 	.globl _g_EXPTBL
+                                     98 	.globl _g_MNROM
+                                     99 	.globl _g_DRWANG
+                                    100 	.globl _g_DRWSCL
+                                    101 	.globl _g_DRWFLG
+                                    102 	.globl _g_GYPOS
+                                    103 	.globl _g_GXPOS
+                                    104 	.globl _g_BRDATR
+                                    105 	.globl _g_CASPRV
+                                    106 	.globl _g_OLDSCR
+                                    107 	.globl _g_SCRMOD
+                                    108 	.globl _g_FLBMEM
+                                    109 	.globl _g_KANAMD
+                                    110 	.globl _g_KANAST
+                                    111 	.globl _g_CAPST
+                                    112 	.globl _g_CSTYLE
+                                    113 	.globl _g_CSRSW
+                                    114 	.globl _g_INSFLG
+                                    115 	.globl _g_ESCCNT
+                                    116 	.globl _g_GRPHED
+                                    117 	.globl _g_WINWID
+                                    118 	.globl _g_LOWLIM
+                                    119 	.globl _g_INTCNT
+                                    120 	.globl _g_INTVAL
+                                    121 	.globl _g_JIFFY
+                                    122 	.globl _g_PADX
+                                    123 	.globl _g_PADY
+                                    124 	.globl _g_INTFLG
+                                    125 	.globl _g_RTYCNT
+                                    126 	.globl _g_TRPTBL
+                                    127 	.globl _g_HIMEM
+                                    128 	.globl _g_BOTTOM
+                                    129 	.globl _g_PATWRK
+                                    130 	.globl _g_LINWRK
+                                    131 	.globl _g_KEYBUF
+                                    132 	.globl _g_NEWKEY
+                                    133 	.globl _g_OLDKEY
+                                    134 	.globl _g_CLIKFL
+                                    135 	.globl _g_ONGSBF
+                                    136 	.globl _g_FNKFLG
+                                    137 	.globl _g_FNKSWI
+                                    138 	.globl _g_CODSAV
+                                    139 	.globl _g_FSTPOS
+                                    140 	.globl _g_LINTTB
+                                    141 	.globl _g_BASROM
+                                    142 	.globl _g_ENSTOP
+                                    143 	.globl _g_VCBC
+                                    144 	.globl _g_VCBB
+                                    145 	.globl _g_VCBA
+                                    146 	.globl _g_PLYCNT
+                                    147 	.globl _g_MUSICF
+                                    148 	.globl _g_QUEUEN
+                                    149 	.globl _g_MCLPTR
+                                    150 	.globl _g_MCLLEN
+                                    151 	.globl _g_SAVVOL
+                                    152 	.globl _g_VOICEN
+                                    153 	.globl _g_SAVSP
+                                    154 	.globl _g_PRSCNT
+                                    155 	.globl _g_LSTMOD
+                                    156 	.globl _g_LSTCOM
+                                    157 	.globl _g_COMMSK
+                                    158 	.globl _g_ESTBLS
+                                    159 	.globl _g_FLAGS
+                                    160 	.globl _g_ERRORS
+                                    161 	.globl _g_DATCNT
+                                    162 	.globl _g_DEVNUM
+                                    163 	.globl _g_OLDINT
+                                    164 	.globl _g_OLDSTT
+                                    165 	.globl _g_MEXBIh
+                                    166 	.globl _g_RSIQLN
+                                    167 	.globl _g_RSFCB
+                                    168 	.globl _g_TOCNT
+                                    169 	.globl _g_RSTMP
+                                    170 	.globl _g_YSAVE
+                                    171 	.globl _g_XSAVE
+                                    172 	.globl _g_NORUSE
+                                    173 	.globl _g_MODE
+                                    174 	.globl _g_ROMA
+                                    175 	.globl _g_CHRCNT
+                                    176 	.globl _g_EXBRSA
+                                    177 	.globl _g_AVCSAV
+                                    178 	.globl _g_ACPAGE
+                                    179 	.globl _g_DPPAGE
+                                    180 	.globl _g_RS2IQ
+                                    181 	.globl _g_VOICCQ
+                                    182 	.globl _g_VOICBQ
+                                    183 	.globl _g_VOICAQ
+                                    184 	.globl _g_QUEBAK
+                                    185 	.globl _g_QUETAB
+                                    186 	.globl _g_ASPCT2
+                                    187 	.globl _g_ASPCT1
+                                    188 	.globl _g_HEADER
+                                    189 	.globl _g_HIGH
+                                    190 	.globl _g_LOW
+                                    191 	.globl _g_CS240
+                                    192 	.globl _g_CS120
+                                    193 	.globl _g_GETPNT
+                                    194 	.globl _g_PUTPNT
+                                    195 	.globl _g_REPCNT
+                                    196 	.globl _g_SCNCNT
+                                    197 	.globl _g_FRCNEW
+                                    198 	.globl _g_QUEUES
+                                    199 	.globl _g_MINUPD
+                                    200 	.globl _g_MAXUPD
+                                    201 	.globl _g_TRGFLG
+                                    202 	.globl _g_STATFL
+                                    203 	.globl _g_RG7SAV
+                                    204 	.globl _g_RG6SAV
+                                    205 	.globl _g_RG5SAV
+                                    206 	.globl _g_RG4SAV
+                                    207 	.globl _g_RG3SAV
+                                    208 	.globl _g_RG2SAV
+                                    209 	.globl _g_RG1SAV
+                                    210 	.globl _g_RG0SAV
+                                    211 	.globl _g_CNSDFG
+                                    212 	.globl _g_USRTAB
+                                    213 	.globl _g_CLPRIM
+                                    214 	.globl _g_WRPRIM
+                                    215 	.globl _g_RDPRIM
+                                    216 	.globl _Bios_Exit
+                                    217 	.globl _Bios_SetHookCallback
+                                    218 	.globl _Bios_InterSlotRead
+                                    219 	.globl _Bios_InterSlotWrite
+                                    220 	.globl _Bios_InterSlotCall
+                                    221 	.globl _Bios_SwitchSlot
+                                    222 	.globl _Bios_WriteVDP
+                                    223 	.globl _Bios_WriteVRAM
+                                    224 	.globl _Bios_FillVRAM
+                                    225 	.globl _Bios_TransfertVRAMtoRAM
+                                    226 	.globl _Bios_TransfertRAMtoVRAM
+                                    227 	.globl _Bios_ChangeColor
+                                    228 	.globl _Bios_InitScreen0Ex
+                                    229 	.globl _Bios_InitScreen1Ex
+                                    230 	.globl _Bios_InitScreen2Ex
+                                    231 	.globl _Bios_InitScreen3Ex
+                                    232 	.globl _Bios_GetPatternTableAddress
+                                    233 	.globl _Bios_GetAttributeTableAddress
+                                    234 	.globl _Bios_GraphPrintCharEx
+                                    235 	.globl _Bios_WritePSG
+                                    236 	.globl _Bios_ClearScreen
+                                    237 	.globl _Bios_SetCursorPosition
+                                    238 ;--------------------------------------------------------
+                                    239 ; special function registers
+                                    240 ;--------------------------------------------------------
+                           0000A8   241 _g_PortPrimarySlot	=	0x00a8
+                           0000A9   242 _g_PortReadKeyboard	=	0x00a9
+                           0000AA   243 _g_PortAccessKeyboard	=	0x00aa
+                           0000AB   244 _g_PortControl	=	0x00ab
+                           000098   245 _g_VDP_DataPort	=	0x0098
+                           000099   246 _g_VDP_RegPort	=	0x0099
+                           000099   247 _g_VDP_AddrPort	=	0x0099
+                           000099   248 _g_VDP_StatPort	=	0x0099
+                           00009A   249 _g_VDP_PalPort	=	0x009a
+                           00009B   250 _g_VDP_IRegPort	=	0x009b
+                           0000A0   251 _g_PSG_RegPort	=	0x00a0
+                           0000A1   252 _g_PSG_DataPort	=	0x00a1
+                           0000A2   253 _g_PSG_StatPort	=	0x00a2
+                           000010   254 _g_PSG_Ext_RegPort	=	0x0010
+                           000011   255 _g_PSG_Ext_DataPort	=	0x0011
+                           000012   256 _g_PSG_Ext_StatPort	=	0x0012
+                           00007C   257 _g_MSXMusic_IndexPort	=	0x007c
+                           00007D   258 _g_MSXMusic_DataPort	=	0x007d
+                           0000C0   259 _g_MSXAudio_IndexPort	=	0x00c0
+                           0000C1   260 _g_MSXAudio_DataPort	=	0x00c1
+                           0000C2   261 _g_MSXAudio_IndexPort2	=	0x00c2
+                           0000C3   262 _g_MSXAudio_DataPort2	=	0x00c3
+                           0000B4   263 _g_RTC_AddrPort	=	0x00b4
+                           0000B5   264 _g_RTC_DataPort	=	0x00b5
+                                    265 ;--------------------------------------------------------
+                                    266 ; ram data
+                                    267 ;--------------------------------------------------------
+                                    268 	.area _DATA
+                           00F3AE   269 _g_LINL40	=	0xf3ae
+                           00F3AF   270 _g_LINL32	=	0xf3af
+                           00F3B0   271 _g_LINLEN	=	0xf3b0
+                           00F3B1   272 _g_CRTCNT	=	0xf3b1
+                           00F3B2   273 _g_CLMLST	=	0xf3b2
+                           00F3B3   274 _g_TXTNAM	=	0xf3b3
+                           00F3B5   275 _g_TXTCOL	=	0xf3b5
+                           00F3B7   276 _g_TXTCGP	=	0xf3b7
+                           00F3B9   277 _g_TXTATR	=	0xf3b9
+                           00F3BB   278 _g_TXTPAT	=	0xf3bb
+                           00F3BD   279 _g_T32NAM	=	0xf3bd
+                           00F3BF   280 _g_T32COL	=	0xf3bf
+                           00F3C1   281 _g_T32CGP	=	0xf3c1
+                           00F3C3   282 _g_T32ATR	=	0xf3c3
+                           00F3C5   283 _g_T32PAT	=	0xf3c5
+                           00F3C7   284 _g_GRPNAM	=	0xf3c7
+                           00F3C9   285 _g_GRPCOL	=	0xf3c9
+                           00F3CB   286 _g_GRPCGP	=	0xf3cb
+                           00F3CD   287 _g_GRPATR	=	0xf3cd
+                           00F3CF   288 _g_GRPPAT	=	0xf3cf
+                           00F3D1   289 _g_MLTNAM	=	0xf3d1
+                           00F3D3   290 _g_MLTCOL	=	0xf3d3
+                           00F3D5   291 _g_MLTCGP	=	0xf3d5
+                           00F3D7   292 _g_MLTATR	=	0xf3d7
+                           00F3D9   293 _g_MLTPAT	=	0xf3d9
+                           00F3DB   294 _g_CLIKSW	=	0xf3db
+                           00F3DC   295 _g_CSRY	=	0xf3dc
+                           00F3DD   296 _g_CSRX	=	0xf3dd
+                           00F3E9   297 _g_FORCLR	=	0xf3e9
+                           00F3EA   298 _g_BAKCLR	=	0xf3ea
+                           00F3EB   299 _g_BDRCLR	=	0xf3eb
+                           00F3F2   300 _g_ATRBYT	=	0xf3f2
+                           00F87F   301 _g_FNKSTR	=	0xf87f
+                           00F92A   302 _g_CLOC	=	0xf92a
+                           00F92C   303 _g_CMASK	=	0xf92c
+                           00FB02   304 _g_LOGOPR	=	0xfb02
+                           00FCB7   305 _g_GRPACX	=	0xfcb7
+                           00FCB9   306 _g_GRPACY	=	0xfcb9
+                           00FFFF   307 _g_SLTSL	=	0xffff
+                           000006   308 _DOS_TPAUpperAddr	=	0x0006
+                                    309 ;--------------------------------------------------------
+                                    310 ; ram data
+                                    311 ;--------------------------------------------------------
+                                    312 	.area _INITIALIZED
+                                    313 ;--------------------------------------------------------
+                                    314 ; absolute external ram data
+                                    315 ;--------------------------------------------------------
+                                    316 	.area _DABS (ABS)
+                                    317 ;--------------------------------------------------------
+                                    318 ; global & static initialisations
+                                    319 ;--------------------------------------------------------
+                                    320 	.area _HOME
+                                    321 	.area _GSINIT
+                                    322 	.area _GSFINAL
+                                    323 	.area _GSINIT
+                                    324 ;--------------------------------------------------------
+                                    325 ; Home
+                                    326 ;--------------------------------------------------------
+                                    327 	.area _HOME
+                                    328 	.area _HOME
+                                    329 ;--------------------------------------------------------
+                                    330 ; code
+                                    331 ;--------------------------------------------------------
+                                    332 	.area _CODE
+                                    333 ;/home/bruno/dev/MSXgl/engine/src/bios.c:27: void Bios_Exit(u8 ret)
+                                    334 ;	---------------------------------
+                                    335 ; Function Bios_Exit
+                                    336 ; ---------------------------------
+      000000                        337 _Bios_Exit::
+                                    338 ;/home/bruno/dev/MSXgl/engine/src/bios.c:51: __endasm;
+      000000 F5               [11]  339 	push	af
+      000001 3E 02            [ 7]  340 	ld	a, #2
+      000003 DD 21 5F 00      [14]  341 	ld	ix, #0x005F
+      000007 FD 2A C0 FC      [20]  342 	ld	iy, (0xFCC1 -1)
+      00000B CD 1C 00         [17]  343 	call	0x001C
+      00000E DD 21 D2 00      [14]  344 	ld	ix, #0x00D2
+      000012 FD 2A C0 FC      [20]  345 	ld	iy, (0xFCC1 -1)
+      000016 CD 1C 00         [17]  346 	call	0x001C
+      000019 F1               [10]  347 	pop	af
+      00001A 47               [ 4]  348 	ld	b, a
+      00001B 0E 62            [ 7]  349 	ld	c, #0x62
+      00001D CD 05 00         [17]  350 	call	0x0005
+      000020 0E 00            [ 7]  351 	ld	c, #0x00
+      000022 C3 05 00         [10]  352 	jp	0x0005
+                                    353 ;/home/bruno/dev/MSXgl/engine/src/bios.c:76: }
+      000025 C9               [10]  354 	ret
+                           00F380   355 _g_RDPRIM	=	0xf380
+                           00F385   356 _g_WRPRIM	=	0xf385
+                           00F38C   357 _g_CLPRIM	=	0xf38c
+                           00F39A   358 _g_USRTAB	=	0xf39a
+                           00F3DE   359 _g_CNSDFG	=	0xf3de
+                           00F3DF   360 _g_RG0SAV	=	0xf3df
+                           00F3E0   361 _g_RG1SAV	=	0xf3e0
+                           00F3E1   362 _g_RG2SAV	=	0xf3e1
+                           00F3E2   363 _g_RG3SAV	=	0xf3e2
+                           00F3E3   364 _g_RG4SAV	=	0xf3e3
+                           00F3E4   365 _g_RG5SAV	=	0xf3e4
+                           00F3E5   366 _g_RG6SAV	=	0xf3e5
+                           00F3E6   367 _g_RG7SAV	=	0xf3e6
+                           00F3E7   368 _g_STATFL	=	0xf3e7
+                           00F3E8   369 _g_TRGFLG	=	0xf3e8
+                           00F3EC   370 _g_MAXUPD	=	0xf3ec
+                           00F3EF   371 _g_MINUPD	=	0xf3ef
+                           00F3F3   372 _g_QUEUES	=	0xf3f3
+                           00F3F5   373 _g_FRCNEW	=	0xf3f5
+                           00F3F6   374 _g_SCNCNT	=	0xf3f6
+                           00F3F7   375 _g_REPCNT	=	0xf3f7
+                           00F3F8   376 _g_PUTPNT	=	0xf3f8
+                           00F3FA   377 _g_GETPNT	=	0xf3fa
+                           00F3FC   378 _g_CS120	=	0xf3fc
+                           00F401   379 _g_CS240	=	0xf401
+                           00F406   380 _g_LOW	=	0xf406
+                           00F408   381 _g_HIGH	=	0xf408
+                           00F40A   382 _g_HEADER	=	0xf40a
+                           00F40B   383 _g_ASPCT1	=	0xf40b
+                           00F40D   384 _g_ASPCT2	=	0xf40d
+                           00F959   385 _g_QUETAB	=	0xf959
+                           00F971   386 _g_QUEBAK	=	0xf971
+                           00F975   387 _g_VOICAQ	=	0xf975
+                           00F9F5   388 _g_VOICBQ	=	0xf9f5
+                           00FA75   389 _g_VOICCQ	=	0xfa75
+                           00FAF5   390 _g_RS2IQ	=	0xfaf5
+                           00FAF5   391 _g_DPPAGE	=	0xfaf5
+                           00FAF6   392 _g_ACPAGE	=	0xfaf6
+                           00FAF7   393 _g_AVCSAV	=	0xfaf7
+                           00FAF8   394 _g_EXBRSA	=	0xfaf8
+                           00FAF9   395 _g_CHRCNT	=	0xfaf9
+                           00FAFA   396 _g_ROMA	=	0xfafa
+                           00FAFC   397 _g_MODE	=	0xfafc
+                           00FAFD   398 _g_NORUSE	=	0xfafd
+                           00FAFE   399 _g_XSAVE	=	0xfafe
+                           00FB00   400 _g_YSAVE	=	0xfb00
+                           00FB03   401 _g_RSTMP	=	0xfb03
+                           00FB03   402 _g_TOCNT	=	0xfb03
+                           00FB04   403 _g_RSFCB	=	0xfb04
+                           00FB06   404 _g_RSIQLN	=	0xfb06
+                           00FB07   405 _g_MEXBIh	=	0xfb07
+                           00FB0C   406 _g_OLDSTT	=	0xfb0c
+                           00FB0C   407 _g_OLDINT	=	0xfb0c
+                           00FB16   408 _g_DEVNUM	=	0xfb16
+                           00FB17   409 _g_DATCNT	=	0xfb17
+                           00FB1A   410 _g_ERRORS	=	0xfb1a
+                           00FB1B   411 _g_FLAGS	=	0xfb1b
+                           00FB1C   412 _g_ESTBLS	=	0xfb1c
+                           00FB1D   413 _g_COMMSK	=	0xfb1d
+                           00FB1E   414 _g_LSTCOM	=	0xfb1e
+                           00FB1F   415 _g_LSTMOD	=	0xfb1f
+                           00FB35   416 _g_PRSCNT	=	0xfb35
+                           00FB36   417 _g_SAVSP	=	0xfb36
+                           00FB38   418 _g_VOICEN	=	0xfb38
+                           00FB39   419 _g_SAVVOL	=	0xfb39
+                           00FB3B   420 _g_MCLLEN	=	0xfb3b
+                           00FB3C   421 _g_MCLPTR	=	0xfb3c
+                           00FB3E   422 _g_QUEUEN	=	0xfb3e
+                           00FB3F   423 _g_MUSICF	=	0xfb3f
+                           00FB40   424 _g_PLYCNT	=	0xfb40
+                           00FB41   425 _g_VCBA	=	0xfb41
+                           00FB66   426 _g_VCBB	=	0xfb66
+                           00FB8B   427 _g_VCBC	=	0xfb8b
+                           00FBB0   428 _g_ENSTOP	=	0xfbb0
+                           00FBB1   429 _g_BASROM	=	0xfbb1
+                           00FBB2   430 _g_LINTTB	=	0xfbb2
+                           00FBCA   431 _g_FSTPOS	=	0xfbca
+                           00FBCC   432 _g_CODSAV	=	0xfbcc
+                           00FBCD   433 _g_FNKSWI	=	0xfbcd
+                           00FBCE   434 _g_FNKFLG	=	0xfbce
+                           00FBD8   435 _g_ONGSBF	=	0xfbd8
+                           00FBD9   436 _g_CLIKFL	=	0xfbd9
+                           00FBDA   437 _g_OLDKEY	=	0xfbda
+                           00FBE5   438 _g_NEWKEY	=	0xfbe5
+                           00FBF0   439 _g_KEYBUF	=	0xfbf0
+                           00FC18   440 _g_LINWRK	=	0xfc18
+                           00FC40   441 _g_PATWRK	=	0xfc40
+                           00FC48   442 _g_BOTTOM	=	0xfc48
+                           00FC4A   443 _g_HIMEM	=	0xfc4a
+                           00FC4C   444 _g_TRPTBL	=	0xfc4c
+                           00FC9A   445 _g_RTYCNT	=	0xfc9a
+                           00FC9B   446 _g_INTFLG	=	0xfc9b
+                           00FC9C   447 _g_PADY	=	0xfc9c
+                           00FC9D   448 _g_PADX	=	0xfc9d
+                           00FC9E   449 _g_JIFFY	=	0xfc9e
+                           00FCA0   450 _g_INTVAL	=	0xfca0
+                           00FCA2   451 _g_INTCNT	=	0xfca2
+                           00FCA4   452 _g_LOWLIM	=	0xfca4
+                           00FCA5   453 _g_WINWID	=	0xfca5
+                           00FCA6   454 _g_GRPHED	=	0xfca6
+                           00FCA7   455 _g_ESCCNT	=	0xfca7
+                           00FCA8   456 _g_INSFLG	=	0xfca8
+                           00FCA9   457 _g_CSRSW	=	0xfca9
+                           00FCAA   458 _g_CSTYLE	=	0xfcaa
+                           00FCAB   459 _g_CAPST	=	0xfcab
+                           00FCAC   460 _g_KANAST	=	0xfcac
+                           00FCAD   461 _g_KANAMD	=	0xfcad
+                           00FCAE   462 _g_FLBMEM	=	0xfcae
+                           00FCAF   463 _g_SCRMOD	=	0xfcaf
+                           00FCB0   464 _g_OLDSCR	=	0xfcb0
+                           00FCB1   465 _g_CASPRV	=	0xfcb1
+                           00FCB2   466 _g_BRDATR	=	0xfcb2
+                           00FCB3   467 _g_GXPOS	=	0xfcb3
+                           00FCB5   468 _g_GYPOS	=	0xfcb5
+                           00FCBB   469 _g_DRWFLG	=	0xfcbb
+                           00FCBC   470 _g_DRWSCL	=	0xfcbc
+                           00FCBD   471 _g_DRWANG	=	0xfcbd
+                           00FCC1   472 _g_MNROM	=	0xfcc1
+                           00FCC1   473 _g_EXPTBL	=	0xfcc1
+                           00FCC5   474 _g_SLTTBL	=	0xfcc5
+                           00FCC9   475 _g_SLTATR	=	0xfcc9
+                           00FD09   476 _g_SLTWRK	=	0xfd09
+                           00FD89   477 _g_PROCNM	=	0xfd89
+                           00FFE7   478 _g_RG08SAV	=	0xffe7
+                           00FFE8   479 _g_RG09SAV	=	0xffe8
+                           00FFE9   480 _g_RG10SAV	=	0xffe9
+                           00FFEA   481 _g_RG11SAV	=	0xffea
+                           00FFEB   482 _g_RG12SAV	=	0xffeb
+                           00FFEC   483 _g_RG13SAV	=	0xffec
+                           00FFED   484 _g_RG14SAV	=	0xffed
+                           00FFEE   485 _g_RG15SAV	=	0xffee
+                           00FFEF   486 _g_RG16SAV	=	0xffef
+                           00FFF0   487 _g_RG17SAV	=	0xfff0
+                           00FFF1   488 _g_RG18SAV	=	0xfff1
+                           00FFF2   489 _g_RG19SAV	=	0xfff2
+                           00FFF3   490 _g_RG20SAV	=	0xfff3
+                           00FFF4   491 _g_RG21SAV	=	0xfff4
+                           00FFF5   492 _g_RG22SAV	=	0xfff5
+                           00FFF6   493 _g_RG23SAV	=	0xfff6
+                           00FFF7   494 _g_MINROM	=	0xfff7
+                           00FFF8   495 _g_SVFFF8	=	0xfff8
+                           00FFFA   496 _g_RG25SAV	=	0xfffa
+                           00FFFB   497 _g_RG26SAV	=	0xfffb
+                           00FFFC   498 _g_RG27SAV	=	0xfffc
+                           00FFFD   499 _g_SVFFFD	=	0xfffd
+                           000004   500 _g_CGTABL	=	0x0004
+                           000006   501 _g_VDP_DR	=	0x0006
+                           000007   502 _g_VDP_DW	=	0x0007
+                           00002B   503 _g_BASRVN	=	0x002b
+                           00002B   504 _g_ROMVersion	=	0x002b
+                           00002D   505 _g_MSXVER	=	0x002d
+                           00002E   506 _g_MSXMID	=	0x002e
+                           000034   507 _g_CHAR_16	=	0x0034
+                           000000   508 _g_SUBRID	=	0x0000
+                           000002   509 _g_STRSRC	=	0x0002
+                           00F30F   510 _g_KANJTABLE	=	0xf30f
+                           00F323   511 _g_DISKVE	=	0xf323
+                           00F325   512 _g_BREAKV	=	0xf325
+                           00F341   513 _g_RAMAD0	=	0xf341
+                           00F342   514 _g_RAMAD1	=	0xf342
+                           00F343   515 _g_RAMAD2	=	0xf343
+                           00F344   516 _g_RAMAD3	=	0xf344
+                           00F348   517 _g_MASTER	=	0xf348
+                           00F37D   518 _g_BDOS	=	0xf37d
+      000026                        519 ___str_0:
+      000026 0A                     520 	.db 0x0a
+      000027 0D                     521 	.db 0x0d
+      000028 24                     522 	.ascii "$"
+      000029 00                     523 	.db 0x00
+                                    524 ;/home/bruno/dev/MSXgl/engine/src/bios.c:81: void Bios_SetHookCallback(u16 hook, callback cb)
+                                    525 ;	---------------------------------
+                                    526 ; Function Bios_SetHookCallback
+                                    527 ; ---------------------------------
+      00002A                        528 _Bios_SetHookCallback::
+      00002A 4D               [ 4]  529 	ld	c, l
+      00002B 44               [ 4]  530 	ld	b, h
+                                    531 ;/home/bruno/dev/MSXgl/engine/src/bios.c:83: u8 slot = Sys_GetPageSlot((u16)cb >> 14);
+                                    532 ;	spillPairReg hl
+                                    533 ;	spillPairReg hl
+                                    534 ;	spillPairReg hl
+                                    535 ;	spillPairReg hl
+      00002C 7A               [ 4]  536 	ld	a, d
+      00002D 07               [ 4]  537 	rlca
+      00002E 07               [ 4]  538 	rlca
+      00002F E6 03            [ 7]  539 	and	a, #0x03
+      000031 6F               [ 4]  540 	ld	l, a
+                                    541 ;	spillPairReg hl
+                                    542 ;	spillPairReg hl
+                                    543 ;	spillPairReg hl
+                                    544 ;	spillPairReg hl
+      000032 C5               [11]  545 	push	bc
+      000033 D5               [11]  546 	push	de
+      000034 7D               [ 4]  547 	ld	a, l
+      000035 CDr00r00         [17]  548 	call	_Sys_GetPageSlot
+      000038 D1               [10]  549 	pop	de
+      000039 C1               [10]  550 	pop	bc
+                                    551 ;/home/bruno/dev/MSXgl/engine/src/bios.c:84: Bios_SetHookInterSlotCallback(hook, slot, cb);
+                                    552 ;/home/bruno/dev/MSXgl/engine/src/bios_hook.h:50: *((u8*)hook) = 0xF7; // RST #30
+      00003A 69               [ 4]  553 	ld	l, c
+                                    554 ;	spillPairReg hl
+                                    555 ;	spillPairReg hl
+      00003B 60               [ 4]  556 	ld	h, b
+                                    557 ;	spillPairReg hl
+                                    558 ;	spillPairReg hl
+      00003C 36 F7            [10]  559 	ld	(hl), #0xf7
+                                    560 ;/home/bruno/dev/MSXgl/engine/src/bios_hook.h:51: *((u8*)++hook) = slot; // Slot ID
+      00003E 03               [ 6]  561 	inc	bc
+      00003F 69               [ 4]  562 	ld	l, c
+                                    563 ;	spillPairReg hl
+                                    564 ;	spillPairReg hl
+      000040 60               [ 4]  565 	ld	h, b
+                                    566 ;	spillPairReg hl
+                                    567 ;	spillPairReg hl
+      000041 77               [ 7]  568 	ld	(hl), a
+                                    569 ;/home/bruno/dev/MSXgl/engine/src/bios_hook.h:52: *((callback*)++hook) = cb; // Callback address
+      000042 03               [ 6]  570 	inc	bc
+      000043 7B               [ 4]  571 	ld	a, e
+      000044 02               [ 7]  572 	ld	(bc), a
+      000045 03               [ 6]  573 	inc	bc
+      000046 7A               [ 4]  574 	ld	a, d
+      000047 02               [ 7]  575 	ld	(bc), a
+                                    576 ;/home/bruno/dev/MSXgl/engine/src/bios.c:84: Bios_SetHookInterSlotCallback(hook, slot, cb);
+                                    577 ;/home/bruno/dev/MSXgl/engine/src/bios.c:85: }
+      000048 C9               [10]  578 	ret
+                                    579 ;/home/bruno/dev/MSXgl/engine/src/bios.c:134: u8 Bios_InterSlotRead(u8 slot, u16 addr)
+                                    580 ;	---------------------------------
+                                    581 ; Function Bios_InterSlotRead
+                                    582 ; ---------------------------------
+      000049                        583 _Bios_InterSlotRead::
+                                    584 ;/home/bruno/dev/MSXgl/engine/src/bios.c:143: __endasm;
+      000049 6B               [ 4]  585 	ld	l, e
+      00004A 62               [ 4]  586 	ld	h, d
+      00004B CD 0C 00         [17]  587 	call	0x000C
+                                    588 ;/home/bruno/dev/MSXgl/engine/src/bios.c:144: }
+      00004E C9               [10]  589 	ret
+                                    590 ;/home/bruno/dev/MSXgl/engine/src/bios.c:172: void Bios_InterSlotWrite(u8 slot, u16 addr, u8 value)
+                                    591 ;	---------------------------------
+                                    592 ; Function Bios_InterSlotWrite
+                                    593 ; ---------------------------------
+      00004F                        594 _Bios_InterSlotWrite::
+                                    595 ;/home/bruno/dev/MSXgl/engine/src/bios.c:188: __endasm;
+      00004F FD E5            [15]  596 	push	iy
+      000051 FD 21 04 00      [14]  597 	ld	iy, #4
+      000055 FD 39            [15]  598 	add	iy, sp
+      000057 6B               [ 4]  599 	ld	l, e
+      000058 62               [ 4]  600 	ld	h, d
+      000059 FD 5E 00         [19]  601 	ld	e, 0(iy)
+      00005C CD 14 00         [17]  602 	call	0x0014
+      00005F FD E1            [14]  603 	pop	iy
+                                    604 ;/home/bruno/dev/MSXgl/engine/src/bios.c:189: }
+      000061 E1               [10]  605 	pop	hl
+      000062 33               [ 6]  606 	inc	sp
+      000063 E9               [ 4]  607 	jp	(hl)
+                                    608 ;/home/bruno/dev/MSXgl/engine/src/bios.c:208: void Bios_InterSlotCall(u8 slot, u16 addr)
+                                    609 ;	---------------------------------
+                                    610 ; Function Bios_InterSlotCall
+                                    611 ; ---------------------------------
+      000064                        612 _Bios_InterSlotCall::
+                                    613 ;/home/bruno/dev/MSXgl/engine/src/bios.c:227: __endasm;
+      000064 DD E5            [15]  614 	push	ix
+      000066 2E 00            [ 7]  615 	ld	l, #0
+      000068 67               [ 4]  616 	ld	h, a
+      000069 E5               [11]  617 	push	hl
+      00006A FD E1            [14]  618 	pop	iy
+      00006C D5               [11]  619 	push	de
+      00006D DD E1            [14]  620 	pop	ix
+      00006F CD 1C 00         [17]  621 	call	0x001C
+      000072 FB               [ 4]  622 	ei
+      000073 DD E1            [14]  623 	pop	ix
+                                    624 ;/home/bruno/dev/MSXgl/engine/src/bios.c:228: }
+      000075 C9               [10]  625 	ret
+                                    626 ;/home/bruno/dev/MSXgl/engine/src/bios.c:248: void Bios_SwitchSlot(u8 page, u8 slot)
+                                    627 ;	---------------------------------
+                                    628 ; Function Bios_SwitchSlot
+                                    629 ; ---------------------------------
+      000076                        630 _Bios_SwitchSlot::
+                                    631 ;/home/bruno/dev/MSXgl/engine/src/bios.c:260: __endasm;
+      000076 0F               [ 4]  632 	rrca	
+      000077 0F               [ 4]  633 	rrca 
+      000078 E6 C0            [ 7]  634 	and a, #0xC0
+      00007A 44               [ 4]  635 	ld	b, h
+      00007B 67               [ 4]  636 	ld	h, a
+      00007C 78               [ 4]  637 	ld	a, b
+      00007D CD 24 00         [17]  638 	call	0x0024
+                                    639 ;/home/bruno/dev/MSXgl/engine/src/bios.c:261: }
+      000080 C9               [10]  640 	ret
+                                    641 ;/home/bruno/dev/MSXgl/engine/src/bios.c:341: void Bios_WriteVDP(u8 reg, u8 value)
+                                    642 ;	---------------------------------
+                                    643 ; Function Bios_WriteVDP
+                                    644 ; ---------------------------------
+      000081                        645 _Bios_WriteVDP::
+                                    646 ;/home/bruno/dev/MSXgl/engine/src/bios.c:350: __endasm;
+      000081 4F               [ 4]  647 	ld	c, a
+      000082 45               [ 4]  648 	ld	b, l
+      000083 CD 47 00         [17]  649 	call	0x0047
+                                    650 ;/home/bruno/dev/MSXgl/engine/src/bios.c:351: }
+      000086 C9               [10]  651 	ret
+                                    652 ;/home/bruno/dev/MSXgl/engine/src/bios.c:372: void Bios_WriteVRAM(u16 addr, u8 value)
+                                    653 ;	---------------------------------
+                                    654 ; Function Bios_WriteVRAM
+                                    655 ; ---------------------------------
+      000087                        656 _Bios_WriteVRAM::
+                                    657 ;/home/bruno/dev/MSXgl/engine/src/bios.c:383: __endasm;
+      000087 FD 21 04 00      [14]  658 	ld	iy, #4
+      00008B FD 39            [15]  659 	add	iy, sp
+      00008D FD 7E 00         [19]  660 	ld	a, 0(iy)
+      000090 CD 4D 00         [17]  661 	call	0x004D
+                                    662 ;/home/bruno/dev/MSXgl/engine/src/bios.c:384: }
+      000093 E1               [10]  663 	pop	hl
+      000094 33               [ 6]  664 	inc	sp
+      000095 E9               [ 4]  665 	jp	(hl)
+                                    666 ;/home/bruno/dev/MSXgl/engine/src/bios.c:416: void Bios_FillVRAM(u16 addr, u16 length, u8 value)
+                                    667 ;	---------------------------------
+                                    668 ; Function Bios_FillVRAM
+                                    669 ; ---------------------------------
+      000096                        670 _Bios_FillVRAM::
+                                    671 ;/home/bruno/dev/MSXgl/engine/src/bios.c:430: __endasm;
+      000096 FD 21 04 00      [14]  672 	ld	iy, #4
+      00009A FD 39            [15]  673 	add	iy, sp
+      00009C 4B               [ 4]  674 	ld	c, e
+      00009D 42               [ 4]  675 	ld	b, d
+      00009E FD 7E 00         [19]  676 	ld	a, 0(iy)
+      0000A1 CD 56 00         [17]  677 	call	0x0056
+                                    678 ;/home/bruno/dev/MSXgl/engine/src/bios.c:431: }
+      0000A4 E1               [10]  679 	pop	hl
+      0000A5 33               [ 6]  680 	inc	sp
+      0000A6 E9               [ 4]  681 	jp	(hl)
+                                    682 ;/home/bruno/dev/MSXgl/engine/src/bios.c:442: void Bios_TransfertVRAMtoRAM(u16 vram, u16 ram, u16 length)
+                                    683 ;	---------------------------------
+                                    684 ; Function Bios_TransfertVRAMtoRAM
+                                    685 ; ---------------------------------
+      0000A7                        686 _Bios_TransfertVRAMtoRAM::
+                                    687 ;/home/bruno/dev/MSXgl/engine/src/bios.c:455: __endasm;
+      0000A7 FD 21 04 00      [14]  688 	ld	iy, #4
+      0000AB FD 39            [15]  689 	add	iy, sp
+      0000AD FD 4E 00         [19]  690 	ld	c, 0(iy)
+      0000B0 FD 46 01         [19]  691 	ld	b, 1(iy)
+      0000B3 CD 59 00         [17]  692 	call	0x0059
+                                    693 ;/home/bruno/dev/MSXgl/engine/src/bios.c:456: }
+      0000B6 E1               [10]  694 	pop	hl
+      0000B7 F1               [10]  695 	pop	af
+      0000B8 E9               [ 4]  696 	jp	(hl)
+                                    697 ;/home/bruno/dev/MSXgl/engine/src/bios.c:467: void Bios_TransfertRAMtoVRAM(u16 ram, u16 vram, u16 length)
+                                    698 ;	---------------------------------
+                                    699 ; Function Bios_TransfertRAMtoVRAM
+                                    700 ; ---------------------------------
+      0000B9                        701 _Bios_TransfertRAMtoVRAM::
+                                    702 ;/home/bruno/dev/MSXgl/engine/src/bios.c:480: __endasm;
+      0000B9 FD 21 04 00      [14]  703 	ld	iy, #4
+      0000BD FD 39            [15]  704 	add	iy, sp
+      0000BF FD 4E 00         [19]  705 	ld	c, 0(iy)
+      0000C2 FD 46 01         [19]  706 	ld	b, 1(iy)
+      0000C5 CD 5C 00         [17]  707 	call	0x005C
+                                    708 ;/home/bruno/dev/MSXgl/engine/src/bios.c:481: }
+      0000C8 E1               [10]  709 	pop	hl
+      0000C9 F1               [10]  710 	pop	af
+      0000CA E9               [ 4]  711 	jp	(hl)
+                                    712 ;/home/bruno/dev/MSXgl/engine/src/bios.c:502: void Bios_ChangeColor(u8 text, u8 back, u8 border)
+                                    713 ;	---------------------------------
+                                    714 ; Function Bios_ChangeColor
+                                    715 ; ---------------------------------
+      0000CB                        716 _Bios_ChangeColor::
+                                    717 ;/home/bruno/dev/MSXgl/engine/src/bios.c:517: __endasm;
+      0000CB FD 21 04 00      [14]  718 	ld	iy, #4
+      0000CF FD 39            [15]  719 	add	iy, sp
+      0000D1 32 E9 F3         [13]  720 	ld	(0xF3E9), a
+      0000D4 7D               [ 4]  721 	ld	a, l
+      0000D5 32 EA F3         [13]  722 	ld	(0xF3EA), a
+      0000D8 FD 7E 00         [19]  723 	ld	a, 0(iy)
+      0000DB 32 EB F3         [13]  724 	ld	(0xF3EB), a
+      0000DE CD 62 00         [17]  725 	call	0x0062
+                                    726 ;/home/bruno/dev/MSXgl/engine/src/bios.c:518: }
+      0000E1 E1               [10]  727 	pop	hl
+      0000E2 33               [ 6]  728 	inc	sp
+      0000E3 E9               [ 4]  729 	jp	(hl)
+                                    730 ;/home/bruno/dev/MSXgl/engine/src/bios.c:544: void Bios_InitScreen0Ex(u16 pnt, u16 pgt, u8 width, u8 text, u8 bg, u8 border)
+                                    731 ;	---------------------------------
+                                    732 ; Function Bios_InitScreen0Ex
+                                    733 ; ---------------------------------
+      0000E4                        734 _Bios_InitScreen0Ex::
+      0000E4 22 B3 F3         [16]  735 	ld	(_g_TXTNAM), hl
+      0000E7 ED 53 B7 F3      [20]  736 	ld	(_g_TXTCGP), de
+                                    737 ;/home/bruno/dev/MSXgl/engine/src/bios.c:548: g_LINL40 = width;  // Character per line
+      0000EB FD 21 02 00      [14]  738 	ld	iy, #2
+      0000EF FD 39            [15]  739 	add	iy, sp
+      0000F1 FD 7E 00         [19]  740 	ld	a, 0 (iy)
+      0000F4 32 AE F3         [13]  741 	ld	(_g_LINL40+0), a
+                                    742 ;/home/bruno/dev/MSXgl/engine/src/bios.c:549: g_FORCLR = text;   // Text color
+      0000F7 FD 7E 01         [19]  743 	ld	a, 1 (iy)
+      0000FA FD 23            [10]  744 	inc	iy
+      0000FC 32 E9 F3         [13]  745 	ld	(_g_FORCLR+0), a
+                                    746 ;/home/bruno/dev/MSXgl/engine/src/bios.c:550: g_BAKCLR = bg;     // Background color
+      0000FF FD 7E 01         [19]  747 	ld	a, 1 (iy)
+      000102 FD 23            [10]  748 	inc	iy
+      000104 32 EA F3         [13]  749 	ld	(_g_BAKCLR+0), a
+                                    750 ;/home/bruno/dev/MSXgl/engine/src/bios.c:551: g_BDRCLR = border; // Border colour
+      000107 FD 7E 01         [19]  751 	ld	a, 1 (iy)
+      00010A 32 EB F3         [13]  752 	ld	(_g_BDRCLR+0), a
+                                    753 ;/home/bruno/dev/MSXgl/engine/src/system.h:171: inline u8 Call(u16 addr) { ((void(*)(void))addr)(); }
+      00010D CD 6C 00         [17]  754 	call	0x006c
+                                    755 ;/home/bruno/dev/MSXgl/engine/src/bios.c:552: Call(R_INITXT);
+                                    756 ;/home/bruno/dev/MSXgl/engine/src/bios.c:553: }
+      000110 E1               [10]  757 	pop	hl
+      000111 F1               [10]  758 	pop	af
+      000112 F1               [10]  759 	pop	af
+      000113 E9               [ 4]  760 	jp	(hl)
+                                    761 ;/home/bruno/dev/MSXgl/engine/src/bios.c:569: void Bios_InitScreen1Ex(u16 pnt, u16 ct, u16 pgt, u16 sat, u16 sgt, u8 text, u8 bg, u8 border)
+                                    762 ;	---------------------------------
+                                    763 ; Function Bios_InitScreen1Ex
+                                    764 ; ---------------------------------
+      000114                        765 _Bios_InitScreen1Ex::
+      000114 DD E5            [15]  766 	push	ix
+      000116 DD 21 00 00      [14]  767 	ld	ix,#0
+      00011A DD 39            [15]  768 	add	ix,sp
+      00011C 22 BD F3         [16]  769 	ld	(_g_T32NAM), hl
+      00011F ED 53 BF F3      [20]  770 	ld	(_g_T32COL), de
+                                    771 ;/home/bruno/dev/MSXgl/engine/src/bios.c:573: g_T32CGP = pgt;    // Address of pattern generator table
+      000123 DD 6E 04         [19]  772 	ld	l, 4 (ix)
+      000126 DD 66 05         [19]  773 	ld	h, 5 (ix)
+      000129 22 C1 F3         [16]  774 	ld	(_g_T32CGP), hl
+                                    775 ;/home/bruno/dev/MSXgl/engine/src/bios.c:574: g_T32ATR = sat;    // Address of sprite attribute table
+      00012C DD 6E 06         [19]  776 	ld	l, 6 (ix)
+      00012F DD 66 07         [19]  777 	ld	h, 7 (ix)
+      000132 22 C3 F3         [16]  778 	ld	(_g_T32ATR), hl
+                                    779 ;/home/bruno/dev/MSXgl/engine/src/bios.c:575: g_T32PAT = sgt;    // Address of sprite generator table
+      000135 DD 6E 08         [19]  780 	ld	l, 8 (ix)
+      000138 DD 66 09         [19]  781 	ld	h, 9 (ix)
+      00013B 22 C5 F3         [16]  782 	ld	(_g_T32PAT), hl
+                                    783 ;/home/bruno/dev/MSXgl/engine/src/bios.c:576: g_FORCLR = text;   // Text color
+      00013E DD 7E 0A         [19]  784 	ld	a, 10 (ix)
+      000141 32 E9 F3         [13]  785 	ld	(_g_FORCLR+0), a
+                                    786 ;/home/bruno/dev/MSXgl/engine/src/bios.c:577: g_BAKCLR = bg;     // Background color
+      000144 DD 7E 0B         [19]  787 	ld	a, 11 (ix)
+      000147 32 EA F3         [13]  788 	ld	(_g_BAKCLR+0), a
+                                    789 ;/home/bruno/dev/MSXgl/engine/src/bios.c:578: g_BDRCLR = border; // Border color
+      00014A DD 7E 0C         [19]  790 	ld	a, 12 (ix)
+      00014D 32 EB F3         [13]  791 	ld	(_g_BDRCLR+0), a
+                                    792 ;/home/bruno/dev/MSXgl/engine/src/system.h:171: inline u8 Call(u16 addr) { ((void(*)(void))addr)(); }
+      000150 CD 6F 00         [17]  793 	call	0x006f
+                                    794 ;/home/bruno/dev/MSXgl/engine/src/bios.c:579: Call(R_INIT32);
+                                    795 ;/home/bruno/dev/MSXgl/engine/src/bios.c:580: }
+      000153 DD E1            [14]  796 	pop	ix
+      000155 E1               [10]  797 	pop	hl
+      000156 FD 21 09 00      [14]  798 	ld	iy, #9
+      00015A FD 39            [15]  799 	add	iy, sp
+      00015C FD F9            [10]  800 	ld	sp, iy
+      00015E E9               [ 4]  801 	jp	(hl)
+                                    802 ;/home/bruno/dev/MSXgl/engine/src/bios.c:596: void Bios_InitScreen2Ex(u16 pnt, u16 ct, u16 pgt, u16 sat, u16 sgt, u8 text, u8 bg, u8 border)
+                                    803 ;	---------------------------------
+                                    804 ; Function Bios_InitScreen2Ex
+                                    805 ; ---------------------------------
+      00015F                        806 _Bios_InitScreen2Ex::
+      00015F DD E5            [15]  807 	push	ix
+      000161 DD 21 00 00      [14]  808 	ld	ix,#0
+      000165 DD 39            [15]  809 	add	ix,sp
+      000167 22 C7 F3         [16]  810 	ld	(_g_GRPNAM), hl
+      00016A ED 53 C9 F3      [20]  811 	ld	(_g_GRPCOL), de
+                                    812 ;/home/bruno/dev/MSXgl/engine/src/bios.c:600: g_GRPCGP = pgt;    // Address of pattern generator table
+      00016E DD 6E 04         [19]  813 	ld	l, 4 (ix)
+      000171 DD 66 05         [19]  814 	ld	h, 5 (ix)
+      000174 22 CB F3         [16]  815 	ld	(_g_GRPCGP), hl
+                                    816 ;/home/bruno/dev/MSXgl/engine/src/bios.c:601: g_GRPATR = sat;    // Address of sprite attribute table
+      000177 DD 6E 06         [19]  817 	ld	l, 6 (ix)
+      00017A DD 66 07         [19]  818 	ld	h, 7 (ix)
+      00017D 22 CD F3         [16]  819 	ld	(_g_GRPATR), hl
+                                    820 ;/home/bruno/dev/MSXgl/engine/src/bios.c:602: g_GRPPAT = sgt;    // Address of sprite generator table
+      000180 DD 6E 08         [19]  821 	ld	l, 8 (ix)
+      000183 DD 66 09         [19]  822 	ld	h, 9 (ix)
+      000186 22 CF F3         [16]  823 	ld	(_g_GRPPAT), hl
+                                    824 ;/home/bruno/dev/MSXgl/engine/src/bios.c:603: g_FORCLR = text;   // Text color
+      000189 DD 7E 0A         [19]  825 	ld	a, 10 (ix)
+      00018C 32 E9 F3         [13]  826 	ld	(_g_FORCLR+0), a
+                                    827 ;/home/bruno/dev/MSXgl/engine/src/bios.c:604: g_BAKCLR = bg;     // Background color
+      00018F DD 7E 0B         [19]  828 	ld	a, 11 (ix)
+      000192 32 EA F3         [13]  829 	ld	(_g_BAKCLR+0), a
+                                    830 ;/home/bruno/dev/MSXgl/engine/src/bios.c:605: g_BDRCLR = border; // Border color
+      000195 DD 7E 0C         [19]  831 	ld	a, 12 (ix)
+      000198 32 EB F3         [13]  832 	ld	(_g_BDRCLR+0), a
+                                    833 ;/home/bruno/dev/MSXgl/engine/src/system.h:171: inline u8 Call(u16 addr) { ((void(*)(void))addr)(); }
+      00019B CD 72 00         [17]  834 	call	0x0072
+                                    835 ;/home/bruno/dev/MSXgl/engine/src/bios.c:606: Call(R_INIGRP);
+                                    836 ;/home/bruno/dev/MSXgl/engine/src/bios.c:607: }
+      00019E DD E1            [14]  837 	pop	ix
+      0001A0 E1               [10]  838 	pop	hl
+      0001A1 FD 21 09 00      [14]  839 	ld	iy, #9
+      0001A5 FD 39            [15]  840 	add	iy, sp
+      0001A7 FD F9            [10]  841 	ld	sp, iy
+      0001A9 E9               [ 4]  842 	jp	(hl)
+                                    843 ;/home/bruno/dev/MSXgl/engine/src/bios.c:623: void Bios_InitScreen3Ex(u16 pnt, u16 ct, u16 pgt, u16 sat, u16 sgt, u8 text, u8 bg, u8 border)
+                                    844 ;	---------------------------------
+                                    845 ; Function Bios_InitScreen3Ex
+                                    846 ; ---------------------------------
+      0001AA                        847 _Bios_InitScreen3Ex::
+      0001AA DD E5            [15]  848 	push	ix
+      0001AC DD 21 00 00      [14]  849 	ld	ix,#0
+      0001B0 DD 39            [15]  850 	add	ix,sp
+      0001B2 22 D1 F3         [16]  851 	ld	(_g_MLTNAM), hl
+      0001B5 ED 53 D3 F3      [20]  852 	ld	(_g_MLTCOL), de
+                                    853 ;/home/bruno/dev/MSXgl/engine/src/bios.c:627: g_MLTCGP = pgt;    // Address of pattern generator table
+      0001B9 DD 6E 04         [19]  854 	ld	l, 4 (ix)
+      0001BC DD 66 05         [19]  855 	ld	h, 5 (ix)
+      0001BF 22 D5 F3         [16]  856 	ld	(_g_MLTCGP), hl
+                                    857 ;/home/bruno/dev/MSXgl/engine/src/bios.c:628: g_MLTATR = sat;    // Address of sprite attribute table
+      0001C2 DD 6E 06         [19]  858 	ld	l, 6 (ix)
+      0001C5 DD 66 07         [19]  859 	ld	h, 7 (ix)
+      0001C8 22 D7 F3         [16]  860 	ld	(_g_MLTATR), hl
+                                    861 ;/home/bruno/dev/MSXgl/engine/src/bios.c:629: g_MLTPAT = sgt;    // Address of sprite generator table
+      0001CB DD 6E 08         [19]  862 	ld	l, 8 (ix)
+      0001CE DD 66 09         [19]  863 	ld	h, 9 (ix)
+      0001D1 22 D9 F3         [16]  864 	ld	(_g_MLTPAT), hl
+                                    865 ;/home/bruno/dev/MSXgl/engine/src/bios.c:630: g_FORCLR = text;   // Text color
+      0001D4 DD 7E 0A         [19]  866 	ld	a, 10 (ix)
+      0001D7 32 E9 F3         [13]  867 	ld	(_g_FORCLR+0), a
+                                    868 ;/home/bruno/dev/MSXgl/engine/src/bios.c:631: g_BAKCLR = bg;     // Background color
+      0001DA DD 7E 0B         [19]  869 	ld	a, 11 (ix)
+      0001DD 32 EA F3         [13]  870 	ld	(_g_BAKCLR+0), a
+                                    871 ;/home/bruno/dev/MSXgl/engine/src/bios.c:632: g_BDRCLR = border; // Border color
+      0001E0 DD 7E 0C         [19]  872 	ld	a, 12 (ix)
+      0001E3 32 EB F3         [13]  873 	ld	(_g_BDRCLR+0), a
+                                    874 ;/home/bruno/dev/MSXgl/engine/src/system.h:171: inline u8 Call(u16 addr) { ((void(*)(void))addr)(); }
+      0001E6 CD 75 00         [17]  875 	call	0x0075
+                                    876 ;/home/bruno/dev/MSXgl/engine/src/bios.c:633: Call(R_INIMLT);
+                                    877 ;/home/bruno/dev/MSXgl/engine/src/bios.c:634: }
+      0001E9 DD E1            [14]  878 	pop	ix
+      0001EB E1               [10]  879 	pop	hl
+      0001EC FD 21 09 00      [14]  880 	ld	iy, #9
+      0001F0 FD 39            [15]  881 	add	iy, sp
+      0001F2 FD F9            [10]  882 	ld	sp, iy
+      0001F4 E9               [ 4]  883 	jp	(hl)
+                                    884 ;/home/bruno/dev/MSXgl/engine/src/bios.c:675: u16 Bios_GetPatternTableAddress(u8 id) __FASTCALL
+                                    885 ;	---------------------------------
+                                    886 ; Function Bios_GetPatternTableAddress
+                                    887 ; ---------------------------------
+      0001F5                        888 _Bios_GetPatternTableAddress::
+                                    889 ;/home/bruno/dev/MSXgl/engine/src/bios.c:682: __endasm;
+      0001F5 7D               [ 4]  890 	ld	a, l
+      0001F6 CD 84 00         [17]  891 	call	0x0084
+                                    892 ;/home/bruno/dev/MSXgl/engine/src/bios.c:683: }
+      0001F9 C9               [10]  893 	ret
+                                    894 ;/home/bruno/dev/MSXgl/engine/src/bios.c:692: u16 Bios_GetAttributeTableAddress(u8 id) __FASTCALL
+                                    895 ;	---------------------------------
+                                    896 ; Function Bios_GetAttributeTableAddress
+                                    897 ; ---------------------------------
+      0001FA                        898 _Bios_GetAttributeTableAddress::
+                                    899 ;/home/bruno/dev/MSXgl/engine/src/bios.c:699: __endasm;
+      0001FA 7D               [ 4]  900 	ld	a, l
+      0001FB CD 87 00         [17]  901 	call	0x0087
+                                    902 ;/home/bruno/dev/MSXgl/engine/src/bios.c:700: }
+      0001FE C9               [10]  903 	ret
+                                    904 ;/home/bruno/dev/MSXgl/engine/src/bios.c:724: void Bios_GraphPrintCharEx(u8 chr, u16 x, u8 y, u8 color, u8 op)
+                                    905 ;	---------------------------------
+                                    906 ; Function Bios_GraphPrintCharEx
+                                    907 ; ---------------------------------
+      0001FF                        908 _Bios_GraphPrintCharEx::
+      0001FF 4F               [ 4]  909 	ld	c, a
+                                    910 ;/home/bruno/dev/MSXgl/engine/src/bios.c:726: g_GRPACX = x;
+      000200 21 B7 FC         [10]  911 	ld	hl, #_g_GRPACX
+      000203 73               [ 7]  912 	ld	(hl), e
+                                    913 ;/home/bruno/dev/MSXgl/engine/src/bios.c:727: g_GRPACY = y;
+      000204 FD 21 02 00      [14]  914 	ld	iy, #2
+      000208 FD 39            [15]  915 	add	iy, sp
+      00020A FD 7E 00         [19]  916 	ld	a, 0 (iy)
+      00020D 32 B9 FC         [13]  917 	ld	(_g_GRPACY+0), a
+                                    918 ;/home/bruno/dev/MSXgl/engine/src/bios.c:728: g_ATRBYT = color;
+      000210 FD 7E 01         [19]  919 	ld	a, 1 (iy)
+      000213 FD 23            [10]  920 	inc	iy
+      000215 32 F2 F3         [13]  921 	ld	(_g_ATRBYT+0), a
+                                    922 ;/home/bruno/dev/MSXgl/engine/src/bios.c:729: g_LOGOPR = op;
+      000218 FD 7E 01         [19]  923 	ld	a, 1 (iy)
+      00021B 32 02 FB         [13]  924 	ld	(_g_LOGOPR+0), a
+                                    925 ;/home/bruno/dev/MSXgl/engine/src/bios.h:271: inline void Bios_GraphPrintChar(u8 chr) { ((void(*)(u8))R_GRPPRT)(chr); }
+      00021E 79               [ 4]  926 	ld	a, c
+      00021F CD 8D 00         [17]  927 	call	0x008d
+                                    928 ;/home/bruno/dev/MSXgl/engine/src/bios.c:730: Bios_GraphPrintChar(chr);
+                                    929 ;/home/bruno/dev/MSXgl/engine/src/bios.c:731: }
+      000222 E1               [10]  930 	pop	hl
+      000223 F1               [10]  931 	pop	af
+      000224 33               [ 6]  932 	inc	sp
+      000225 E9               [ 4]  933 	jp	(hl)
+                                    934 ;/home/bruno/dev/MSXgl/engine/src/bios.c:759: void Bios_WritePSG(u8 reg, u8 value)
+                                    935 ;	---------------------------------
+                                    936 ; Function Bios_WritePSG
+                                    937 ; ---------------------------------
+      000226                        938 _Bios_WritePSG::
+                                    939 ;/home/bruno/dev/MSXgl/engine/src/bios.c:767: __endasm;	
+      000226 5D               [ 4]  940 	ld	e, l
+      000227 CD 93 00         [17]  941 	call	0x0093
+                                    942 ;/home/bruno/dev/MSXgl/engine/src/bios.c:768: }
+      00022A C9               [10]  943 	ret
+                                    944 ;/home/bruno/dev/MSXgl/engine/src/bios.c:903: void Bios_ClearScreen()
+                                    945 ;	---------------------------------
+                                    946 ; Function Bios_ClearScreen
+                                    947 ; ---------------------------------
+      00022B                        948 _Bios_ClearScreen::
+                                    949 ;/home/bruno/dev/MSXgl/engine/src/bios.c:908: __endasm;
+      00022B AF               [ 4]  950 	xor	a, a
+      00022C CD C3 00         [17]  951 	call	0x00C3
+                                    952 ;/home/bruno/dev/MSXgl/engine/src/bios.c:909: }
+      00022F C9               [10]  953 	ret
+                                    954 ;/home/bruno/dev/MSXgl/engine/src/bios.c:918: void Bios_SetCursorPosition(u8 X, u8 Y)
+                                    955 ;	---------------------------------
+                                    956 ; Function Bios_SetCursorPosition
+                                    957 ; ---------------------------------
+      000230                        958 _Bios_SetCursorPosition::
+                                    959 ;/home/bruno/dev/MSXgl/engine/src/bios.c:926: __endasm;	
+      000230 67               [ 4]  960 	ld	h, a
+      000231 CD C6 00         [17]  961 	call	0x00C6
+                                    962 ;/home/bruno/dev/MSXgl/engine/src/bios.c:927: }
+      000234 C9               [10]  963 	ret
+                                    964 	.area _CODE
+                                    965 	.area _INITIALIZER
+                                    966 	.area _CABS (ABS)

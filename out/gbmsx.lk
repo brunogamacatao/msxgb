@@ -1,0 +1,16 @@
+-mjwx
+-i /home/bruno/dev/MSXgl/projects/gbmsx/out/gbmsx.ihx
+-b _CODE = 0x0100
+-b _DATA = 0x0000
+-k /home/bruno/dev/MSXgl/tools/sdcc/lib/z80
+-k /home/bruno/dev/MSXgl/tools/sdcc/bin/../share/sdcc/lib/z80
+-k /usr/local/share/sdcc/lib/z80
+-l /home/bruno/dev/MSXgl/projects/gbmsx/out/msxgl.lib
+-l z80
+/home/bruno/dev/MSXgl/projects/gbmsx/out/crt0_dos.rel
+/home/bruno/dev/MSXgl/projects/gbmsx/out/gbmsx.rel
+/home/bruno/dev/MSXgl/projects/gbmsx/out/emu.rel
+/home/bruno/dev/MSXgl/projects/gbmsx/out/msx_printf.rel
+/home/bruno/dev/MSXgl/projects/gbmsx/out/cart.rel
+
+-e

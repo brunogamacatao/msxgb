@@ -1,0 +1,566 @@
+                                      1 ;--------------------------------------------------------
+                                      2 ; File Created by SDCC : free open source ANSI-C Compiler
+                                      3 ; Version 4.2.0 #13081 (Linux)
+                                      4 ;--------------------------------------------------------
+                                      5 	.module msx_audio
+                                      6 	.optsdcc -mz80
+                                      7 	
+                                      8 ;--------------------------------------------------------
+                                      9 ; Public variables in this module
+                                     10 ;--------------------------------------------------------
+                                     11 	.globl _g_MSXAudio_RegBackup
+                                     12 	.globl _g_SLTSL
+                                     13 	.globl _g_GRPACY
+                                     14 	.globl _g_GRPACX
+                                     15 	.globl _g_LOGOPR
+                                     16 	.globl _g_CMASK
+                                     17 	.globl _g_CLOC
+                                     18 	.globl _g_FNKSTR
+                                     19 	.globl _g_ATRBYT
+                                     20 	.globl _g_BDRCLR
+                                     21 	.globl _g_BAKCLR
+                                     22 	.globl _g_FORCLR
+                                     23 	.globl _g_CSRX
+                                     24 	.globl _g_CSRY
+                                     25 	.globl _g_CLIKSW
+                                     26 	.globl _g_MLTPAT
+                                     27 	.globl _g_MLTATR
+                                     28 	.globl _g_MLTCGP
+                                     29 	.globl _g_MLTCOL
+                                     30 	.globl _g_MLTNAM
+                                     31 	.globl _g_GRPPAT
+                                     32 	.globl _g_GRPATR
+                                     33 	.globl _g_GRPCGP
+                                     34 	.globl _g_GRPCOL
+                                     35 	.globl _g_GRPNAM
+                                     36 	.globl _g_T32PAT
+                                     37 	.globl _g_T32ATR
+                                     38 	.globl _g_T32CGP
+                                     39 	.globl _g_T32COL
+                                     40 	.globl _g_T32NAM
+                                     41 	.globl _g_TXTPAT
+                                     42 	.globl _g_TXTATR
+                                     43 	.globl _g_TXTCGP
+                                     44 	.globl _g_TXTCOL
+                                     45 	.globl _g_TXTNAM
+                                     46 	.globl _g_CLMLST
+                                     47 	.globl _g_CRTCNT
+                                     48 	.globl _g_LINLEN
+                                     49 	.globl _g_LINL32
+                                     50 	.globl _g_LINL40
+                                     51 	.globl _g_MSXAudio_Ident
+                                     52 	.globl _g_SVFFFD
+                                     53 	.globl _g_RG27SAV
+                                     54 	.globl _g_RG26SAV
+                                     55 	.globl _g_RG25SAV
+                                     56 	.globl _g_SVFFF8
+                                     57 	.globl _g_MINROM
+                                     58 	.globl _g_RG23SAV
+                                     59 	.globl _g_RG22SAV
+                                     60 	.globl _g_RG21SAV
+                                     61 	.globl _g_RG20SAV
+                                     62 	.globl _g_RG19SAV
+                                     63 	.globl _g_RG18SAV
+                                     64 	.globl _g_RG17SAV
+                                     65 	.globl _g_RG16SAV
+                                     66 	.globl _g_RG15SAV
+                                     67 	.globl _g_RG14SAV
+                                     68 	.globl _g_RG13SAV
+                                     69 	.globl _g_RG12SAV
+                                     70 	.globl _g_RG11SAV
+                                     71 	.globl _g_RG10SAV
+                                     72 	.globl _g_RG09SAV
+                                     73 	.globl _g_RG08SAV
+                                     74 	.globl _g_PROCNM
+                                     75 	.globl _g_SLTWRK
+                                     76 	.globl _g_SLTATR
+                                     77 	.globl _g_SLTTBL
+                                     78 	.globl _g_EXPTBL
+                                     79 	.globl _g_MNROM
+                                     80 	.globl _g_DRWANG
+                                     81 	.globl _g_DRWSCL
+                                     82 	.globl _g_DRWFLG
+                                     83 	.globl _g_GYPOS
+                                     84 	.globl _g_GXPOS
+                                     85 	.globl _g_BRDATR
+                                     86 	.globl _g_CASPRV
+                                     87 	.globl _g_OLDSCR
+                                     88 	.globl _g_SCRMOD
+                                     89 	.globl _g_FLBMEM
+                                     90 	.globl _g_KANAMD
+                                     91 	.globl _g_KANAST
+                                     92 	.globl _g_CAPST
+                                     93 	.globl _g_CSTYLE
+                                     94 	.globl _g_CSRSW
+                                     95 	.globl _g_INSFLG
+                                     96 	.globl _g_ESCCNT
+                                     97 	.globl _g_GRPHED
+                                     98 	.globl _g_WINWID
+                                     99 	.globl _g_LOWLIM
+                                    100 	.globl _g_INTCNT
+                                    101 	.globl _g_INTVAL
+                                    102 	.globl _g_JIFFY
+                                    103 	.globl _g_PADX
+                                    104 	.globl _g_PADY
+                                    105 	.globl _g_INTFLG
+                                    106 	.globl _g_RTYCNT
+                                    107 	.globl _g_TRPTBL
+                                    108 	.globl _g_HIMEM
+                                    109 	.globl _g_BOTTOM
+                                    110 	.globl _g_PATWRK
+                                    111 	.globl _g_LINWRK
+                                    112 	.globl _g_KEYBUF
+                                    113 	.globl _g_NEWKEY
+                                    114 	.globl _g_OLDKEY
+                                    115 	.globl _g_CLIKFL
+                                    116 	.globl _g_ONGSBF
+                                    117 	.globl _g_FNKFLG
+                                    118 	.globl _g_FNKSWI
+                                    119 	.globl _g_CODSAV
+                                    120 	.globl _g_FSTPOS
+                                    121 	.globl _g_LINTTB
+                                    122 	.globl _g_BASROM
+                                    123 	.globl _g_ENSTOP
+                                    124 	.globl _g_VCBC
+                                    125 	.globl _g_VCBB
+                                    126 	.globl _g_VCBA
+                                    127 	.globl _g_PLYCNT
+                                    128 	.globl _g_MUSICF
+                                    129 	.globl _g_QUEUEN
+                                    130 	.globl _g_MCLPTR
+                                    131 	.globl _g_MCLLEN
+                                    132 	.globl _g_SAVVOL
+                                    133 	.globl _g_VOICEN
+                                    134 	.globl _g_SAVSP
+                                    135 	.globl _g_PRSCNT
+                                    136 	.globl _g_LSTMOD
+                                    137 	.globl _g_LSTCOM
+                                    138 	.globl _g_COMMSK
+                                    139 	.globl _g_ESTBLS
+                                    140 	.globl _g_FLAGS
+                                    141 	.globl _g_ERRORS
+                                    142 	.globl _g_DATCNT
+                                    143 	.globl _g_DEVNUM
+                                    144 	.globl _g_OLDINT
+                                    145 	.globl _g_OLDSTT
+                                    146 	.globl _g_MEXBIh
+                                    147 	.globl _g_RSIQLN
+                                    148 	.globl _g_RSFCB
+                                    149 	.globl _g_TOCNT
+                                    150 	.globl _g_RSTMP
+                                    151 	.globl _g_YSAVE
+                                    152 	.globl _g_XSAVE
+                                    153 	.globl _g_NORUSE
+                                    154 	.globl _g_MODE
+                                    155 	.globl _g_ROMA
+                                    156 	.globl _g_CHRCNT
+                                    157 	.globl _g_EXBRSA
+                                    158 	.globl _g_AVCSAV
+                                    159 	.globl _g_ACPAGE
+                                    160 	.globl _g_DPPAGE
+                                    161 	.globl _g_RS2IQ
+                                    162 	.globl _g_VOICCQ
+                                    163 	.globl _g_VOICBQ
+                                    164 	.globl _g_VOICAQ
+                                    165 	.globl _g_QUEBAK
+                                    166 	.globl _g_QUETAB
+                                    167 	.globl _g_ASPCT2
+                                    168 	.globl _g_ASPCT1
+                                    169 	.globl _g_HEADER
+                                    170 	.globl _g_HIGH
+                                    171 	.globl _g_LOW
+                                    172 	.globl _g_CS240
+                                    173 	.globl _g_CS120
+                                    174 	.globl _g_GETPNT
+                                    175 	.globl _g_PUTPNT
+                                    176 	.globl _g_REPCNT
+                                    177 	.globl _g_SCNCNT
+                                    178 	.globl _g_FRCNEW
+                                    179 	.globl _g_QUEUES
+                                    180 	.globl _g_MINUPD
+                                    181 	.globl _g_MAXUPD
+                                    182 	.globl _g_TRGFLG
+                                    183 	.globl _g_STATFL
+                                    184 	.globl _g_RG7SAV
+                                    185 	.globl _g_RG6SAV
+                                    186 	.globl _g_RG5SAV
+                                    187 	.globl _g_RG4SAV
+                                    188 	.globl _g_RG3SAV
+                                    189 	.globl _g_RG2SAV
+                                    190 	.globl _g_RG1SAV
+                                    191 	.globl _g_RG0SAV
+                                    192 	.globl _g_CNSDFG
+                                    193 	.globl _g_USRTAB
+                                    194 	.globl _g_CLPRIM
+                                    195 	.globl _g_WRPRIM
+                                    196 	.globl _g_RDPRIM
+                                    197 	.globl _MSXAudio_Initialize
+                                    198 	.globl _MSXAudio_Detect
+                                    199 	.globl _MSXAudio_SetRegister
+                                    200 	.globl _MSXAudio_GetRegister
+                                    201 	.globl _MSXAudio_Mute
+                                    202 	.globl _MSXAudio_Resume
+                                    203 ;--------------------------------------------------------
+                                    204 ; special function registers
+                                    205 ;--------------------------------------------------------
+                           0000A8   206 _g_PortPrimarySlot	=	0x00a8
+                           0000A9   207 _g_PortReadKeyboard	=	0x00a9
+                           0000AA   208 _g_PortAccessKeyboard	=	0x00aa
+                           0000AB   209 _g_PortControl	=	0x00ab
+                           000098   210 _g_VDP_DataPort	=	0x0098
+                           000099   211 _g_VDP_RegPort	=	0x0099
+                           000099   212 _g_VDP_AddrPort	=	0x0099
+                           000099   213 _g_VDP_StatPort	=	0x0099
+                           00009A   214 _g_VDP_PalPort	=	0x009a
+                           00009B   215 _g_VDP_IRegPort	=	0x009b
+                           0000A0   216 _g_PSG_RegPort	=	0x00a0
+                           0000A1   217 _g_PSG_DataPort	=	0x00a1
+                           0000A2   218 _g_PSG_StatPort	=	0x00a2
+                           000010   219 _g_PSG_Ext_RegPort	=	0x0010
+                           000011   220 _g_PSG_Ext_DataPort	=	0x0011
+                           000012   221 _g_PSG_Ext_StatPort	=	0x0012
+                           00007C   222 _g_MSXMusic_IndexPort	=	0x007c
+                           00007D   223 _g_MSXMusic_DataPort	=	0x007d
+                           0000C0   224 _g_MSXAudio_IndexPort	=	0x00c0
+                           0000C1   225 _g_MSXAudio_DataPort	=	0x00c1
+                           0000C2   226 _g_MSXAudio_IndexPort2	=	0x00c2
+                           0000C3   227 _g_MSXAudio_DataPort2	=	0x00c3
+                           0000B4   228 _g_RTC_AddrPort	=	0x00b4
+                           0000B5   229 _g_RTC_DataPort	=	0x00b5
+                                    230 ;--------------------------------------------------------
+                                    231 ; ram data
+                                    232 ;--------------------------------------------------------
+                                    233 	.area _DATA
+                           00F3AE   234 _g_LINL40	=	0xf3ae
+                           00F3AF   235 _g_LINL32	=	0xf3af
+                           00F3B0   236 _g_LINLEN	=	0xf3b0
+                           00F3B1   237 _g_CRTCNT	=	0xf3b1
+                           00F3B2   238 _g_CLMLST	=	0xf3b2
+                           00F3B3   239 _g_TXTNAM	=	0xf3b3
+                           00F3B5   240 _g_TXTCOL	=	0xf3b5
+                           00F3B7   241 _g_TXTCGP	=	0xf3b7
+                           00F3B9   242 _g_TXTATR	=	0xf3b9
+                           00F3BB   243 _g_TXTPAT	=	0xf3bb
+                           00F3BD   244 _g_T32NAM	=	0xf3bd
+                           00F3BF   245 _g_T32COL	=	0xf3bf
+                           00F3C1   246 _g_T32CGP	=	0xf3c1
+                           00F3C3   247 _g_T32ATR	=	0xf3c3
+                           00F3C5   248 _g_T32PAT	=	0xf3c5
+                           00F3C7   249 _g_GRPNAM	=	0xf3c7
+                           00F3C9   250 _g_GRPCOL	=	0xf3c9
+                           00F3CB   251 _g_GRPCGP	=	0xf3cb
+                           00F3CD   252 _g_GRPATR	=	0xf3cd
+                           00F3CF   253 _g_GRPPAT	=	0xf3cf
+                           00F3D1   254 _g_MLTNAM	=	0xf3d1
+                           00F3D3   255 _g_MLTCOL	=	0xf3d3
+                           00F3D5   256 _g_MLTCGP	=	0xf3d5
+                           00F3D7   257 _g_MLTATR	=	0xf3d7
+                           00F3D9   258 _g_MLTPAT	=	0xf3d9
+                           00F3DB   259 _g_CLIKSW	=	0xf3db
+                           00F3DC   260 _g_CSRY	=	0xf3dc
+                           00F3DD   261 _g_CSRX	=	0xf3dd
+                           00F3E9   262 _g_FORCLR	=	0xf3e9
+                           00F3EA   263 _g_BAKCLR	=	0xf3ea
+                           00F3EB   264 _g_BDRCLR	=	0xf3eb
+                           00F3F2   265 _g_ATRBYT	=	0xf3f2
+                           00F87F   266 _g_FNKSTR	=	0xf87f
+                           00F92A   267 _g_CLOC	=	0xf92a
+                           00F92C   268 _g_CMASK	=	0xf92c
+                           00FB02   269 _g_LOGOPR	=	0xfb02
+                           00FCB7   270 _g_GRPACX	=	0xfcb7
+                           00FCB9   271 _g_GRPACY	=	0xfcb9
+                           00FFFF   272 _g_SLTSL	=	0xffff
+      000000                        273 _g_MSXAudio_RegBackup::
+      000000                        274 	.ds 16
+                                    275 ;--------------------------------------------------------
+                                    276 ; ram data
+                                    277 ;--------------------------------------------------------
+                                    278 	.area _INITIALIZED
+                                    279 ;--------------------------------------------------------
+                                    280 ; absolute external ram data
+                                    281 ;--------------------------------------------------------
+                                    282 	.area _DABS (ABS)
+                                    283 ;--------------------------------------------------------
+                                    284 ; global & static initialisations
+                                    285 ;--------------------------------------------------------
+                                    286 	.area _HOME
+                                    287 	.area _GSINIT
+                                    288 	.area _GSFINAL
+                                    289 	.area _GSINIT
+                                    290 ;--------------------------------------------------------
+                                    291 ; Home
+                                    292 ;--------------------------------------------------------
+                                    293 	.area _HOME
+                                    294 	.area _HOME
+                                    295 ;--------------------------------------------------------
+                                    296 ; code
+                                    297 ;--------------------------------------------------------
+                                    298 	.area _CODE
+                                    299 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:40: void MSXAudio_Initialize()
+                                    300 ;	---------------------------------
+                                    301 ; Function MSXAudio_Initialize
+                                    302 ; ---------------------------------
+      000000                        303 _MSXAudio_Initialize::
+                                    304 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:42: MSXAudio_Detect();
+                                    305 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:43: }
+      000000 C3r09r00         [10]  306 	jp	_MSXAudio_Detect
+                           00F380   307 _g_RDPRIM	=	0xf380
+                           00F385   308 _g_WRPRIM	=	0xf385
+                           00F38C   309 _g_CLPRIM	=	0xf38c
+                           00F39A   310 _g_USRTAB	=	0xf39a
+                           00F3DE   311 _g_CNSDFG	=	0xf3de
+                           00F3DF   312 _g_RG0SAV	=	0xf3df
+                           00F3E0   313 _g_RG1SAV	=	0xf3e0
+                           00F3E1   314 _g_RG2SAV	=	0xf3e1
+                           00F3E2   315 _g_RG3SAV	=	0xf3e2
+                           00F3E3   316 _g_RG4SAV	=	0xf3e3
+                           00F3E4   317 _g_RG5SAV	=	0xf3e4
+                           00F3E5   318 _g_RG6SAV	=	0xf3e5
+                           00F3E6   319 _g_RG7SAV	=	0xf3e6
+                           00F3E7   320 _g_STATFL	=	0xf3e7
+                           00F3E8   321 _g_TRGFLG	=	0xf3e8
+                           00F3EC   322 _g_MAXUPD	=	0xf3ec
+                           00F3EF   323 _g_MINUPD	=	0xf3ef
+                           00F3F3   324 _g_QUEUES	=	0xf3f3
+                           00F3F5   325 _g_FRCNEW	=	0xf3f5
+                           00F3F6   326 _g_SCNCNT	=	0xf3f6
+                           00F3F7   327 _g_REPCNT	=	0xf3f7
+                           00F3F8   328 _g_PUTPNT	=	0xf3f8
+                           00F3FA   329 _g_GETPNT	=	0xf3fa
+                           00F3FC   330 _g_CS120	=	0xf3fc
+                           00F401   331 _g_CS240	=	0xf401
+                           00F406   332 _g_LOW	=	0xf406
+                           00F408   333 _g_HIGH	=	0xf408
+                           00F40A   334 _g_HEADER	=	0xf40a
+                           00F40B   335 _g_ASPCT1	=	0xf40b
+                           00F40D   336 _g_ASPCT2	=	0xf40d
+                           00F959   337 _g_QUETAB	=	0xf959
+                           00F971   338 _g_QUEBAK	=	0xf971
+                           00F975   339 _g_VOICAQ	=	0xf975
+                           00F9F5   340 _g_VOICBQ	=	0xf9f5
+                           00FA75   341 _g_VOICCQ	=	0xfa75
+                           00FAF5   342 _g_RS2IQ	=	0xfaf5
+                           00FAF5   343 _g_DPPAGE	=	0xfaf5
+                           00FAF6   344 _g_ACPAGE	=	0xfaf6
+                           00FAF7   345 _g_AVCSAV	=	0xfaf7
+                           00FAF8   346 _g_EXBRSA	=	0xfaf8
+                           00FAF9   347 _g_CHRCNT	=	0xfaf9
+                           00FAFA   348 _g_ROMA	=	0xfafa
+                           00FAFC   349 _g_MODE	=	0xfafc
+                           00FAFD   350 _g_NORUSE	=	0xfafd
+                           00FAFE   351 _g_XSAVE	=	0xfafe
+                           00FB00   352 _g_YSAVE	=	0xfb00
+                           00FB03   353 _g_RSTMP	=	0xfb03
+                           00FB03   354 _g_TOCNT	=	0xfb03
+                           00FB04   355 _g_RSFCB	=	0xfb04
+                           00FB06   356 _g_RSIQLN	=	0xfb06
+                           00FB07   357 _g_MEXBIh	=	0xfb07
+                           00FB0C   358 _g_OLDSTT	=	0xfb0c
+                           00FB0C   359 _g_OLDINT	=	0xfb0c
+                           00FB16   360 _g_DEVNUM	=	0xfb16
+                           00FB17   361 _g_DATCNT	=	0xfb17
+                           00FB1A   362 _g_ERRORS	=	0xfb1a
+                           00FB1B   363 _g_FLAGS	=	0xfb1b
+                           00FB1C   364 _g_ESTBLS	=	0xfb1c
+                           00FB1D   365 _g_COMMSK	=	0xfb1d
+                           00FB1E   366 _g_LSTCOM	=	0xfb1e
+                           00FB1F   367 _g_LSTMOD	=	0xfb1f
+                           00FB35   368 _g_PRSCNT	=	0xfb35
+                           00FB36   369 _g_SAVSP	=	0xfb36
+                           00FB38   370 _g_VOICEN	=	0xfb38
+                           00FB39   371 _g_SAVVOL	=	0xfb39
+                           00FB3B   372 _g_MCLLEN	=	0xfb3b
+                           00FB3C   373 _g_MCLPTR	=	0xfb3c
+                           00FB3E   374 _g_QUEUEN	=	0xfb3e
+                           00FB3F   375 _g_MUSICF	=	0xfb3f
+                           00FB40   376 _g_PLYCNT	=	0xfb40
+                           00FB41   377 _g_VCBA	=	0xfb41
+                           00FB66   378 _g_VCBB	=	0xfb66
+                           00FB8B   379 _g_VCBC	=	0xfb8b
+                           00FBB0   380 _g_ENSTOP	=	0xfbb0
+                           00FBB1   381 _g_BASROM	=	0xfbb1
+                           00FBB2   382 _g_LINTTB	=	0xfbb2
+                           00FBCA   383 _g_FSTPOS	=	0xfbca
+                           00FBCC   384 _g_CODSAV	=	0xfbcc
+                           00FBCD   385 _g_FNKSWI	=	0xfbcd
+                           00FBCE   386 _g_FNKFLG	=	0xfbce
+                           00FBD8   387 _g_ONGSBF	=	0xfbd8
+                           00FBD9   388 _g_CLIKFL	=	0xfbd9
+                           00FBDA   389 _g_OLDKEY	=	0xfbda
+                           00FBE5   390 _g_NEWKEY	=	0xfbe5
+                           00FBF0   391 _g_KEYBUF	=	0xfbf0
+                           00FC18   392 _g_LINWRK	=	0xfc18
+                           00FC40   393 _g_PATWRK	=	0xfc40
+                           00FC48   394 _g_BOTTOM	=	0xfc48
+                           00FC4A   395 _g_HIMEM	=	0xfc4a
+                           00FC4C   396 _g_TRPTBL	=	0xfc4c
+                           00FC9A   397 _g_RTYCNT	=	0xfc9a
+                           00FC9B   398 _g_INTFLG	=	0xfc9b
+                           00FC9C   399 _g_PADY	=	0xfc9c
+                           00FC9D   400 _g_PADX	=	0xfc9d
+                           00FC9E   401 _g_JIFFY	=	0xfc9e
+                           00FCA0   402 _g_INTVAL	=	0xfca0
+                           00FCA2   403 _g_INTCNT	=	0xfca2
+                           00FCA4   404 _g_LOWLIM	=	0xfca4
+                           00FCA5   405 _g_WINWID	=	0xfca5
+                           00FCA6   406 _g_GRPHED	=	0xfca6
+                           00FCA7   407 _g_ESCCNT	=	0xfca7
+                           00FCA8   408 _g_INSFLG	=	0xfca8
+                           00FCA9   409 _g_CSRSW	=	0xfca9
+                           00FCAA   410 _g_CSTYLE	=	0xfcaa
+                           00FCAB   411 _g_CAPST	=	0xfcab
+                           00FCAC   412 _g_KANAST	=	0xfcac
+                           00FCAD   413 _g_KANAMD	=	0xfcad
+                           00FCAE   414 _g_FLBMEM	=	0xfcae
+                           00FCAF   415 _g_SCRMOD	=	0xfcaf
+                           00FCB0   416 _g_OLDSCR	=	0xfcb0
+                           00FCB1   417 _g_CASPRV	=	0xfcb1
+                           00FCB2   418 _g_BRDATR	=	0xfcb2
+                           00FCB3   419 _g_GXPOS	=	0xfcb3
+                           00FCB5   420 _g_GYPOS	=	0xfcb5
+                           00FCBB   421 _g_DRWFLG	=	0xfcbb
+                           00FCBC   422 _g_DRWSCL	=	0xfcbc
+                           00FCBD   423 _g_DRWANG	=	0xfcbd
+                           00FCC1   424 _g_MNROM	=	0xfcc1
+                           00FCC1   425 _g_EXPTBL	=	0xfcc1
+                           00FCC5   426 _g_SLTTBL	=	0xfcc5
+                           00FCC9   427 _g_SLTATR	=	0xfcc9
+                           00FD09   428 _g_SLTWRK	=	0xfd09
+                           00FD89   429 _g_PROCNM	=	0xfd89
+                           00FFE7   430 _g_RG08SAV	=	0xffe7
+                           00FFE8   431 _g_RG09SAV	=	0xffe8
+                           00FFE9   432 _g_RG10SAV	=	0xffe9
+                           00FFEA   433 _g_RG11SAV	=	0xffea
+                           00FFEB   434 _g_RG12SAV	=	0xffeb
+                           00FFEC   435 _g_RG13SAV	=	0xffec
+                           00FFED   436 _g_RG14SAV	=	0xffed
+                           00FFEE   437 _g_RG15SAV	=	0xffee
+                           00FFEF   438 _g_RG16SAV	=	0xffef
+                           00FFF0   439 _g_RG17SAV	=	0xfff0
+                           00FFF1   440 _g_RG18SAV	=	0xfff1
+                           00FFF2   441 _g_RG19SAV	=	0xfff2
+                           00FFF3   442 _g_RG20SAV	=	0xfff3
+                           00FFF4   443 _g_RG21SAV	=	0xfff4
+                           00FFF5   444 _g_RG22SAV	=	0xfff5
+                           00FFF6   445 _g_RG23SAV	=	0xfff6
+                           00FFF7   446 _g_MINROM	=	0xfff7
+                           00FFF8   447 _g_SVFFF8	=	0xfff8
+                           00FFFA   448 _g_RG25SAV	=	0xfffa
+                           00FFFB   449 _g_RG26SAV	=	0xfffb
+                           00FFFC   450 _g_RG27SAV	=	0xfffc
+                           00FFFD   451 _g_SVFFFD	=	0xfffd
+      000003                        452 _g_MSXAudio_Ident:
+      000003 41 55 44 49 4F         453 	.ascii "AUDIO"
+      000008 00                     454 	.db 0x00
+                                    455 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:47: bool MSXAudio_Detect()
+                                    456 ;	---------------------------------
+                                    457 ; Function MSXAudio_Detect
+                                    458 ; ---------------------------------
+      000009                        459 _MSXAudio_Detect::
+                                    460 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:49: return (g_MSXAudio_IndexPort | 0x06) == 0x06; // can be 0x00 for Moonsound
+      000009 DB C0            [11]  461 	in	a, (_g_MSXAudio_IndexPort)
+      00000B F6 06            [ 7]  462 	or	a, #0x06
+      00000D D6 06            [ 7]  463 	sub	a, #0x06
+      00000F 3E 01            [ 7]  464 	ld	a, #0x01
+      000011 C8               [11]  465 	ret	Z
+      000012 AF               [ 4]  466 	xor	a, a
+                                    467 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:50: }
+      000013 C9               [10]  468 	ret
+                                    469 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:54: void MSXAudio_SetRegister(u8 reg, u8 value)
+                                    470 ;	---------------------------------
+                                    471 ; Function MSXAudio_SetRegister
+                                    472 ; ---------------------------------
+      000014                        473 _MSXAudio_SetRegister::
+      000014 5F               [ 4]  474 	ld	e, a
+      000015 4D               [ 4]  475 	ld	c, l
+                                    476 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:56: g_MSXAudio_IndexPort = reg;
+      000016 7B               [ 4]  477 	ld	a, e
+      000017 D3 C0            [11]  478 	out	(_g_MSXAudio_IndexPort), a
+                                    479 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:57: g_MSXAudio_DataPort = value;
+      000019 79               [ 4]  480 	ld	a, c
+      00001A D3 C1            [11]  481 	out	(_g_MSXAudio_DataPort), a
+                                    482 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:60: if((reg & 0xF0) == 0xB0) // MSXAUDIO_REG_CTRL_x
+      00001C 7B               [ 4]  483 	ld	a, e
+      00001D E6 F0            [ 7]  484 	and	a, #0xf0
+                                    485 ;	spillPairReg hl
+                                    486 ;	spillPairReg hl
+      00001F 06 00            [ 7]  487 	ld	b, #0x00
+      000021 D6 B0            [ 7]  488 	sub	a, #0xb0
+      000023 B0               [ 4]  489 	or	a, b
+      000024 C0               [11]  490 	ret	NZ
+                                    491 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:61: g_MSXAudio_RegBackup[reg & 0x0F] = value;
+      000025 21r00r00         [10]  492 	ld	hl, #_g_MSXAudio_RegBackup+0
+      000028 7B               [ 4]  493 	ld	a, e
+      000029 E6 0F            [ 7]  494 	and	a, #0x0f
+      00002B 5F               [ 4]  495 	ld	e, a
+      00002C 16 00            [ 7]  496 	ld	d, #0x00
+      00002E 19               [11]  497 	add	hl, de
+      00002F 71               [ 7]  498 	ld	(hl), c
+                                    499 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:63: }
+      000030 C9               [10]  500 	ret
+                                    501 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:67: u8 MSXAudio_GetRegister(u8 reg)
+                                    502 ;	---------------------------------
+                                    503 ; Function MSXAudio_GetRegister
+                                    504 ; ---------------------------------
+      000031                        505 _MSXAudio_GetRegister::
+      000031 D3 C0            [11]  506 	out	(_g_MSXAudio_IndexPort), a
+                                    507 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:70: return g_MSXAudio_DataPort;
+      000033 DB C1            [11]  508 	in	a, (_g_MSXAudio_DataPort)
+                                    509 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:71: }
+      000035 C9               [10]  510 	ret
+                                    511 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:75: void MSXAudio_Mute()
+                                    512 ;	---------------------------------
+                                    513 ; Function MSXAudio_Mute
+                                    514 ; ---------------------------------
+      000036                        515 _MSXAudio_Mute::
+                                    516 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:77: loop(i, 9)
+      000036 0E 00            [ 7]  517 	ld	c, #0x00
+      000038                        518 00103$:
+                                    519 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:79: MSXAudio_SetRegister(MSXAUDIO_REG_CTRL_1 + i, 0); // seem to be enough
+      000038 79               [ 4]  520 	ld	a,c
+      000039 FE 09            [ 7]  521 	cp	a,#0x09
+      00003B D0               [11]  522 	ret	NC
+      00003C C6 B0            [ 7]  523 	add	a, #0xb0
+      00003E 47               [ 4]  524 	ld	b, a
+      00003F C5               [11]  525 	push	bc
+      000040 2E 00            [ 7]  526 	ld	l, #0x00
+                                    527 ;	spillPairReg hl
+                                    528 ;	spillPairReg hl
+      000042 78               [ 4]  529 	ld	a, b
+      000043 CDr14r00         [17]  530 	call	_MSXAudio_SetRegister
+      000046 C1               [10]  531 	pop	bc
+                                    532 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:77: loop(i, 9)
+      000047 0C               [ 4]  533 	inc	c
+                                    534 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:81: }
+      000048 C3r38r00         [10]  535 	jp	00103$
+                                    536 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:86: void MSXAudio_Resume()
+                                    537 ;	---------------------------------
+                                    538 ; Function MSXAudio_Resume
+                                    539 ; ---------------------------------
+      00004B                        540 _MSXAudio_Resume::
+                                    541 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:88: loop(i, 9)
+      00004B 0E 00            [ 7]  542 	ld	c, #0x00
+      00004D                        543 00103$:
+      00004D 79               [ 4]  544 	ld	a, c
+      00004E D6 09            [ 7]  545 	sub	a, #0x09
+      000050 D0               [11]  546 	ret	NC
+                                    547 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:90: MSXAudio_SetRegister(MSXAUDIO_REG_CTRL_1 + i, g_MSXAudio_RegBackup[i]); // seem to be enough
+      000051 21r00r00         [10]  548 	ld	hl, #_g_MSXAudio_RegBackup
+      000054 06 00            [ 7]  549 	ld	b, #0x00
+      000056 09               [11]  550 	add	hl, bc
+      000057 6E               [ 7]  551 	ld	l, (hl)
+                                    552 ;	spillPairReg hl
+      000058 79               [ 4]  553 	ld	a, c
+      000059 C6 B0            [ 7]  554 	add	a, #0xb0
+      00005B 47               [ 4]  555 	ld	b, a
+      00005C C5               [11]  556 	push	bc
+      00005D 78               [ 4]  557 	ld	a, b
+      00005E CDr14r00         [17]  558 	call	_MSXAudio_SetRegister
+      000061 C1               [10]  559 	pop	bc
+                                    560 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:88: loop(i, 9)
+      000062 0C               [ 4]  561 	inc	c
+                                    562 ;/home/bruno/dev/MSXgl/engine/src/msx-audio.c:92: }
+      000063 C3r4Dr00         [10]  563 	jp	00103$
+                                    564 	.area _CODE
+                                    565 	.area _INITIALIZER
+                                    566 	.area _CABS (ABS)
