@@ -14,19 +14,19 @@ emu_context *emu_get_context() {
 }
 
 u8 emu_run(u8 argc, const c8 **argv) {
-  msx_printf("argc = %d\r\n", argc);
+  printf("argc = %d\r\n", argc);
 
   if (argc < 1) {
-    msx_printf("Usage: gbmsx <rom_file>\r\n");
+    printf("Usage: gbmsx <rom_file>\r\n");
     return 0;
   }
 
   if (!cart_load(argv[0])) {
-    msx_printf("Failed to load ROM file: %s\r\n", argv[0]);
+    printf("Failed to load ROM file: %s\r\n", argv[0]);
     return 0;
   }
 
-  msx_printf("Cart loaded\r\n");
+  printf("Cart loaded\r\n");
 
 /*	VDP_SetMode(VDP_MODE_SCREEN5);
 	VDP_SetColor(COLOR_BLACK);

@@ -163,7 +163,7 @@ bool cart_load(c8 *filename) {
   ctx.header = (rom_header *)(ctx.rom_data + 0x100);
   ctx.header->title[15] = 0;
 
-  printf("Cartridge Loaded:\n");
+  printf("Cartridge Loaded:\r\n");
   printf("\t Title    : %s\r\n", ctx.header->title);
   printf("\t Type     : %d (%s)\r\n", ctx.header->type, cart_type_name());
   printf("\t ROM Size : %d KB\r\n", 32 << ctx.header->rom_size);
