@@ -52,3 +52,5 @@ u8 emu_run(u8 argc, const c8 **argv) {
 
   return 0;
 }
+
+void emu_cycles(int cpu_cycles) {}

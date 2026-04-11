@@ -39,6 +39,20 @@ AddSources = [
   "emu.c",
   "msx_printf.c",
   "cart.c",
+  "bus.c",
+  "ram.c",
+  "cpu.c",
+  "io.c",
+  "ppu.c",
+  "dma.c",
+  "ppu_sm.c",
+  "interrupts.c",
+  "stack.c",
+  "lcd.c",
+  "dbg.c",
+  "instructions.c",
+  "timer.c",
+  "common.c",
 ];
 
 //-- Target MSX machine version (string)

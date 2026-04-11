@@ -10,3 +10,4 @@ typedef struct {
 
 u8 emu_run(u8 argc, const c8 **argv);
 emu_context *emu_get_context();
+void emu_cycles(int cpu_cycles);

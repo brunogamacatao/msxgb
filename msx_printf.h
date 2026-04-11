@@ -10,3 +10,4 @@ static c8 g_StrBuffer[128];
     String_Format(g_StrBuffer, fmt "$", ##__VA_ARGS__); \
     DOS_StringOutput(g_StrBuffer)
 
+#define sprintf(dest, fmt, ...) String_Format(dest, fmt "$", ##__VA_ARGS__)

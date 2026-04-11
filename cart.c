@@ -1,14 +1,8 @@
 #include "dos.h"
+#include "common.h"
 #include "memory.h"
 #include "cart.h"
 #include "string.h"
-
-// buffer for string manipulation
-c8 g_StrBuffer[128];
-
-#define printf(fmt, ...) \
-    String_Format(g_StrBuffer, fmt "$", ##__VA_ARGS__); \
-    DOS_StringOutput(g_StrBuffer)
 
 typedef struct {
   c8 filename[1024];
@@ -172,4 +166,12 @@ bool cart_load(c8 *filename) {
   printf("\t ROM Vers : %d\r\n", ctx.header->version);
 
   return true;
+}
+
+u8 cart_read(u16 address) {
+  return ctx.rom_data[address];
+}
+
+void cart_write(u16 address, u8 value) {
+  printf("cart_write(%d)\n", address);
 }
