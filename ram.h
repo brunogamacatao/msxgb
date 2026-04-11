@@ -3,6 +3,8 @@
 #include "dos.h"
 #include "common.h"
 
+void ram_init();
+
 u8 wram_read(u16 address);
 void wram_write(u16 address, u8 value);
 

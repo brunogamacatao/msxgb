@@ -1,4 +1,5 @@
 #include "cpu.h"
+#include "ram.h"
 #include "bus.h"
 #include "dbg.h"
 #include "emu.h"
@@ -11,6 +12,8 @@ static cpu_context ctx;
 #define CPU_DEBUG 0
 
 void cpu_init() {
+  ram_init();
+
   ctx.regs.pc = 0x100;
   ctx.regs.sp = 0xFFFE;
   *((short *)&ctx.regs.a) = 0xB001;

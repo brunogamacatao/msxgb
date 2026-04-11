@@ -5,7 +5,7 @@
 #include "string.h"
 
 typedef struct {
-  c8 filename[1024];
+  c8 filename[64];
   u32 rom_size;
   u8 *rom_data;
   rom_header *header;
@@ -151,8 +151,35 @@ bool cart_load(c8 *filename) {
 
   ctx.rom_data = Mem_HeapAlloc(ctx.rom_size);
 
-  DOS_FRead(fp, (void*)ctx.rom_data, ctx.rom_size);
+  if (!ctx.rom_data) {
+    printf("Not enought memory to allocate the rom\r\n");
+    exit(-1);
+  } else {
+    printf("Memory allocated successfully!\r\n");
+  }
+
+  printf("Reading rom data ...\r\n");
+
+  u8 *dst = ctx.rom_data;
+  u32 remaining = ctx.rom_size;
+  u8 n_chunks = (u8)(remaining / 0x8000);
+  u8 i_chunk = 1;
+  
+  printf("Gonna read the mom file in %d chunks of 32kb\r\n", n_chunks);
+
+  while (remaining > 0) {
+    printf("Reading the %d of %d chunk...\r\n", i_chunk, n_chunks);
+    i_chunk++;
+    u16 chunk = (remaining > 0x8000) ? 0x8000 : (u16)remaining;
+    DOS_FRead(fp, (void*)dst, chunk);
+    dst += chunk;
+    remaining -= chunk;
+  }
+
+  printf("Done!\r\n");
+  printf("Cloding the file handle...\r\n");
   DOS_FClose(fp); 
+  printf("Done!\r\n");
 
   ctx.header = (rom_header *)(ctx.rom_data + 0x100);
   ctx.header->title[15] = 0;
