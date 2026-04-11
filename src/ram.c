@@ -9,7 +9,16 @@ typedef struct {
 static ram_context *ctx;
 
 void ram_init() {
+  printf("Initializing ram...\r\n");
+
   ctx = Mem_HeapAlloc(sizeof(ram_context));
+
+  if (!ctx) {
+    printf("Could not allocate ram context\r\n");
+    exit(-1);
+  }
+
+  printf("Done initializing ram\r\n");
 }
 
 u8 wram_read(u16 address) {

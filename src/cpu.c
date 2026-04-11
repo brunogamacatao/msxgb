@@ -1,5 +1,6 @@
 #include "cpu.h"
 #include "ram.h"
+#include "ppu.h"
 #include "bus.h"
 #include "dbg.h"
 #include "emu.h"
@@ -7,48 +8,59 @@
 #include "timer.h"
 #include "stack.h"
 
-static cpu_context ctx;
+static cpu_context *ctx;
 
 #define CPU_DEBUG 0
 
 void cpu_init() {
+  printf("Initializing cpu...\r\n");
   ram_init();
+  dbg_init();
+  ppu_init();
 
-  ctx.regs.pc = 0x100;
-  ctx.regs.sp = 0xFFFE;
-  *((short *)&ctx.regs.a) = 0xB001;
-  *((short *)&ctx.regs.b) = 0x1300;
-  *((short *)&ctx.regs.d) = 0xD800;
-  *((short *)&ctx.regs.h) = 0x4D01;
-  ctx.ie_register = 0;
-  ctx.int_flags = 0;
-  ctx.int_master_enabled = false;
-  ctx.enabling_ime = false;
+  ctx = Mem_HeapAlloc(sizeof(cpu_context));
+
+  if (!ctx) {
+    printf("Could not allocate cpu context");
+    exit(-1);
+  }
+
+  ctx->regs.pc = 0x100;
+  ctx->regs.sp = 0xFFFE;
+  *((short *)ctx->regs.a) = 0xB001;
+  *((short *)ctx->regs.b) = 0x1300;
+  *((short *)ctx->regs.d) = 0xD800;
+  *((short *)ctx->regs.h) = 0x4D01;
+  ctx->ie_register = 0;
+  ctx->int_flags = 0;
+  ctx->int_master_enabled = false;
+  ctx->enabling_ime = false;
 
   timer_get_context()->div = 0xABCC;
+  printf("Done cpu initialization\r\n");
 }
 
 static void fetch_instruction() {
-  ctx.cur_opcode = bus_read(ctx.regs.pc++);
-  ctx.cur_inst = instruction_by_opcode(ctx.cur_opcode);
+  ctx->cur_opcode = bus_read(ctx->regs.pc++);
+  ctx->cur_inst = instruction_by_opcode(ctx->cur_opcode);
 }
 
 void fetch_data();
 
 static void execute() {
-  IN_PROC proc = inst_get_processor(ctx.cur_inst->type);
+  IN_PROC proc = inst_get_processor(ctx->cur_inst->type);
 
   if (!proc) {
     NO_IMPL
   }
 
-  proc(&ctx);
+  proc(ctx);
 }
 
 bool cpu_step() {
 
-  if (!ctx.halted) {
-    u16 pc = ctx.regs.pc;
+  if (!ctx->halted) {
+    u16 pc = ctx->regs.pc;
 
     fetch_instruction();
     emu_cycles(1);
@@ -56,23 +68,23 @@ bool cpu_step() {
 
 #if CPU_DEBUG == 1
     char flags[16];
-    sprintf(flags, "%c%c%c%c", ctx.regs.f & (1 << 7) ? 'Z' : '-',
-            ctx.regs.f & (1 << 6) ? 'N' : '-',
-            ctx.regs.f & (1 << 5) ? 'H' : '-',
-            ctx.regs.f & (1 << 4) ? 'C' : '-');
+    sprintf(flags, "%c%c%c%c", ctx->regs.f & (1 << 7) ? 'Z' : '-',
+            ctx->regs.f & (1 << 6) ? 'N' : '-',
+            ctx->regs.f & (1 << 5) ? 'H' : '-',
+            ctx->regs.f & (1 << 4) ? 'C' : '-');
 
     char inst[16];
-    inst_to_str(&ctx, inst);
+    inst_to_str(ctx, inst);
 
     printf("%08lX - %04X: %-12s (%02X %02X %02X) A: %02X F: %s BC: %02X%02X "
            "DE: %02X%02X HL: %02X%02X\n",
-           emu_get_context()->ticks, pc, inst, ctx.cur_opcode, bus_read(pc + 1),
-           bus_read(pc + 2), ctx.regs.a, flags, ctx.regs.b, ctx.regs.c,
-           ctx.regs.d, ctx.regs.e, ctx.regs.h, ctx.regs.l);
+           emu_get_context()->ticks, pc, inst, ctx->cur_opcode, bus_read(pc + 1),
+           bus_read(pc + 2), ctx->regs.a, flags, ctx->regs.b, ctx->regs.c,
+           ctx->regs.d, ctx->regs.e, ctx->regs.h, ctx->regs.l);
 #endif
 
-    if (ctx.cur_inst == NULL) {
-      printf("Unknown Instruction! %02X\n", ctx.cur_opcode);
+    if (ctx->cur_inst == NULL) {
+      printf("Unknown Instruction! %02X\n", ctx->cur_opcode);
       exit(-7);
     }
 
@@ -84,63 +96,63 @@ bool cpu_step() {
     // is halted...
     emu_cycles(1);
 
-    if (ctx.int_flags) {
-      ctx.halted = false;
+    if (ctx->int_flags) {
+      ctx->halted = false;
     }
   }
 
-  if (ctx.int_master_enabled) {
-    cpu_handle_interrupts(&ctx);
-    ctx.enabling_ime = false;
+  if (ctx->int_master_enabled) {
+    cpu_handle_interrupts(ctx);
+    ctx->enabling_ime = false;
   }
 
-  if (ctx.enabling_ime) {
-    ctx.int_master_enabled = true;
+  if (ctx->enabling_ime) {
+    ctx->int_master_enabled = true;
   }
 
   return true;
 }
 
-u8 cpu_get_ie_register() { return ctx.ie_register; }
+u8 cpu_get_ie_register() { return ctx->ie_register; }
 
-void cpu_set_ie_register(u8 n) { ctx.ie_register = n; }
+void cpu_set_ie_register(u8 n) { ctx->ie_register = n; }
 
-void cpu_request_interrupt(interrupt_type t) { ctx.int_flags |= t; }
+void cpu_request_interrupt(interrupt_type t) { ctx->int_flags |= t; }
 
 u16 reverse(u16 n) { return ((n & 0xFF00) >> 8) | ((n & 0x00FF) << 8); }
 
 u16 cpu_read_reg(reg_type rt) {
   switch (rt) {
   case RT_A:
-    return ctx.regs.a;
+    return ctx->regs.a;
   case RT_F:
-    return ctx.regs.f;
+    return ctx->regs.f;
   case RT_B:
-    return ctx.regs.b;
+    return ctx->regs.b;
   case RT_C:
-    return ctx.regs.c;
+    return ctx->regs.c;
   case RT_D:
-    return ctx.regs.d;
+    return ctx->regs.d;
   case RT_E:
-    return ctx.regs.e;
+    return ctx->regs.e;
   case RT_H:
-    return ctx.regs.h;
+    return ctx->regs.h;
   case RT_L:
-    return ctx.regs.l;
+    return ctx->regs.l;
 
   case RT_AF:
-    return reverse(*((u16 *)&ctx.regs.a));
+    return reverse(*((u16 *)ctx->regs.a));
   case RT_BC:
-    return reverse(*((u16 *)&ctx.regs.b));
+    return reverse(*((u16 *)ctx->regs.b));
   case RT_DE:
-    return reverse(*((u16 *)&ctx.regs.d));
+    return reverse(*((u16 *)ctx->regs.d));
   case RT_HL:
-    return reverse(*((u16 *)&ctx.regs.h));
+    return reverse(*((u16 *)ctx->regs.h));
 
   case RT_PC:
-    return ctx.regs.pc;
+    return ctx->regs.pc;
   case RT_SP:
-    return ctx.regs.sp;
+    return ctx->regs.sp;
   default:
     return 0;
   }
@@ -149,49 +161,49 @@ u16 cpu_read_reg(reg_type rt) {
 void cpu_set_reg(reg_type rt, u16 val) {
   switch (rt) {
   case RT_A:
-    ctx.regs.a = val & 0xFF;
+    ctx->regs.a = val & 0xFF;
     break;
   case RT_F:
-    ctx.regs.f = val & 0xFF;
+    ctx->regs.f = val & 0xFF;
     break;
   case RT_B:
-    ctx.regs.b = val & 0xFF;
+    ctx->regs.b = val & 0xFF;
     break;
   case RT_C: {
-    ctx.regs.c = val & 0xFF;
+    ctx->regs.c = val & 0xFF;
   } break;
   case RT_D:
-    ctx.regs.d = val & 0xFF;
+    ctx->regs.d = val & 0xFF;
     break;
   case RT_E:
-    ctx.regs.e = val & 0xFF;
+    ctx->regs.e = val & 0xFF;
     break;
   case RT_H:
-    ctx.regs.h = val & 0xFF;
+    ctx->regs.h = val & 0xFF;
     break;
   case RT_L:
-    ctx.regs.l = val & 0xFF;
+    ctx->regs.l = val & 0xFF;
     break;
 
   case RT_AF:
-    *((u16 *)&ctx.regs.a) = reverse(val);
+    *((u16 *)ctx->regs.a) = reverse(val);
     break;
   case RT_BC:
-    *((u16 *)&ctx.regs.b) = reverse(val);
+    *((u16 *)ctx->regs.b) = reverse(val);
     break;
   case RT_DE:
-    *((u16 *)&ctx.regs.d) = reverse(val);
+    *((u16 *)ctx->regs.d) = reverse(val);
     break;
   case RT_HL: {
-    *((u16 *)&ctx.regs.h) = reverse(val);
+    *((u16 *)ctx->regs.h) = reverse(val);
     break;
   }
 
   case RT_PC:
-    ctx.regs.pc = val;
+    ctx->regs.pc = val;
     break;
   case RT_SP:
-    ctx.regs.sp = val;
+    ctx->regs.sp = val;
     break;
   case RT_NONE:
     break;
@@ -201,21 +213,21 @@ void cpu_set_reg(reg_type rt, u16 val) {
 u8 cpu_read_reg8(reg_type rt) {
   switch (rt) {
   case RT_A:
-    return ctx.regs.a;
+    return ctx->regs.a;
   case RT_F:
-    return ctx.regs.f;
+    return ctx->regs.f;
   case RT_B:
-    return ctx.regs.b;
+    return ctx->regs.b;
   case RT_C:
-    return ctx.regs.c;
+    return ctx->regs.c;
   case RT_D:
-    return ctx.regs.d;
+    return ctx->regs.d;
   case RT_E:
-    return ctx.regs.e;
+    return ctx->regs.e;
   case RT_H:
-    return ctx.regs.h;
+    return ctx->regs.h;
   case RT_L:
-    return ctx.regs.l;
+    return ctx->regs.l;
   case RT_HL: {
     return bus_read(cpu_read_reg(RT_HL));
   }
@@ -228,28 +240,28 @@ u8 cpu_read_reg8(reg_type rt) {
 void cpu_set_reg8(reg_type rt, u8 val) {
   switch (rt) {
   case RT_A:
-    ctx.regs.a = val & 0xFF;
+    ctx->regs.a = val & 0xFF;
     break;
   case RT_F:
-    ctx.regs.f = val & 0xFF;
+    ctx->regs.f = val & 0xFF;
     break;
   case RT_B:
-    ctx.regs.b = val & 0xFF;
+    ctx->regs.b = val & 0xFF;
     break;
   case RT_C:
-    ctx.regs.c = val & 0xFF;
+    ctx->regs.c = val & 0xFF;
     break;
   case RT_D:
-    ctx.regs.d = val & 0xFF;
+    ctx->regs.d = val & 0xFF;
     break;
   case RT_E:
-    ctx.regs.e = val & 0xFF;
+    ctx->regs.e = val & 0xFF;
     break;
   case RT_H:
-    ctx.regs.h = val & 0xFF;
+    ctx->regs.h = val & 0xFF;
     break;
   case RT_L:
-    ctx.regs.l = val & 0xFF;
+    ctx->regs.l = val & 0xFF;
     break;
   case RT_HL:
     bus_write(cpu_read_reg(RT_HL), val);
@@ -260,177 +272,177 @@ void cpu_set_reg8(reg_type rt, u8 val) {
   }
 }
 
-cpu_registers *cpu_get_regs() { return &ctx.regs; }
+cpu_registers *cpu_get_regs() { return ctx->regs; }
 
-u8 cpu_get_int_flags() { return ctx.int_flags; }
+u8 cpu_get_int_flags() { return ctx->int_flags; }
 
-void cpu_set_int_flags(u8 value) { ctx.int_flags = value; }
+void cpu_set_int_flags(u8 value) { ctx->int_flags = value; }
 
 void fetch_data() {
-  ctx.mem_dest = 0;
-  ctx.dest_is_mem = false;
+  ctx->mem_dest = 0;
+  ctx->dest_is_mem = false;
 
-  if (ctx.cur_inst == NULL) {
+  if (ctx->cur_inst == NULL) {
     return;
   }
 
-  switch (ctx.cur_inst->mode) {
+  switch (ctx->cur_inst->mode) {
   case AM_IMP:
     return;
 
   case AM_R:
-    ctx.fetched_data = cpu_read_reg(ctx.cur_inst->reg_1);
+    ctx->fetched_data = cpu_read_reg(ctx->cur_inst->reg_1);
     return;
 
   case AM_R_R:
-    ctx.fetched_data = cpu_read_reg(ctx.cur_inst->reg_2);
+    ctx->fetched_data = cpu_read_reg(ctx->cur_inst->reg_2);
     return;
 
   case AM_R_D8:
-    ctx.fetched_data = bus_read(ctx.regs.pc);
+    ctx->fetched_data = bus_read(ctx->regs.pc);
     emu_cycles(1);
-    ctx.regs.pc++;
+    ctx->regs.pc++;
     return;
 
   case AM_R_D16:
   case AM_D16: {
-    u16 lo = bus_read(ctx.regs.pc);
+    u16 lo = bus_read(ctx->regs.pc);
     emu_cycles(1);
 
-    u16 hi = bus_read(ctx.regs.pc + 1);
+    u16 hi = bus_read(ctx->regs.pc + 1);
     emu_cycles(1);
 
-    ctx.fetched_data = lo | (hi << 8);
+    ctx->fetched_data = lo | (hi << 8);
 
-    ctx.regs.pc += 2;
+    ctx->regs.pc += 2;
 
     return;
   }
 
   case AM_MR_R:
-    ctx.fetched_data = cpu_read_reg(ctx.cur_inst->reg_2);
-    ctx.mem_dest = cpu_read_reg(ctx.cur_inst->reg_1);
-    ctx.dest_is_mem = true;
+    ctx->fetched_data = cpu_read_reg(ctx->cur_inst->reg_2);
+    ctx->mem_dest = cpu_read_reg(ctx->cur_inst->reg_1);
+    ctx->dest_is_mem = true;
 
-    if (ctx.cur_inst->reg_1 == RT_C) {
-      ctx.mem_dest |= 0xFF00;
+    if (ctx->cur_inst->reg_1 == RT_C) {
+      ctx->mem_dest |= 0xFF00;
     }
 
     return;
 
   case AM_R_MR: {
-    u16 addr = cpu_read_reg(ctx.cur_inst->reg_2);
+    u16 addr = cpu_read_reg(ctx->cur_inst->reg_2);
 
-    if (ctx.cur_inst->reg_2 == RT_C) {
+    if (ctx->cur_inst->reg_2 == RT_C) {
       addr |= 0xFF00;
     }
 
-    ctx.fetched_data = bus_read(addr);
+    ctx->fetched_data = bus_read(addr);
     emu_cycles(1);
   }
     return;
 
   case AM_R_HLI:
-    ctx.fetched_data = bus_read(cpu_read_reg(ctx.cur_inst->reg_2));
+    ctx->fetched_data = bus_read(cpu_read_reg(ctx->cur_inst->reg_2));
     emu_cycles(1);
     cpu_set_reg(RT_HL, cpu_read_reg(RT_HL) + 1);
     return;
 
   case AM_R_HLD:
-    ctx.fetched_data = bus_read(cpu_read_reg(ctx.cur_inst->reg_2));
+    ctx->fetched_data = bus_read(cpu_read_reg(ctx->cur_inst->reg_2));
     emu_cycles(1);
     cpu_set_reg(RT_HL, cpu_read_reg(RT_HL) - 1);
     return;
 
   case AM_HLI_R:
-    ctx.fetched_data = cpu_read_reg(ctx.cur_inst->reg_2);
-    ctx.mem_dest = cpu_read_reg(ctx.cur_inst->reg_1);
-    ctx.dest_is_mem = true;
+    ctx->fetched_data = cpu_read_reg(ctx->cur_inst->reg_2);
+    ctx->mem_dest = cpu_read_reg(ctx->cur_inst->reg_1);
+    ctx->dest_is_mem = true;
     cpu_set_reg(RT_HL, cpu_read_reg(RT_HL) + 1);
     return;
 
   case AM_HLD_R:
-    ctx.fetched_data = cpu_read_reg(ctx.cur_inst->reg_2);
-    ctx.mem_dest = cpu_read_reg(ctx.cur_inst->reg_1);
-    ctx.dest_is_mem = true;
+    ctx->fetched_data = cpu_read_reg(ctx->cur_inst->reg_2);
+    ctx->mem_dest = cpu_read_reg(ctx->cur_inst->reg_1);
+    ctx->dest_is_mem = true;
     cpu_set_reg(RT_HL, cpu_read_reg(RT_HL) - 1);
     return;
 
   case AM_R_A8:
-    ctx.fetched_data = bus_read(ctx.regs.pc);
+    ctx->fetched_data = bus_read(ctx->regs.pc);
     emu_cycles(1);
-    ctx.regs.pc++;
+    ctx->regs.pc++;
     return;
 
   case AM_A8_R:
-    ctx.mem_dest = bus_read(ctx.regs.pc) | 0xFF00;
-    ctx.dest_is_mem = true;
+    ctx->mem_dest = bus_read(ctx->regs.pc) | 0xFF00;
+    ctx->dest_is_mem = true;
     emu_cycles(1);
-    ctx.regs.pc++;
+    ctx->regs.pc++;
     return;
 
   case AM_HL_SPR:
-    ctx.fetched_data = bus_read(ctx.regs.pc);
+    ctx->fetched_data = bus_read(ctx->regs.pc);
     emu_cycles(1);
-    ctx.regs.pc++;
+    ctx->regs.pc++;
     return;
 
   case AM_D8:
-    ctx.fetched_data = bus_read(ctx.regs.pc);
+    ctx->fetched_data = bus_read(ctx->regs.pc);
     emu_cycles(1);
-    ctx.regs.pc++;
+    ctx->regs.pc++;
     return;
 
   case AM_A16_R:
   case AM_D16_R: {
-    u16 lo = bus_read(ctx.regs.pc);
+    u16 lo = bus_read(ctx->regs.pc);
     emu_cycles(1);
 
-    u16 hi = bus_read(ctx.regs.pc + 1);
+    u16 hi = bus_read(ctx->regs.pc + 1);
     emu_cycles(1);
 
-    ctx.mem_dest = lo | (hi << 8);
-    ctx.dest_is_mem = true;
+    ctx->mem_dest = lo | (hi << 8);
+    ctx->dest_is_mem = true;
 
-    ctx.regs.pc += 2;
-    ctx.fetched_data = cpu_read_reg(ctx.cur_inst->reg_2);
+    ctx->regs.pc += 2;
+    ctx->fetched_data = cpu_read_reg(ctx->cur_inst->reg_2);
   }
     return;
 
   case AM_MR_D8:
-    ctx.fetched_data = bus_read(ctx.regs.pc);
+    ctx->fetched_data = bus_read(ctx->regs.pc);
     emu_cycles(1);
-    ctx.regs.pc++;
-    ctx.mem_dest = cpu_read_reg(ctx.cur_inst->reg_1);
-    ctx.dest_is_mem = true;
+    ctx->regs.pc++;
+    ctx->mem_dest = cpu_read_reg(ctx->cur_inst->reg_1);
+    ctx->dest_is_mem = true;
     return;
 
   case AM_MR:
-    ctx.mem_dest = cpu_read_reg(ctx.cur_inst->reg_1);
-    ctx.dest_is_mem = true;
-    ctx.fetched_data = bus_read(cpu_read_reg(ctx.cur_inst->reg_1));
+    ctx->mem_dest = cpu_read_reg(ctx->cur_inst->reg_1);
+    ctx->dest_is_mem = true;
+    ctx->fetched_data = bus_read(cpu_read_reg(ctx->cur_inst->reg_1));
     emu_cycles(1);
     return;
 
   case AM_R_A16: {
-    u16 lo = bus_read(ctx.regs.pc);
+    u16 lo = bus_read(ctx->regs.pc);
     emu_cycles(1);
 
-    u16 hi = bus_read(ctx.regs.pc + 1);
+    u16 hi = bus_read(ctx->regs.pc + 1);
     emu_cycles(1);
 
     u16 addr = lo | (hi << 8);
 
-    ctx.regs.pc += 2;
-    ctx.fetched_data = bus_read(addr);
+    ctx->regs.pc += 2;
+    ctx->fetched_data = bus_read(addr);
     emu_cycles(1);
 
     return;
   }
 
   default:
-    printf("Unknown Addressing Mode! %d (%02X)\n", ctx.cur_inst->mode,
-           ctx.cur_opcode);
+    printf("Unknown Addressing Mode! %d (%02X)\n", ctx->cur_inst->mode,
+           ctx->cur_opcode);
     exit(-7);
     return;
   }

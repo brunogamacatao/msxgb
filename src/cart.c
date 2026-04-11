@@ -162,15 +162,16 @@ bool cart_load(c8 *filename) {
 
   u8 *dst = ctx.rom_data;
   u32 remaining = ctx.rom_size;
-  u8 n_chunks = (u8)(remaining / 0x8000);
+  u32 chunk_size = 1024;
+  u16 n_chunks = (u16)(remaining / chunk_size);
   u8 i_chunk = 1;
   
-  printf("Gonna read the mom file in %d chunks of 32kb\r\n", n_chunks);
+  printf("Gonna read the ROM file in %d chunks of %d bytes\r\n", n_chunks, chunk_size);
 
   while (remaining > 0) {
     printf("Reading the %d of %d chunk...\r\n", i_chunk, n_chunks);
     i_chunk++;
-    u16 chunk = (remaining > 0x8000) ? 0x8000 : (u16)remaining;
+    u16 chunk = (remaining > chunk_size) ? chunk_size : (u16)remaining;
     DOS_FRead(fp, (void*)dst, chunk);
     dst += chunk;
     remaining -= chunk;
