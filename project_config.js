@@ -36,23 +36,23 @@ LibModules = ["system", "bios", "memory", "vdp", "print", "input", "memory", "ps
 
 //-- Additional sources to be compiled and linked with the project (array)
 AddSources = [
-  "emu.c",
-  "msx_printf.c",
-  "cart.c",
-  "bus.c",
-  "ram.c",
-  "cpu.c",
-  "io.c",
-  "ppu.c",
-  "dma.c",
-  "ppu_sm.c",
-  "interrupts.c",
-  "stack.c",
-  "lcd.c",
-  "dbg.c",
-  "instructions.c",
-  "timer.c",
-  "common.c",
+  "src/emu.c",
+  "src/msx_printf.c",
+  "src/cart.c",
+  "src/bus.c",
+  "src/ram.c",
+  "src/cpu.c",
+  "src/io.c",
+  "src/ppu.c",
+  "src/dma.c",
+  "src/ppu_sm.c",
+  "src/interrupts.c",
+  "src/stack.c",
+  "src/lcd.c",
+  "src/dbg.c",
+  "src/instructions.c",
+  "src/timer.c",
+  "src/common.c",
 ];
 
 //-- Target MSX machine version (string)
@@ -159,6 +159,8 @@ AppID = "GB";
 //-- Additionnal compilation options (string)
 // CompileOpt = "";
 
+CompileOpt = "-Iinclude";
+
 //-- Skip file if compile data (REL) is newer than the source code (boolean)
 // CompileSkipOld = false;
 
@@ -199,7 +201,7 @@ Verbose = true;
 
 //-- Emulator extra parameters to be add to command-line (string). Emulator sotfware specific
 // EmulExtraParam = "";
-EmulExtraParam = "-ext ram1mb";
+EmulExtraParam = "-ext ram2mb";
 
 //-------------------------------------------------------------------------------
 // Extension options
