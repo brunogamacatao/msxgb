@@ -37,7 +37,6 @@ typedef struct {
 
   u32 current_frame;
   u32 line_ticks;
-  u32 *video_buffer;
 } ppu_context;
 
 void ppu_init();

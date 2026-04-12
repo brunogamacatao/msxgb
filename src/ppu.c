@@ -18,18 +18,11 @@ void ppu_init() {
 
   ctx->current_frame = 0;
   ctx->line_ticks = 0;
-  ctx->video_buffer = Mem_HeapAlloc(YRES * XRES * sizeof(32));
-
-  if (!ctx->video_buffer) {
-    printf("Could not allocate ppu video buffer\r\n");
-    exit(-1);
-  }
 
   lcd_init();
   LCDS_MODE_SET(MODE_OAM);
 
   memset(ctx->oam_ram, 0, sizeof(ctx->oam_ram));
-  memset(ctx->video_buffer, 0, YRES * XRES * sizeof(u32));
   printf("Done ppu initialization\r\n");
 }
 

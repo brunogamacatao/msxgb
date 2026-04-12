@@ -1,14 +1,29 @@
+// ____________________________
+// ██▀▀█▀▀██▀▀▀▀▀▀▀█▀▀█        │   ▄▄▄                ▄▄
+// ██  ▀  █▄  ▀██▄ ▀ ▄█ ▄▀▀ █  │  ▀█▄  ▄▀██ ▄█▄█ ██▀▄ ██  ▄███
+// █  █ █  ▀▀  ▄█  █  █ ▀▄█ █▄ │  ▄▄█▀ ▀▄██ ██ █ ██▀  ▀█▄ ▀█▄▄
+// ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀────────┘                 ▀▀
+// Cartridge loader — uses DOS2 memory mapper segments for ROM storage
+// Each segment is 16KB. ROM banks are read directly via DOSMapper_ReadByte.
+//─────────────────────────────────────────────────────────────────────────────
+
 #include "dos.h"
+#include "dos_mapper.h"
 #include "common.h"
 #include "memory.h"
 #include "cart.h"
 #include "string.h"
 
+// Each mapper segment is 16KB — matches the Game Boy ROM bank size exactly
+#define SEG_SIZE      0x4000
+#define MAX_SEGMENTS  32     // 32 x 16KB = 512KB max ROM
+
 typedef struct {
-  c8 filename[64];
-  u32 rom_size;
-  u8 *rom_data;
-  rom_header *header;
+  c8          filename[64];
+  u32         rom_size;
+  u8          num_segments;
+  DOS_Segment segments[MAX_SEGMENTS];
+  rom_header  header;       // local copy — safe to read any time
 } cart_context;
 
 static cart_context ctx;
@@ -109,25 +124,23 @@ static const char *LIC_CODE[0xA5] = {
     [0x92] = "Video system",
     [0x93] = "Ocean/Acclaim",
     [0x95] = "Varie",
-    [0x96] = "Yonezawa/s’pal",
+    [0x96] = "Yonezawa/s'pal",
     [0x97] = "Kaneko",
     [0x99] = "Pack in soft",
     [0xA4] = "Konami (Yu-Gi-Oh!)"
 };
 
 const char *cart_lic_name() {
-    if (ctx.header->new_lic_code <= 0xA4) {
-        return LIC_CODE[ctx.header->lic_code];
+    if (ctx.header.new_lic_code <= 0xA4) {
+        return LIC_CODE[ctx.header.lic_code];
     }
-
     return "UNKNOWN";
 }
 
 const char *cart_type_name() {
-    if (ctx.header->type <= 0x22) {
-        return ROM_TYPES[ctx.header->type];
+    if (ctx.header.type <= 0x22) {
+        return ROM_TYPES[ctx.header.type];
     }
-
     return "UNKNOWN";
 }
 
@@ -135,71 +148,99 @@ bool cart_load(c8 *filename) {
   printf("Trying to open %s file...\r\n", filename);
 
   u8 fp = DOS_FOpen(filename, O_RDONLY);
-
   if (fp == HANDLE_INVALID) {
     printf("Failed to open: %s\r\n", filename);
     return false;
   }
-
   printf("Opened: %s\r\n", filename);
 
-  ctx.rom_size = DOS_SeekHandle(fp, 0, SEEK_END); // go to the end to the filename
+  // Get file size
+  ctx.rom_size = DOS_SeekHandle(fp, 0, SEEK_END);
+  printf("File Size: %d KB\r\n", (u16)(ctx.rom_size / 1024L));
+  DOS_SeekHandle(fp, 0, SEEK_SET);
 
-  printf("File Size: %d KB\r\n", (u16)(ctx.rom_size/1024L));
-
-  DOS_SeekHandle(fp, 0, SEEK_SET); // rewind 
-
-  ctx.rom_data = Mem_HeapAlloc(ctx.rom_size);
-
-  if (!ctx.rom_data) {
-    printf("Not enought memory to allocate the rom\r\n");
-    exit(-1);
-  } else {
-    printf("Memory allocated successfully!\r\n");
+  // Sanity check
+  if (ctx.rom_size == 0) {
+    printf("Error: ROM size is 0\r\n");
+    DOS_FClose(fp);
+    return false;
   }
 
-  printf("Reading rom data ...\r\n");
+  // Calculate how many 16KB mapper segments we need
+  ctx.num_segments = (u8)((ctx.rom_size + SEG_SIZE - 1) / SEG_SIZE);
+  if (ctx.num_segments > MAX_SEGMENTS) {
+    printf("Error: ROM too large (%d segments, max %d)\r\n", ctx.num_segments, MAX_SEGMENTS);
+    DOS_FClose(fp);
+    return false;
+  }
+  printf("Segments needed: %d\r\n", ctx.num_segments);
 
-  u8 *dst = ctx.rom_data;
-  u32 remaining = ctx.rom_size;
-  u32 chunk_size = 1024;
-  u16 n_chunks = (u16)(remaining / chunk_size);
-  u8 i_chunk = 1;
-  
-  printf("Gonna read the ROM file in %d chunks of %d bytes\r\n", n_chunks, chunk_size);
-
-  while (remaining > 0) {
-    printf("Reading the %d of %d chunk...\r\n", i_chunk, n_chunks);
-    i_chunk++;
-    u16 chunk = (remaining > chunk_size) ? chunk_size : (u16)remaining;
-    DOS_FRead(fp, (void*)dst, chunk);
-    dst += chunk;
-    remaining -= chunk;
+  // Initialize mapper
+  if (!DOSMapper_Init()) {
+    printf("Error: mapper init failed\r\n");
+    DOS_FClose(fp);
+    return false;
   }
 
-  printf("Done!\r\n");
-  printf("Cloding the file handle...\r\n");
-  DOS_FClose(fp); 
-  printf("Done!\r\n");
+  // Allocate mapper segments
+  u8 i;
+  for (i = 0; i < ctx.num_segments; i++) {
+    // DOS_SEGSLOT_OTHERFIRST: prefer other slots first so we don't
+    // compete with DOS2 system segments on the primary mapper
+    if (!DOSMapper_Alloc(DOS_ALLOC_USER, DOS_SEGSLOT_PRIM | DOS_SEGSLOT_OTHERFIRST, &ctx.segments[i])) {
+      printf("Error: failed to allocate segment %d\r\n", i);
+      DOS_FClose(fp);
+      return false;
+    }
+    printf("Segment %d allocated (slot=%d num=%d)\r\n", i, ctx.segments[i].Slot, ctx.segments[i].Number);
+  }
 
-  ctx.header = (rom_header *)(ctx.rom_data + 0x100);
-  ctx.header->title[15] = 0;
+  // Load ROM: read byte by byte into mapper segments via DOSMapper_WriteByte.
+  // DOSMapper_WriteByte handles segment switching internally — no hardcoded
+  // page addresses needed, safe regardless of where our program lives.
+  printf("Loading ROM into mapper segments...\r\n");
+  u32 addr;
+  for (addr = 0; addr < ctx.rom_size; addr++) {
+    u8 byte;
+    DOS_FRead(fp, &byte, 1);
+    u8  seg    = (u8)(addr / SEG_SIZE);
+    u16 offset = (u16)(addr % SEG_SIZE);
+    DOSMapper_WriteByte(ctx.segments[seg].Number, offset, byte);
+  }
+  printf("Done loading ROM\r\n");
+
+  DOS_FClose(fp);
+
+  // Copy header locally so it's always readable without touching the mapper
+  // Header is at ROM offset 0x100, which is in segment 0 at offset 0x100
+  u8 *hdst = (u8*)&ctx.header;
+  u16 j;
+  for (j = 0; j < sizeof(rom_header); j++) {
+    hdst[j] = DOSMapper_ReadByte(ctx.segments[0].Number, 0x100 + j);
+  }
+  ctx.header.title[15] = 0;
 
   printf("Cartridge Loaded:\r\n");
-  printf("\t Title    : %s\r\n", ctx.header->title);
-  printf("\t Type     : %d (%s)\r\n", ctx.header->type, cart_type_name());
-  printf("\t ROM Size : %d KB\r\n", 32 << ctx.header->rom_size);
-  printf("\t RAM Size : %d\r\n", ctx.header->ram_size);
-  printf("\t LIC Code : %d (%s)\r\n", ctx.header->lic_code, cart_lic_name());
-  printf("\t ROM Vers : %d\r\n", ctx.header->version);
+  printf("\t Title    : %s\r\n",  ctx.header.title);
+  printf("\t Type     : %d (%s)\r\n", ctx.header.type, cart_type_name());
+  printf("\t ROM Size : %d KB\r\n", 32 << ctx.header.rom_size);
+  printf("\t RAM Size : %d\r\n",  ctx.header.ram_size);
+  printf("\t LIC Code : %d (%s)\r\n", ctx.header.lic_code, cart_lic_name());
+  printf("\t ROM Vers : %d\r\n",  ctx.header.version);
 
   return true;
 }
 
+// Read a byte from the full GB ROM address space (0x0000 ~ rom_size-1).
+// The CPU calls this for addresses 0x0000~0x7FFF (ROM banks 0 and 1).
+// DOSMapper_ReadByte switches the segment internally — no manual page mapping needed.
 u8 cart_read(u16 address) {
-  return ctx.rom_data[address];
+  u8  seg    = (u8)((u32)address / SEG_SIZE);
+  u16 offset = address % SEG_SIZE;
+  return DOSMapper_ReadByte(ctx.segments[seg].Number, offset);
 }
 
 void cart_write(u16 address, u8 value) {
-  printf("cart_write(%d)\n", address);
+  // MBC register writes will go here when MBC support is added
+  printf("cart_write(0x%04X, 0x%02X)\r\n", address, value);
 }
