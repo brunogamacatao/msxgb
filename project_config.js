@@ -201,7 +201,7 @@ Verbose = true;
 
 //-- Emulator extra parameters to be add to command-line (string). Emulator sotfware specific
 // EmulExtraParam = "";
-EmulExtraParam = "-ext ram2mb";
+EmulExtraParam = "-ext ram4mb";
 
 //-------------------------------------------------------------------------------
 // Extension options
